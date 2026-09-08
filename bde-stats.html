@@ -26,7 +26,9 @@
   .applybtn{height:38px; padding:0 20px; border-radius:9px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; border:none; cursor:pointer; box-shadow:var(--shadow-sm);}
   .applybtn:hover{filter:brightness(.96);}
 
-  .kpis{display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin-bottom:16px;}
+  .sectiontitle{font-size:16px; font-weight:800; margin:0 0 14px; letter-spacing:-.01em;}
+  .section{margin-bottom:32px;}
+  .kpis{display:grid; grid-template-columns:repeat(6, 1fr); gap:14px; margin-bottom:16px;}
   .kpi{border:1px solid var(--line); border-radius:14px; background:var(--panel); box-shadow:var(--shadow-sm); padding:18px 20px; animation:riseIn .3s ease-out both;}
   .kpi .k{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:8px;}
   .kpi .v{font-size:28px; font-weight:800; letter-spacing:-.01em; line-height:1;}
@@ -52,6 +54,14 @@
   tbody tr:not(.total):hover{background:var(--paper);}
   .bdename{font-weight:700;}
   .dash{color:var(--faint);}
+
+  @media (max-width: 900px){
+    .kpis{grid-template-columns:repeat(3, 1fr);}
+  }
+  @media (max-width: 560px){
+    .kpis{grid-template-columns:repeat(2, 1fr);}
+    .filterbar{align-items:stretch;}
+  }
 </style>
 </head>
 <body>
@@ -61,7 +71,7 @@
     <div class="name">PropFlow</div>
   </div>
   <div class="usermenu">
-    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg></div>
     <div class="usermenu-dd" id="userMenuDd">
       <div class="usermenu-head">
         <div class="av" style="background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
@@ -84,86 +94,95 @@
     </div>
     <div class="nav">
       <div class="navlabel">Workspace</div>
-      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
-      <a class="nitem on" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>For you</a>
+      <a class="nitem" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
       <a class="nitem" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
-    </div>
-    <div class="sidestats" id="sideStats"></div>
-    <div class="sidebottom">
-      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
-      <div><div class="who-name">M. Iyer</div><div class="who-role">BDM &middot; Bengaluru</div></div>
+      <a class="nitem on" href="bde-stats.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Dashboard</a>
     </div>
   </div>
 
   <div class="main">
     <div class="wrap">
       <div class="head">
-        <h1>BDE Stats</h1>
+        <h1>Dashboard</h1>
         <a class="backbtn" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Back to Properties List</a>
       </div>
 
-      <div class="filterbar">
-        <div class="ffield"><label>Period</label><select id="fPeriod"><option>Last 7 days</option><option selected>Last 30 days</option><option>Last 90 days</option><option>Custom range</option></select></div>
-        <div class="ffield"><label>Start</label><input type="text" placeholder="dd-mm-yyyy" disabled></div>
-        <div class="ffield"><label>End</label><input type="text" placeholder="dd-mm-yyyy" disabled></div>
-        <div class="ffield"><label>City</label><select id="fCity"><option>All cities</option><option>Bangalore</option><option>Chennai</option><option>Hyderabad</option></select></div>
-        <div class="ffield"><label>Source</label><select id="fSource"><option>All sources</option><option>Self</option><option>Consultant</option><option>Employee Referral</option></select></div>
-        <label class="fcheck"><input type="checkbox" checked>Hide deactivated BDEs</label>
-        <button class="applybtn" id="applyBtn">Apply</button>
+      <div class="section">
+        <div class="sectiontitle">Company Overview</div>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="k">Submitted</div>
+            <div class="v">38</div>
+            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>6 (18.8%)</div>
+            <div class="sub">vs previous period</div>
+          </div>
+          <div class="kpi">
+            <div class="k">In Pipeline</div>
+            <div class="v">14</div>
+            <div class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>-3 (-17.6%)</div>
+            <div class="sub">BDE 3 &middot; BDM 5 &middot; CXO 4 &middot; IC 2</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Approved</div>
+            <div class="v">9</div>
+            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>2 (28.6%)</div>
+            <div class="sub">Conversion 64.3% of closed</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Rejected</div>
+            <div class="v">5</div>
+            <div class="delta down" style="color:var(--bad);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>1 (25.0%)</div>
+            <div class="sub">35.7% of closed</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Avg TAT</div>
+            <div class="v">42.3 <span style="font-size:14px; font-weight:700; color:var(--faint);">days</span></div>
+            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>4.1 (8.8%)</div>
+            <div class="sub">days, lead to IC decision</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Weighted Avg &#8377;/sqft</div>
+            <div class="v">&#8377;94</div>
+            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>3 (3.3%)</div>
+            <div class="sub">weighted by submitted size</div>
+          </div>
+        </div>
       </div>
 
-      <div class="kpis">
-        <div class="kpi">
-          <div class="k">Submitted</div>
-          <div class="v">5</div>
-          <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>2 (66.7%)</div>
-          <div class="sub">vs previous period</div>
-        </div>
-        <div class="kpi">
-          <div class="k">In Pipeline</div>
-          <div class="v">2</div>
-          <div class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>-2 (-50.0%)</div>
-          <div class="sub">BDE 0 &middot; BDM 0 &middot; CXO 2 &middot; IC 0</div>
-        </div>
-        <div class="kpi">
-          <div class="k">Approved</div>
-          <div class="v">1</div>
-          <div class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>-4 (-80.0%)</div>
-          <div class="sub">Conversion 100.0% of closed</div>
-        </div>
-        <div class="kpi">
-          <div class="k">Rejected</div>
-          <div class="v">0</div>
-          <div class="delta" style="color:var(--faint);">&mdash; 0</div>
-          <div class="sub">0.0% of closed</div>
-        </div>
-        <div class="kpi">
-          <div class="k">Avg TAT</div>
-          <div class="v">49.9 <span style="font-size:14px; font-weight:700; color:var(--faint);">days</span></div>
-          <div class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>8.7 (21.1%)</div>
-          <div class="sub">days</div>
-        </div>
-      </div>
+      <div class="section">
+        <div class="sectiontitle">BDE Stats</div>
 
-      <div class="showing">Showing: Last 30 days &middot; City: All &middot; Source: All</div>
+        <div class="filterbar">
+          <div class="ffield"><label>Period</label><select id="fPeriod"><option>Last 7 days</option><option selected>Last 30 days</option><option>Last 90 days</option><option>Custom range</option></select></div>
+          <div class="ffield"><label>Start</label><input type="text" placeholder="dd-mm-yyyy" disabled></div>
+          <div class="ffield"><label>End</label><input type="text" placeholder="dd-mm-yyyy" disabled></div>
+          <div class="ffield"><label>City</label><select id="fCity"><option>All cities</option><option>Bangalore</option><option>Chennai</option><option>Hyderabad</option></select></div>
+          <div class="ffield"><label>Source</label><select id="fSource"><option>All sources</option><option>Self</option><option>Consultant</option><option>Employee Referral</option></select></div>
+          <label class="fcheck"><input type="checkbox" checked>Hide deactivated BDEs</label>
+          <button class="applybtn" id="applyBtn">Apply</button>
+        </div>
 
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr class="grp">
-              <th rowspan="2">BDE</th>
-              <th rowspan="2">Submitted<br>Last 30D</th>
-              <th rowspan="2">Assigned<br>Last 30D</th>
-              <th colspan="4">In Pipeline &middot; Last 30D</th>
-              <th rowspan="2">Approved<br>Last 30D</th>
-              <th rowspan="2">Rejected<br>Last 30D</th>
-              <th rowspan="2">Conversion %<br>Last 30D</th>
-              <th rowspan="2">Avg TAT<br>Last 30D</th>
-            </tr>
-            <tr class="cols"><th>BDE</th><th>BDM</th><th>CXO</th><th>IC</th></tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
+        <div class="showing">Showing: Last 30 days &middot; City: All &middot; Source: All</div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr class="grp">
+                <th rowspan="2">BDE</th>
+                <th rowspan="2">Submitted<br>Last 30D</th>
+                <th rowspan="2">Assigned<br>Last 30D</th>
+                <th colspan="4">In Pipeline &middot; Last 30D</th>
+                <th rowspan="2">Approved<br>Last 30D</th>
+                <th rowspan="2">Rejected<br>Last 30D</th>
+                <th rowspan="2">Conversion %<br>Last 30D</th>
+                <th rowspan="2">Avg TAT<br>Last 30D</th>
+              </tr>
+              <tr class="cols"><th>BDE</th><th>BDM</th><th>CXO</th><th>IC</th></tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

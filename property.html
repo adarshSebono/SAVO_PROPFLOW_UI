@@ -33,6 +33,20 @@
   .leftcol{position:sticky; top:calc(var(--gtop-h) + 68px); border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); padding:18px; animation:riseIn .4s .05s ease-out both;}
   .leftcol h3{font-size:12.5px; font-weight:800; margin:0 0 4px;}
   .leftsub{font-size:11px; color:var(--faint); margin-bottom:12px;}
+
+  .idxlist{display:flex; flex-direction:column; gap:2px;}
+  .idxitem{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:9px; cursor:pointer; transition:background .15s;}
+  .idxitem:hover{background:var(--paper);}
+  .idxdot{width:20px;height:20px;border-radius:7px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .idxdot svg{width:10px;height:10px;}
+  .idxdot.done{background:var(--good-bg); color:var(--good);}
+  .idxdot.current{background:var(--accent); color:#fff;}
+  .idxdot.rejected{background:var(--bad-bg); color:var(--bad);}
+  .idxdot.hold{background:var(--hold-bg); color:var(--hold);}
+  .idxdot.future{background:var(--line-soft); color:var(--faint);}
+  .idxlbl{font-size:12px; font-weight:600; color:var(--muted); flex:1; min-width:0;}
+  .idxitem.on .idxlbl{color:var(--ink); font-weight:700;}
+
   .mtabs{display:flex; gap:4px; background:var(--paper); padding:3px; border-radius:8px; margin-bottom:12px;}
   .mtab{flex:1; text-align:center; font-size:11px; font-weight:700; padding:6px 0; border-radius:6px; color:var(--muted); cursor:pointer;}
   .mtab.on{background:var(--panel); color:var(--ink); box-shadow:var(--shadow-sm);}
@@ -47,10 +61,14 @@
   .doctile{height:52px; border-radius:9px; background:linear-gradient(150deg,#c7cdd2,#8f9aa3); display:flex; align-items:flex-end; padding:6px 9px; margin-bottom:9px;}
   .doctile .lb{font-size:10px; font-weight:700; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.3);}
 
-  .stcard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:20px 22px; margin-bottom:16px; animation:riseIn .35s ease-out both;}
+  .stcard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); margin-bottom:16px; animation:riseIn .35s ease-out both; overflow:hidden; scroll-margin-top:calc(var(--gtop-h) + 68px);}
   .stcard.current{border-color:var(--accent); box-shadow:var(--shadow-md);}
   .stcard.dim{opacity:.6;}
-  .stchead{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .stchead{display:flex; align-items:center; gap:10px; padding:20px 22px; cursor:pointer; margin-bottom:0;}
+  .stchev{width:16px;height:16px; color:var(--faint); flex:none; transition:transform .2s; margin-left:8px;}
+  .stcard.open .stchev{transform:rotate(180deg);}
+  .stbody{padding:0 22px 20px;}
+  .stcard:not(.open) .stbody{display:none;}
   .stbadge{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;}
   .stbadge svg{width:13px;height:13px;}
   .stbadge.done{background:var(--good-bg); color:var(--good);}
@@ -111,6 +129,15 @@
   .openlink:hover{color:var(--accent-deep);}
   .openlink svg{width:13px;height:13px;}
 
+  .takeaction{position:fixed; right:28px; bottom:28px; z-index:120; display:none; align-items:center; gap:12px; background:var(--accent); color:#fff; padding:14px 18px; border-radius:100px; box-shadow:var(--shadow-lg); cursor:pointer; animation:riseIn .3s ease-out both, pulse 2.4s ease-in-out infinite;}
+  .takeaction:hover{filter:brightness(1.05); transform:translateY(-1px);}
+  .takeaction.show{display:flex;}
+  .takeaction .ic{width:30px;height:30px;border-radius:50%; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; flex:none;}
+  .takeaction .ic svg{width:15px;height:15px;}
+  .takeaction .t{font-size:13px; font-weight:700; line-height:1.3;}
+  .takeaction .d{font-size:11px; color:rgba(255,255,255,.8); font-weight:600;}
+  .takeaction .arrow{width:14px;height:14px; flex:none;}
+
   .sharewrap{position:relative;}
   .sharebtn{height:32px; padding:0 13px; border-radius:100px; border:1px solid var(--line); background:var(--panel); color:var(--muted); font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer; transition:border-color .15s, color .15s;}
   .sharebtn:hover{border-color:var(--accent); color:var(--accent);}
@@ -125,22 +152,19 @@
   .share-copybtn.copied{background:var(--good);}
   .share-note{font-size:11px; color:var(--faint); line-height:1.5; margin-top:10px;}
 
-  .tabbtn.mobile-only{display:none;}
   @media (max-width: 720px){
     body{overflow-x:hidden;}
     .topbar{flex-wrap:wrap; height:auto; padding:10px 16px; gap:6px;}
     .pagewrap{padding-left:16px; padding-right:16px;}
-    .htop{flex-direction:column;}
-    .storecard{width:100%;}
     .fieldgrid{grid-template-columns:repeat(2, 1fr);}
     .bodygrid{grid-template-columns:1fr;}
-    .leftcol{position:static; width:100%; display:none;}
-    .leftcol.show{display:block;}
-    .tabbtn.mobile-only{display:inline-block;}
+    .leftcol{position:static; width:100%;}
     .flow{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px;}
     .flow::-webkit-scrollbar{height:4px;}
     .tabbar{overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;}
     .tabbtn{white-space:nowrap;}
+    .takeaction{right:16px; bottom:16px; padding:12px 16px;}
+    .takeaction .d{display:none;}
   }
 </style>
 </head>
@@ -151,7 +175,7 @@
     <div class="name">PropFlow</div>
   </div>
   <div class="usermenu">
-    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg></div>
     <div class="usermenu-dd" id="userMenuDd">
       <div class="usermenu-head">
         <div class="av" style="background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
@@ -174,14 +198,10 @@
     </div>
     <div class="nav">
       <div class="navlabel">Workspace</div>
-      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>For you</a>
       <a class="nitem on" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
       <a class="nitem" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
-    </div>
-    <div class="sidestats" id="sideStats"></div>
-    <div class="sidebottom">
-      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
-      <div><div class="who-name">M. Iyer</div><div class="who-role">BDM &middot; Bengaluru</div></div>
+      <a class="nitem" href="bde-stats.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Dashboard</a>
     </div>
   </div>
 
@@ -189,7 +209,6 @@
     <div class="topbar">
       <div class="crumb"><a class="back" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Properties</a> / <b>BLR1041</b></div>
       <div style="display:flex; align-items:center; gap:16px;">
-        <div class="livewrap"><div class="livedot"></div>2 viewing now</div>
         <div class="sharewrap">
           <div class="sharebtn" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>Share</div>
           <div class="share-pop" id="sharePop">
@@ -207,27 +226,17 @@
     <div class="pagewrap">
 
       <div class="pagehead">
-        <div class="htop">
-          <div>
-            <div class="htitle">
-              <h1>Whitefield Main Road</h1>
-              <span class="code">BLR1041</span>
-              <span class="status" id="headStatus"></span>
-            </div>
-            <div class="hmeta">Hunter <div class="av" style="background:#3f6e85;">RS</div> R. Suresh &nbsp;&middot;&nbsp; Assigned <div class="av" style="background:#7c4f96;">MI</div> M. Iyer &nbsp;&middot;&nbsp; <span class="mono" id="clock" style="color:var(--faint);"></span></div>
-          </div>
-          <div class="storecard">
-            <div class="k">Nearest Savo Store</div>
-            <div class="v">Whitefield Central</div>
-            <div class="sub">2.4 km &middot; auto-computed</div>
-          </div>
+        <div class="htitle">
+          <h1>Whitefield Main Road</h1>
+          <span class="code">BLR1041</span>
+          <span class="status" id="headStatus"></span>
         </div>
         <div class="flow" id="flowStepper"></div>
       </div>
 
       <div class="tabbar" id="tabBar">
         <div class="tabbtn on" data-tab="overview">Overview</div>
-        <div class="tabbtn mobile-only" data-tab="media">Media</div>
+        <div class="tabbtn" data-tab="media">Media</div>
         <div class="tabbtn" data-tab="propflow">PropFlow</div>
         <div class="tabbtn" data-tab="launchflow">Launch Flow</div>
         <div class="tabbtn" data-tab="marketops">Market Ops</div>
@@ -235,14 +244,10 @@
       </div>
 
       <div class="bodygrid">
-        <div class="leftcol" id="media">
-          <h3>Media</h3>
-          <div class="leftsub">3 photos &middot; 2 docs</div>
-          <div class="mtabs">
-            <div class="mtab on" id="tabPhotos">Photos</div>
-            <div class="mtab" id="tabDocs">Documents</div>
-          </div>
-          <div id="mediaBody"></div>
+        <div class="leftcol">
+          <h3>Review Index</h3>
+          <div class="leftsub">Jump to any review</div>
+          <div class="idxlist" id="reviewIndex"></div>
         </div>
 
         <div>
@@ -268,6 +273,18 @@
                 <div class="fitem"><div class="k">Assigned To</div><div class="v">M. Iyer &middot; BDM</div></div>
                 <div class="fitem"><div class="k">Current Stage</div><div class="v" id="ovStage">&mdash;</div></div>
               </div>
+            </div>
+          </div>
+
+          <div class="tabpane" data-pane="media" id="media" style="display:none;">
+            <div class="summarycard">
+              <div class="panetitle">Media</div>
+              <div class="leftsub" style="margin-bottom:14px;">3 photos &middot; 2 docs</div>
+              <div class="mtabs" style="max-width:260px;">
+                <div class="mtab on" id="tabPhotos">Photos</div>
+                <div class="mtab" id="tabDocs">Documents</div>
+              </div>
+              <div id="mediaBody"></div>
             </div>
           </div>
 
@@ -301,9 +318,18 @@
   </div>
 </div>
 
+<div class="takeaction" id="takeActionBanner">
+  <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"/></svg></div>
+  <div>
+    <div class="t" id="takeActionText">Take action</div>
+    <div class="d">Your turn to act on this property</div>
+  </div>
+  <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+</div>
+
 <script src="common.js"></script>
 <script>
-var STAGES = ['Hunter','BDE','Site Eval','BDM','Negotiation','CXO','IC'];
+var STAGES = ['Hunter','BDE','Site Eval','BDM','CXO','IC'];
 var state = { outcome: null, mediaTab: 'photos', elapsedSec: 6*3600 + 42*60 + 10 };
 
 var ICONS = {
@@ -324,7 +350,6 @@ function stageBadge(idx) {
   var b = bdmState();
   if (idx < 3) return { cls:'done', icon: ICONS.check };
   if (idx === 3) return b.done ? {cls:'done', icon:ICONS.check} : b.rejected ? {cls:'rejected', icon:ICONS.x} : b.held ? {cls:'hold', icon:ICONS.pause} : {cls:'current', icon:ICONS.bdm};
-  if (idx === 4) return b.done ? {cls:'current', icon:ICONS.dollar} : {cls:'future', icon:ICONS.lock};
   return {cls:'future', icon:ICONS.lock};
 }
 
@@ -342,50 +367,129 @@ function fieldGrid(items) {
   }).join('') + '</div>';
 }
 
+var CHEV = '<svg class="stchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+
+function cardHead(badgeCls, icon, name, tag) {
+  return '<div class="stchead"><div class="stbadge ' + badgeCls + '">' + icon + '</div><div class="stname">' + name + '</div><span class="sttag ' + badgeCls + '">' + tag + '</span>' + CHEV + '</div>';
+}
+
 function renderStages() {
   var b = bdmState();
   var html = '';
 
-  html += '<div class="stcard"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Hunter Submission</div><span class="sttag done">Complete</span></div>' +
-    fieldGrid([['Locality','Whitefield Main Rd'],['Size','1,850 sqft'],['Expected Rent','&#8377;1,65,000'],['Landlord','N. Gowda'],['Landlord Phone','98450 XXXXX'],['Source','Self'],['City','Bengaluru'],['Submitted','12 Aug']]) + '</div>';
+  html += '<div class="stcard" data-key="hunter">' + cardHead('done', ICONS.check, 'Hunter Submission', 'Complete') +
+    '<div class="stbody">' + fieldGrid([['Locality','Whitefield Main Rd'],['Size','1,850 sqft'],['Expected Rent','&#8377;1,65,000'],['Landlord','N. Gowda'],['Landlord Phone','98450 XXXXX'],['Source','Self'],['City','Bengaluru'],['Submitted','12 Aug']]) + '</div></div>';
 
-  html += '<div class="stcard"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">BDE Review</div><span class="sttag done">Approved</span></div>' +
-    fieldGrid([['Rent / sqft','&#8377;89'],['Frontage','32 ft'],['Property Type','Regular'],['Rent In Line','Yes'],['Deposit','&#8377;9,90,000'],['Deposit Months','6'],['Occupation By','30&ndash;60 days'],['Reviewed','14 Aug']]) + '</div>';
+  html += '<div class="stcard" data-key="bde">' + cardHead('done', ICONS.check, 'BDE Review', 'Approved') +
+    '<div class="stbody">' + fieldGrid([['Rent / sqft','&#8377;89'],['Frontage','32 ft'],['Property Type','Regular'],['Rent In Line','Yes'],['Deposit','&#8377;9,90,000'],['Deposit Months','6'],['Occupation By','30&ndash;60 days'],['Reviewed','14 Aug']]) + '</div></div>';
 
-  html += '<div class="stcard"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Site Evaluation</div><span class="sttag done">42/48 checks</span></div>' +
-    fieldGrid([['Location Score','Strong'],['Property Score','Adequate'],['Catchment Profile','61% SEC A'],['Competition','3 nearby']]) + '</div>';
+  html += '<div class="stcard" data-key="siteeval">' + cardHead('done', ICONS.check, 'Site Evaluation', '42/48 checks') +
+    '<div class="stbody">' + fieldGrid([['Location Score','Strong'],['Property Score','Adequate'],['Catchment Profile','61% SEC A'],['Competition','3 nearby']]) + '</div></div>';
 
   var bdmBadge = b.done?'done':b.rejected?'rejected':b.held?'hold':'current';
   var bdmTag = b.done?'Approved':b.rejected?'Rejected':b.held?'On hold':'Your turn to act';
-  html += '<div class="stcard ' + (bdmBadge==='current'?'current':'') + '"><div class="stchead"><div class="stbadge ' + bdmBadge + '">' + (b.done?ICONS.check:b.rejected?ICONS.x:b.held?ICONS.pause:ICONS.bdm) + '</div><div class="stname">BDM Review</div><span class="sttag ' + bdmBadge + '">' + bdmTag + '</span></div>';
+  html += '<div class="stcard ' + (bdmBadge==='current'?'current':'') + '" data-key="bdm">' + cardHead(bdmBadge, b.done?ICONS.check:b.rejected?ICONS.x:b.held?ICONS.pause:ICONS.bdm, 'BDM Review', bdmTag) + '<div class="stbody">';
   if (b.pending) {
     html += '<div class="editgrid"><div><label>Sales Estimate &middot; 1 Month (&#8377;)</label><div class="fakeinput focus">42,00,000</div></div><div><label>Sales Estimate &middot; 3 Month (&#8377;)</label><div class="fakeinput">58,00,000</div></div><div><label>GeoIQ Household Count</label><div class="fakeinput">6,200</div></div></div>' +
-      '<div class="editgrid" style="grid-template-columns:1fr 2fr;"><div><label>Negotiation Required</label><div class="toggle"><div class="sw"></div><span style="font-size:12.5px; font-weight:600;">Yes</span></div></div></div>' +
       '<div class="actionrow"><div class="commentbox"><label>Comments <span style="color:var(--faint); font-weight:500;">(required for Reject / Hold)</span></label><div class="textarea">Add context for this decision&hellip;</div></div>' +
       '<div class="actionbtns"><div class="abtn hold" id="btnHold">Hold</div><div class="abtn reject" id="btnReject">Reject</div><div class="abtn approve" id="btnApprove">Approve</div></div></div>';
   } else if (b.done) {
-    html += '<div class="decidedbox approve"><div class="ic">' + ICONS.check + '</div><div><div class="t">Approved by M. Iyer</div><div class="d">Sales est. &#8377;42L (1mo) / &#8377;58L (3mo) &middot; Negotiation required &mdash; unlocked below.</div></div></div>';
+    html += '<div class="decidedbox approve"><div class="ic">' + ICONS.check + '</div><div><div class="t">Approved by M. Iyer</div><div class="d">Sales est. &#8377;42L (1mo) / &#8377;58L (3mo).</div></div></div>';
   } else if (b.rejected) {
     html += '<div class="decidedbox reject"><div class="ic">' + ICONS.x + '</div><div><div class="t">Rejected by M. Iyer</div><div class="d">Pipeline stops here &mdash; property marked BDM Rejected.</div></div></div>';
   } else if (b.held) {
     html += '<div class="decidedbox hold"><div class="ic">' + ICONS.pause + '</div><div><div class="t">On hold &mdash; M. Iyer</div><div class="d">BDE and BDM can both still act while on hold.</div></div></div>';
   }
-  html += '</div>';
+  html += '</div></div>';
 
   var negDim = b.done ? '' : 'dim';
-  html += '<div class="stcard ' + negDim + '"><div class="stchead"><div class="stbadge ' + (b.done?'current':'future') + '">' + ICONS.dollar + '</div><div class="stname">Negotiation Rounds</div><span class="sttag ' + (b.done?'current':'future') + '">' + (b.done?'Open':'Locked') + '</span></div>' +
-    '<table class="negtable"><thead><tr><th>Round</th><th>Monthly Rent</th><th>Deposit (months)</th><th>Agreement Term</th></tr></thead><tbody><tr><td>&mdash;</td><td colspan="3" style="color:var(--faint);">' +
-    (b.done ? 'No rounds recorded yet — add the first round above.' : 'No rounds yet — opens once BDM approves and marks negotiation required.') + '</td></tr></tbody></table></div>';
+  html += '<div class="stcard ' + negDim + '" data-key="neg">' + cardHead(b.done?'current':'future', ICONS.dollar, 'Negotiation Rounds', b.done?'Open':'Locked') +
+    '<div class="stbody"><table class="negtable"><thead><tr><th>Round</th><th>Monthly Rent</th><th>Deposit (months)</th><th>Agreement Term</th></tr></thead><tbody><tr><td>&mdash;</td><td colspan="3" style="color:var(--faint);">' +
+    (b.done ? 'No rounds recorded yet — add the first round above.' : 'No rounds yet — opens once BDM approves.') + '</td></tr></tbody></table></div></div>';
 
-  html += '<div class="stcard dim"><div class="stchead"><div class="stbadge future">' + ICONS.lock + '</div><div class="stname">CXO Review</div><span class="sttag future">Locked</span></div><div class="lockrow">' + ICONS.lock + 'Max rent / deposit approval &mdash; unlocks once BDM approves.</div></div>';
-  html += '<div class="stcard dim"><div class="stchead"><div class="stbadge future">' + ICONS.lock + '</div><div class="stname">IC Decision</div><span class="sttag future">Locked</span></div><div class="lockrow">' + ICONS.lock + 'Final approval &amp; canonical property name &mdash; unlocks once CXO approves.</div></div>';
+  html += '<div class="stcard dim" data-key="cxo">' + cardHead('future', ICONS.lock, 'CXO Review', 'Locked') + '<div class="stbody"><div class="lockrow">' + ICONS.lock + 'Max rent / deposit approval &mdash; unlocks once BDM approves.</div></div></div>';
+  html += '<div class="stcard dim" data-key="ic">' + cardHead('future', ICONS.lock, 'IC Decision', 'Locked') + '<div class="stbody"><div class="lockrow">' + ICONS.lock + 'Final approval &amp; canonical property name &mdash; unlocks once CXO approves.</div></div></div>';
 
   document.getElementById('stageStack').innerHTML = html;
+  applyOpenState();
 
   if (b.pending) {
-    document.getElementById('btnApprove').addEventListener('click', function () { setOutcome('approved', 'BDM Review approved — Negotiation unlocked'); });
+    document.getElementById('btnApprove').addEventListener('click', function () { setOutcome('approved', 'BDM Review approved'); });
     document.getElementById('btnReject').addEventListener('click', function () { setOutcome('rejected', 'Property marked BDM Rejected'); });
     document.getElementById('btnHold').addEventListener('click', function () { setOutcome('hold', 'Property placed on hold at BDM stage'); });
+  }
+}
+
+// ---- Accordion open/close state (kept across re-renders) ----
+state.openStages = {};
+function applyOpenState() {
+  document.querySelectorAll('#stageStack .stcard').forEach(function (card) {
+    card.classList.toggle('open', !!state.openStages[card.getAttribute('data-key')]);
+  });
+}
+function openStage(key) {
+  state.openStages[key] = true;
+  applyOpenState();
+  var card = document.querySelector('#stageStack .stcard[data-key="' + key + '"]');
+  if (card) card.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+document.getElementById('stageStack').addEventListener('click', function (e) {
+  var head = e.target.closest('.stchead');
+  if (!head) return;
+  var card = head.closest('.stcard');
+  var key = card.getAttribute('data-key');
+  state.openStages[key] = !state.openStages[key];
+  applyOpenState();
+});
+
+// ---- Review Index (left panel) ----
+var INDEX_ITEMS = [
+  ['hunter', 'Hunter Submission'],
+  ['bde', 'BDE Review'],
+  ['siteeval', 'Site Evaluation'],
+  ['bdm', 'BDM Review'],
+  ['neg', 'Negotiation Rounds'],
+  ['cxo', 'CXO Review'],
+  ['ic', 'IC Decision'],
+];
+function indexBadge(key) {
+  var b = bdmState();
+  if (key === 'hunter' || key === 'bde' || key === 'siteeval') return { cls:'done', icon:ICONS.check };
+  if (key === 'bdm') return b.done ? {cls:'done', icon:ICONS.check} : b.rejected ? {cls:'rejected', icon:ICONS.x} : b.held ? {cls:'hold', icon:ICONS.pause} : {cls:'current', icon:ICONS.bdm};
+  if (key === 'neg') return b.done ? {cls:'current', icon:ICONS.dollar} : {cls:'future', icon:ICONS.lock};
+  return {cls:'future', icon:ICONS.lock};
+}
+function renderIndex() {
+  var html = INDEX_ITEMS.map(function (it) {
+    var key = it[0], label = it[1];
+    var bd = indexBadge(key);
+    return '<div class="idxitem" data-key="' + key + '"><div class="idxdot ' + bd.cls + '">' + bd.icon + '</div><div class="idxlbl">' + label + '</div></div>';
+  }).join('');
+  document.getElementById('reviewIndex').innerHTML = html;
+  document.querySelectorAll('.idxitem').forEach(function (item) {
+    item.addEventListener('click', function () {
+      goToStage(item.getAttribute('data-key'));
+    });
+  });
+}
+function goToStage(key) {
+  var propflowTab = document.querySelector('.tabbtn[data-tab="propflow"]');
+  if (!propflowTab.classList.contains('on')) propflowTab.click();
+  setTimeout(function () { openStage(key); }, 60);
+}
+
+// ---- Floating Take Action banner ----
+function renderTakeAction() {
+  var b = bdmState();
+  var banner = document.getElementById('takeActionBanner');
+  var role = getCurrentRole();
+  if (role === 'bdm' && b.pending) {
+    document.getElementById('takeActionText').textContent = 'Take action';
+    banner.classList.add('show');
+    banner.onclick = function () { goToStage('bdm'); };
+  } else {
+    banner.classList.remove('show');
+    banner.onclick = null;
   }
 }
 
@@ -433,13 +537,7 @@ function fmt(sec) {
   return pad(h)+':'+pad(m)+':'+pad(s);
 }
 
-function render() { renderHead(); renderFlow(); renderStages(); }
-
-setInterval(function () {
-  state.elapsedSec++;
-  document.getElementById('clock').textContent = fmt(state.elapsedSec) + ' in current stage';
-}, 1000);
-document.getElementById('clock').textContent = fmt(state.elapsedSec) + ' in current stage';
+function render() { renderHead(); renderFlow(); renderStages(); renderIndex(); renderTakeAction(); }
 
 render();
 renderMedia();
@@ -485,7 +583,6 @@ document.querySelectorAll('.tabbtn').forEach(function (btn) {
     document.querySelectorAll('.tabpane').forEach(function (p) {
       p.style.display = (p.getAttribute('data-pane') === tab) ? '' : 'none';
     });
-    document.getElementById('media').classList.toggle('show', tab === 'media');
   });
 });
 

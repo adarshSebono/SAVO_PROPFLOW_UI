@@ -33,6 +33,19 @@
   .leftcol{position:sticky; top:calc(var(--gtop-h) + 68px); border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); padding:18px; animation:riseIn .4s .05s ease-out both;}
   .leftcol h3{font-size:12.5px; font-weight:800; margin:0 0 4px;}
   .leftsub{font-size:11px; color:var(--faint); margin-bottom:12px;}
+
+  .idxlist{display:flex; flex-direction:column; gap:2px;}
+  .idxitem{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:9px; cursor:pointer; transition:background .15s;}
+  .idxitem:hover{background:var(--paper);}
+  .idxdot{width:20px;height:20px;border-radius:7px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .idxdot svg{width:10px;height:10px;}
+  .idxdot.done{background:var(--good-bg); color:var(--good);}
+  .idxdot.current{background:var(--accent); color:#fff;}
+  .idxdot.rejected{background:var(--bad-bg); color:var(--bad);}
+  .idxdot.hold{background:var(--hold-bg); color:var(--hold);}
+  .idxdot.future{background:var(--line-soft); color:var(--faint);}
+  .idxlbl{font-size:12px; font-weight:600; color:var(--muted); flex:1; min-width:0;}
+
   .mtabs{display:flex; gap:4px; background:var(--paper); padding:3px; border-radius:8px; margin-bottom:12px;}
   .mtab{flex:1; text-align:center; font-size:11px; font-weight:700; padding:6px 0; border-radius:6px; color:var(--muted); cursor:pointer;}
   .mtab.on{background:var(--panel); color:var(--ink); box-shadow:var(--shadow-sm);}
@@ -47,20 +60,55 @@
   .doctile{height:52px; border-radius:9px; background:linear-gradient(150deg,#c7cdd2,#8f9aa3); display:flex; align-items:flex-end; padding:6px 9px; margin-bottom:9px;}
   .doctile .lb{font-size:10px; font-weight:700; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.3);}
 
-  .stcard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:20px 22px; margin-bottom:16px; animation:riseIn .35s ease-out both;}
+  .stcard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); margin-bottom:16px; animation:riseIn .35s ease-out both; overflow:hidden; scroll-margin-top:calc(var(--gtop-h) + 68px);}
   .stcard.current{border-color:var(--accent); box-shadow:var(--shadow-md);}
   .stcard.dim{opacity:.6;}
-  .stchead{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .stchead{display:flex; align-items:center; gap:10px; padding:20px 22px; cursor:pointer; margin-bottom:0;}
+  .stchev{width:16px;height:16px; color:var(--faint); flex:none; transition:transform .2s; margin-left:8px;}
+  .stcard.open .stchev{transform:rotate(180deg);}
+  .stbody{padding:0 22px 20px;}
+  .stcard:not(.open) .stbody{display:none;}
   .stbadge{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;}
   .stbadge svg{width:13px;height:13px;}
   .stbadge.done{background:var(--good-bg); color:var(--good);}
   .stbadge.current{background:var(--accent); color:#fff;}
+  .stbadge.rejected{background:var(--bad-bg); color:var(--bad);}
+  .stbadge.hold{background:var(--hold-bg); color:var(--hold);}
   .stbadge.future{background:var(--line-soft); color:var(--faint);}
   .stname{font-size:14.5px; font-weight:700;}
   .sttag{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:3px 9px; border-radius:100px; margin-left:auto;}
   .sttag.done{background:var(--good-bg); color:var(--good);}
   .sttag.current{background:var(--accent-soft); color:var(--accent-ink);}
+  .sttag.rejected{background:var(--bad-bg); color:var(--bad);}
+  .sttag.hold{background:var(--hold-bg); color:var(--hold);}
   .sttag.future{background:var(--line-soft); color:var(--faint);}
+
+  .editgrid{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-bottom:18px;}
+  label{display:block; font-size:11px; font-weight:600; color:var(--muted); margin-bottom:6px;}
+  .fakeinput{height:38px; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:0 12px; font-size:13px; display:flex; align-items:center; color:var(--faint);}
+  .fakeinput.focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); color:var(--muted);}
+  .toggle{display:flex; align-items:center; gap:10px; height:38px;}
+  .sw{width:36px;height:20px;border-radius:100px;background:var(--accent); position:relative;}
+  .sw::after{content:"";position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff;}
+  .textarea{height:38px; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:9px 12px; font-size:12px; color:var(--faint);}
+
+  .actionrow{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding-top:16px; border-top:1px solid var(--line-soft);}
+  .commentbox{flex:1; max-width:400px;}
+  .actionbtns{display:flex; gap:9px;}
+  .abtn{height:38px; padding:0 18px; border-radius:9px; font-size:12.5px; font-weight:700; display:flex; align-items:center; border:1px solid var(--line); cursor:pointer; transition:transform .12s, filter .12s;}
+  .abtn:hover{filter:brightness(0.97); transform:translateY(-1px);}
+  .abtn.approve{background:var(--good); color:#fff; border-color:var(--good);}
+  .abtn.reject{background:var(--bad-bg); color:var(--bad); border-color:transparent;}
+  .abtn.hold{background:var(--hold-bg); color:var(--hold); border-color:transparent;}
+
+  .decidedbox{display:flex; align-items:flex-start; gap:12px;}
+  .decidedbox .ic{width:34px;height:34px;border-radius:9px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .decidedbox .ic svg{width:17px;height:17px;}
+  .decidedbox.approve .ic{background:var(--good-bg); color:var(--good);}
+  .decidedbox.reject .ic{background:var(--bad-bg); color:var(--bad);}
+  .decidedbox.hold .ic{background:var(--hold-bg); color:var(--hold);}
+  .decidedbox .t{font-size:13.5px; font-weight:700; margin-bottom:3px;}
+  .decidedbox .d{font-size:12px; color:var(--muted); line-height:1.6;}
 
   .fieldgrid{display:grid; grid-template-columns:repeat(4, 1fr); gap:18px;}
   .fitem .k{font-size:10px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;}
@@ -78,6 +126,15 @@
   .openlink{margin-top:16px; display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--accent);}
   .openlink:hover{color:var(--accent-deep);}
   .openlink svg{width:13px;height:13px;}
+
+  .takeaction{position:fixed; right:28px; bottom:28px; z-index:120; display:none; align-items:center; gap:12px; background:var(--accent); color:#fff; padding:14px 18px; border-radius:100px; box-shadow:var(--shadow-lg); cursor:pointer; animation:riseIn .3s ease-out both, pulse 2.4s ease-in-out infinite;}
+  .takeaction:hover{filter:brightness(1.05); transform:translateY(-1px);}
+  .takeaction.show{display:flex;}
+  .takeaction .ic{width:30px;height:30px;border-radius:50%; background:rgba(255,255,255,.18); display:flex; align-items:center; justify-content:center; flex:none;}
+  .takeaction .ic svg{width:15px;height:15px;}
+  .takeaction .t{font-size:13px; font-weight:700; line-height:1.3;}
+  .takeaction .d{font-size:11px; color:rgba(255,255,255,.8); font-weight:600;}
+  .takeaction .arrow{width:14px;height:14px; flex:none;}
 
   .sharewrap{position:relative;}
   .sharebtn{height:32px; padding:0 13px; border-radius:100px; border:1px solid var(--line); background:var(--panel); color:var(--muted); font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer; transition:border-color .15s, color .15s;}
@@ -97,19 +154,16 @@
   .empty404 h2{font-size:18px; margin:0 0 8px; color:var(--ink);}
   .empty404 a{color:var(--accent); font-weight:600;}
 
-  .tabbtn.mobile-only{display:none;}
   @media (max-width: 720px){
     body{overflow-x:hidden;}
-    .htop{flex-direction:column;}
-    .storecard{width:100%;}
     .fieldgrid{grid-template-columns:repeat(2, 1fr);}
     .bodygrid{grid-template-columns:1fr;}
-    .leftcol{position:static; width:100%; display:none;}
-    .leftcol.show{display:block;}
-    .tabbtn.mobile-only{display:inline-block;}
+    .leftcol{position:static; width:100%;}
     .flow{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px;}
     .tabbar{overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;}
     .tabbtn{white-space:nowrap;}
+    .takeaction{right:16px; bottom:16px; padding:12px 16px;}
+    .takeaction .d{display:none;}
   }
 </style>
 </head>
@@ -120,7 +174,7 @@
     <div class="name">PropFlow</div>
   </div>
   <div class="usermenu">
-    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></svg></div>
     <div class="usermenu-dd" id="userMenuDd">
       <div class="usermenu-head">
         <div class="av" style="background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
@@ -143,14 +197,10 @@
     </div>
     <div class="nav">
       <div class="navlabel">Workspace</div>
-      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>For you</a>
       <a class="nitem on" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
       <a class="nitem" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
-    </div>
-    <div class="sidestats" id="sideStats"></div>
-    <div class="sidebottom">
-      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
-      <div><div class="who-name">M. Iyer</div><div class="who-role">BDM &middot; Bengaluru</div></div>
+      <a class="nitem" href="bde-stats.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Dashboard</a>
     </div>
   </div>
 
@@ -174,6 +224,15 @@
   </div>
 </div>
 
+<div class="takeaction" id="takeActionBanner">
+  <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h8l-1 8 10-12h-8l1-8Z"/></svg></div>
+  <div>
+    <div class="t" id="takeActionText">Take action</div>
+    <div class="d">Your turn to act on this property</div>
+  </div>
+  <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+</div>
+
 <script src="common.js"></script>
 <script>
 var params = new URLSearchParams(window.location.search);
@@ -184,6 +243,8 @@ var record = stored.find(function (r) { return r.code === code; });
 
 var ICONS = {
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="7" y="6" width="3.4" height="12" rx="1"/><rect x="13.6" y="6" width="3.4" height="12" rx="1"/></svg>',
   lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
   dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-6"/></svg>',
@@ -197,7 +258,12 @@ if (!record) {
   document.getElementById('crumbCode').textContent = record.code + ' · ' + record.detail.locality;
   document.title = record.code + ' — PropFlow';
 
-  var STAGES = ['Hunter','BDE','Site Eval','BDM','Negotiation','CXO','IC'];
+  var STAGES = ['Hunter','BDE','Site Eval','BDM','CXO','IC'];
+  var state = { bdeOutcome: null };
+
+  function bdeState() {
+    return { done: state.bdeOutcome === 'approved', rejected: state.bdeOutcome === 'rejected', held: state.bdeOutcome === 'hold', pending: state.bdeOutcome === null };
+  }
 
   function fieldGrid(items) {
     return '<div class="fieldgrid">' + items.map(function (it) {
@@ -206,12 +272,34 @@ if (!record) {
   }
 
   function renderFlow() {
+    var d = bdeState();
     var html = STAGES.map(function (label, i) {
-      var cls = i === 0 ? 'done' : i === 1 ? 'current' : 'future';
-      var icon = i === 0 ? ICONS.check : i === 1 ? ICONS.clock : ICONS.lock;
+      var cls, icon;
+      if (i === 0) { cls = 'done'; icon = ICONS.check; }
+      else if (i === 1) { cls = d.done?'done':d.rejected?'rejected':d.held?'hold':'current'; icon = d.done?ICONS.check:d.rejected?ICONS.x:d.held?ICONS.pause:ICONS.clock; }
+      else if (i === 2) { cls = d.done?'current':'future'; icon = d.done?ICONS.clock:ICONS.lock; }
+      else { cls = 'future'; icon = ICONS.lock; }
       return '<div class="flowstep ' + cls + '"><div class="fline"></div><div class="fdot">' + icon + '</div><div class="flbl">' + label + '</div></div>';
     }).join('');
     document.getElementById('flowStepper').innerHTML = html;
+  }
+
+  function renderHead() {
+    var d = bdeState();
+    var label = 'BDE Review Pending', bg = '#e2ebee', color = '#1f3947';
+    if (d.done) { label = 'Site Evaluation Pending'; bg = '#e2ebee'; color = '#1f3947'; }
+    if (d.rejected) { label = 'BDE Rejected'; bg = '#f8e8e8'; color = '#ad3d3d'; }
+    if (d.held) { label = 'BDE Review on Hold'; bg = '#efe6f4'; color = '#7c4f96'; }
+    var el = document.getElementById('headStatus');
+    if (el) { el.style.background = bg; el.style.color = color; el.innerHTML = '<span class="dot"></span>' + label; }
+    var ov = document.getElementById('ovStage');
+    if (ov) ov.textContent = label;
+  }
+
+  function setOutcome(outcome, msg) {
+    state.bdeOutcome = outcome;
+    render();
+    showToast(msg);
   }
 
   function explainFor(key) {
@@ -225,10 +313,13 @@ if (!record) {
     }
   }
 
+  var CHEV = '<svg class="stchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+  var openStages = {};
+
   function renderStages() {
     var html = '';
 
-    html += '<div class="stcard"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Hunter Submission</div><span class="sttag done">Complete</span></div>' +
+    html += '<div class="stcard" data-key="hunter"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Hunter Submission</div><span class="sttag done">Complete</span>' + CHEV + '</div><div class="stbody">' +
       fieldGrid([
         ['Locality', record.detail.locality],
         ['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],
@@ -238,19 +329,107 @@ if (!record) {
         ['Source', record.detail.source],
         ['City', record.detail.city],
         ['Submitted', record.detail.submittedAt],
-      ]) + '</div>';
+      ]) + '</div></div>';
 
-    html += '<div class="stcard current"><div class="stchead"><div class="stbadge current">' + ICONS.clock + '</div><div class="stname">BDE Review</div><span class="sttag current">Awaiting BDE</span></div>' +
-      '<div class="lockrow">' + ICONS.clock + 'BDE reviews feasibility, deposit and rent-fit next — this reaches BDM Review once BDE approves.</div></div>';
+    var d = bdeState();
+    var bdeBadge = d.done?'done':d.rejected?'rejected':d.held?'hold':'current';
+    var bdeTag = d.done?'Approved':d.rejected?'Rejected':d.held?'On hold':'Your turn to act';
+    html += '<div class="stcard ' + (bdeBadge==='current'?'current':'') + '" data-key="bde"><div class="stchead"><div class="stbadge ' + bdeBadge + '">' + (d.done?ICONS.check:d.rejected?ICONS.x:d.held?ICONS.pause:ICONS.clock) + '</div><div class="stname">BDE Review</div><span class="sttag ' + bdeBadge + '">' + bdeTag + '</span>' + CHEV + '</div><div class="stbody">';
+    if (d.pending) {
+      html += fieldGrid([['Locality', record.detail.locality],['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],['Expected Rent', record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—'],['Source', record.detail.source]]) +
+        '<div class="editgrid" style="margin-top:18px;"><div><label>Rent / sqft (&#8377;)</label><div class="fakeinput focus">89</div></div><div><label>Deposit (&#8377;)</label><div class="fakeinput">9,90,000</div></div><div><label>Occupation By</label><div class="fakeinput">30&ndash;60 days</div></div></div>' +
+        '<div class="actionrow"><div class="commentbox"><label>Comments <span style="color:var(--faint); font-weight:500;">(required for Reject / Hold)</span></label><div class="textarea">Add context for this decision&hellip;</div></div>' +
+        '<div class="actionbtns"><div class="abtn hold" id="btnHold">Hold</div><div class="abtn reject" id="btnReject">Reject</div><div class="abtn approve" id="btnApprove">Approve</div></div></div>';
+    } else if (d.done) {
+      html += '<div class="decidedbox approve"><div class="ic">' + ICONS.check + '</div><div><div class="t">Approved by A. Verma</div><div class="d">Rent/sqft &#8377;89 &middot; Deposit &#8377;9,90,000 &middot; Site Evaluation unlocked below.</div></div></div>';
+    } else if (d.rejected) {
+      html += '<div class="decidedbox reject"><div class="ic">' + ICONS.x + '</div><div><div class="t">Rejected by A. Verma</div><div class="d">Pipeline stops here &mdash; property marked BDE Rejected.</div></div></div>';
+    } else if (d.held) {
+      html += '<div class="decidedbox hold"><div class="ic">' + ICONS.pause + '</div><div><div class="t">On hold &mdash; A. Verma</div><div class="d">Can still be approved, rejected or resumed anytime.</div></div></div>';
+    }
+    html += '</div></div>';
 
     ['siteeval', 'bdm', 'neg', 'cxo', 'ic'].forEach(function (key, i) {
       var names = { siteeval:'Site Evaluation', bdm:'BDM Review', neg:'Negotiation Rounds', cxo:'CXO Review', ic:'IC Decision' };
       var icon = key === 'neg' ? ICONS.dollar : ICONS.lock;
-      html += '<div class="stcard dim"><div class="stchead"><div class="stbadge future">' + icon + '</div><div class="stname">' + names[key] + '</div><span class="sttag future">Locked</span></div><div class="lockrow">' + ICONS.lock + explainFor(key) + '</div></div>';
+      var unlocked = key === 'siteeval' && d.done;
+      html += '<div class="stcard ' + (unlocked?'':'dim') + '" data-key="' + key + '"><div class="stchead"><div class="stbadge ' + (unlocked?'current':'future') + '">' + (unlocked?ICONS.clock:icon) + '</div><div class="stname">' + names[key] + '</div><span class="sttag ' + (unlocked?'current':'future') + '">' + (unlocked?'Next up':'Locked') + '</span>' + CHEV + '</div><div class="stbody"><div class="lockrow">' + (unlocked?ICONS.clock:ICONS.lock) + explainFor(key) + '</div></div></div>';
     });
 
     document.getElementById('stageStack').innerHTML = html;
+    applyOpenState();
+
+    if (d.pending) {
+      document.getElementById('btnApprove').addEventListener('click', function () { setOutcome('approved', 'BDE Review approved'); });
+      document.getElementById('btnReject').addEventListener('click', function () { setOutcome('rejected', 'Property marked BDE Rejected'); });
+      document.getElementById('btnHold').addEventListener('click', function () { setOutcome('hold', 'Property placed on hold at BDE stage'); });
+    }
   }
+
+  function applyOpenState() {
+    document.querySelectorAll('#stageStack .stcard').forEach(function (card) {
+      card.classList.toggle('open', !!openStages[card.getAttribute('data-key')]);
+    });
+  }
+  function openStage(key) {
+    openStages[key] = true;
+    applyOpenState();
+    var card = document.querySelector('#stageStack .stcard[data-key="' + key + '"]');
+    if (card) card.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  document.addEventListener('click', function (e) {
+    var head = e.target.closest('#stageStack .stchead');
+    if (!head) return;
+    var card = head.closest('.stcard');
+    var key = card.getAttribute('data-key');
+    openStages[key] = !openStages[key];
+    applyOpenState();
+  });
+
+  var INDEX_ITEMS = [
+    ['hunter', 'Hunter Submission'],
+    ['bde', 'BDE Review'],
+    ['siteeval', 'Site Evaluation'],
+    ['bdm', 'BDM Review'],
+    ['neg', 'Negotiation Rounds'],
+    ['cxo', 'CXO Review'],
+    ['ic', 'IC Decision'],
+  ];
+  function indexBadge(key) {
+    var d = bdeState();
+    if (key === 'hunter') return { cls:'done', icon:ICONS.check };
+    if (key === 'bde') return d.done ? {cls:'done', icon:ICONS.check} : d.rejected ? {cls:'rejected', icon:ICONS.x} : d.held ? {cls:'hold', icon:ICONS.pause} : {cls:'current', icon:ICONS.clock};
+    if (key === 'siteeval') return d.done ? {cls:'current', icon:ICONS.clock} : {cls:'future', icon:ICONS.lock};
+    return {cls:'future', icon:ICONS.lock};
+  }
+  function renderIndex() {
+    var html = INDEX_ITEMS.map(function (it) {
+      var bd = indexBadge(it[0]);
+      return '<div class="idxitem" data-key="' + it[0] + '"><div class="idxdot ' + bd.cls + '">' + bd.icon + '</div><div class="idxlbl">' + it[1] + '</div></div>';
+    }).join('');
+    document.getElementById('reviewIndex').innerHTML = html;
+    document.querySelectorAll('.idxitem').forEach(function (item) {
+      item.addEventListener('click', function () { goToStage(item.getAttribute('data-key')); });
+    });
+  }
+  function goToStage(key) {
+    var propflowTab = document.querySelector('.tabbtn[data-tab="propflow"]');
+    if (!propflowTab.classList.contains('on')) propflowTab.click();
+    setTimeout(function () { openStage(key); }, 60);
+  }
+  function renderTakeAction() {
+    var banner = document.getElementById('takeActionBanner');
+    var d = bdeState();
+    if (getCurrentRole() === 'bde' && d.pending) {
+      document.getElementById('takeActionText').textContent = 'Take action';
+      banner.classList.add('show');
+      banner.onclick = function () { goToStage('bde'); };
+    } else {
+      banner.classList.remove('show');
+      banner.onclick = null;
+    }
+  }
+  function render() { renderHead(); renderFlow(); renderStages(); renderIndex(); renderTakeAction(); }
 
   function renderMedia() {
     document.getElementById('mediaBody').innerHTML = '<div class="mtiles">' +
@@ -267,19 +446,13 @@ if (!record) {
 
   document.getElementById('pagewrap').innerHTML =
     '<div class="pagehead">' +
-      '<div class="htop">' +
-        '<div>' +
-          '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="code">' + record.code + '</span><span class="status" style="background:#e2ebee; color:#1f3947;"><span class="dot"></span>BDE Review Pending</span></div>' +
-          '<div class="hmeta">Submitted by <div class="av" style="background:#7c4f96;">MI</div> You (M. Iyer) &nbsp;&middot;&nbsp; ' + record.detail.city + ' &nbsp;&middot;&nbsp; ' + record.detail.submittedAt + '</div>' +
-        '</div>' +
-        '<div class="storecard"><div class="k">City</div><div class="v">' + record.detail.city + '</div><div class="sub">Nearest store TBD after BDE review</div></div>' +
-      '</div>' +
+      '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="code">' + record.code + '</span><span class="status" id="headStatus"></span></div>' +
       '<div class="flow" id="flowStepper"></div>' +
     '</div>' +
 
     '<div class="tabbar" id="tabBar">' +
       '<div class="tabbtn on" data-tab="overview">Overview</div>' +
-      '<div class="tabbtn mobile-only" data-tab="media">Media</div>' +
+      '<div class="tabbtn" data-tab="media">Media</div>' +
       '<div class="tabbtn" data-tab="propflow">PropFlow</div>' +
       '<div class="tabbtn" data-tab="launchflow">Launch Flow</div>' +
       '<div class="tabbtn" data-tab="marketops">Market Ops</div>' +
@@ -287,11 +460,10 @@ if (!record) {
     '</div>' +
 
     '<div class="bodygrid">' +
-      '<div class="leftcol" id="media">' +
-        '<h3>Media</h3>' +
-        '<div class="leftsub">0 photos &middot; 0 docs</div>' +
-        '<div class="mtabs"><div class="mtab on" id="tabPhotos">Photos</div><div class="mtab" id="tabDocs">Documents</div></div>' +
-        '<div id="mediaBody"></div>' +
+      '<div class="leftcol">' +
+        '<h3>Review Index</h3>' +
+        '<div class="leftsub">Jump to any review</div>' +
+        '<div class="idxlist" id="reviewIndex"></div>' +
       '</div>' +
 
       '<div>' +
@@ -315,8 +487,16 @@ if (!record) {
               '<div class="fitem"><div class="k">Hunter</div><div class="v">You (M. Iyer)</div></div>' +
               '<div class="fitem"><div class="k">Submitted</div><div class="v">' + record.detail.submittedAt + '</div></div>' +
               '<div class="fitem"><div class="k">Assigned To</div><div class="v">Unassigned</div></div>' +
-              '<div class="fitem"><div class="k">Current Stage</div><div class="v">BDE Review Pending</div></div>' +
+              '<div class="fitem"><div class="k">Current Stage</div><div class="v" id="ovStage">BDE Review Pending</div></div>' +
             '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tabpane" data-pane="media" id="media" style="display:none;">' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Media</div>' +
+            '<div class="leftsub" style="margin-bottom:14px;">0 photos &middot; 0 docs</div>' +
+            '<div class="mtabs" style="max-width:260px;"><div class="mtab on" id="tabPhotos">Photos</div><div class="mtab" id="tabDocs">Documents</div></div>' +
+            '<div id="mediaBody"></div>' +
           '</div>' +
         '</div>' +
         '<div class="tabpane" data-pane="propflow" id="propflow" style="display:none;"><div id="stageStack"></div></div>' +
@@ -331,8 +511,7 @@ if (!record) {
       '</div>' +
     '</div>';
 
-  renderFlow();
-  renderStages();
+  render();
   renderMedia();
 
   document.getElementById('tabPhotos').addEventListener('click', function () { document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
@@ -350,7 +529,6 @@ if (!record) {
       document.querySelectorAll('.tabpane').forEach(function (p) {
         p.style.display = (p.getAttribute('data-pane') === tab) ? '' : 'none';
       });
-      document.getElementById('media').classList.toggle('show', tab === 'media');
     });
   });
   moveTabIndicator(document.querySelector('.tabbtn.on'));
