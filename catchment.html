@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catchment Report — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+  h1{font-size:21px; font-weight:800; margin:0; letter-spacing:-.01em;}
+  .head{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:24px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both;}
+  .htitle{display:flex; align-items:center; gap:12px; margin-bottom:18px;}
+  .code{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; color:var(--muted); background:var(--line-soft); padding:4px 10px; border-radius:7px;}
+  .hgrid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
+  .hgrid.span2 > div{grid-column:span 2;}
+  label{display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:7px;}
+  .fld{height:40px; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:0 13px; font-size:13.5px; display:flex; align-items:center; color:var(--ink); font-weight:600;}
+  .fld.linked{color:var(--accent); cursor:pointer;}
+  select.fld{width:100%; font-family:inherit; cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b78' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; background-size:14px;}
+  textarea.fld{height:auto; min-height:64px; padding-top:10px; line-height:1.5; width:100%; resize:vertical; font-family:inherit;}
+  .fldhint{font-size:11px; color:var(--faint); margin-top:5px;}
+
+  .section{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); overflow:hidden; margin-top:18px; animation:riseIn .4s .05s ease-out both;}
+  .sectionhead{padding:14px 22px; background:var(--accent-deep); color:#fff; font-size:12.5px; font-weight:700; letter-spacing:.03em;}
+  .sectionbody{padding:22px;}
+
+  .maparea{display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;}
+  .mapbox{width:340px; height:340px; border-radius:12px; background:#e8ecdf; position:relative; overflow:hidden; flex:none; border:1px solid var(--line);}
+  .mapbox svg{width:100%; height:100%;}
+  .maplegend{display:flex; flex-direction:column; gap:9px; padding-top:6px;}
+  .lgitem{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);}
+  .lgswatch{width:12px;height:12px;border-radius:3px; flex:none;}
+  .lgpin{width:10px;height:10px;border-radius:50%; flex:none; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.15);}
+  .mapcaption{font-size:12px; color:var(--faint); font-style:italic; margin-top:10px;}
+
+  .trackhead{display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none;}
+  .trackhead svg{width:14px;height:14px; transition:transform .2s;}
+  .trackhead.open svg{transform:rotate(90deg);}
+  .trackbody{display:none; padding-top:14px;}
+  .trackbody.open{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  .tritem{border:1px solid var(--line-soft); border-radius:9px; padding:10px 13px; background:var(--paper);}
+  .tritem .k{font-size:10px; color:var(--faint); font-weight:600; text-transform:uppercase; margin-bottom:3px;}
+  .tritem .v{font-size:13px; font-weight:700;}
+
+  table{width:100%; border-collapse:collapse; font-size:12.8px;}
+  th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--faint); padding:9px 10px; border-bottom:1px solid var(--line);}
+  td{padding:10px; border-bottom:1px solid var(--line-soft); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  select.cellsel{height:32px; border:1px solid var(--line); border-radius:7px; background:var(--panel); font-size:12px; padding:0 8px; font-family:inherit; color:var(--ink); min-width:110px;}
+  .rowstatus{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 9px; border-radius:100px;}
+  .rowstatus.pending{background:var(--pend-bg); color:var(--pend);}
+  .rowstatus.completed{background:var(--good-bg); color:var(--good);}
+  .num{font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums;}
+  .delbtn{width:24px;height:24px;border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--faint); cursor:pointer;}
+  .delbtn:hover{background:var(--bad-bg); color:var(--bad);}
+  .delbtn svg{width:13px;height:13px;}
+  .addrow{margin-top:14px; font-size:12.5px; font-weight:700; color:var(--accent); display:flex; align-items:center; gap:6px; cursor:pointer; width:fit-content;}
+  .addrow svg{width:13px;height:13px;}
+  .emptysurveys{padding:20px; text-align:center; color:var(--faint); font-size:12.5px;}
+</style>
+</head>
+<body>
+<div class="gtopbar">
+  <div class="brand">
+    <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+    <div class="name">PropFlow</div>
+  </div>
+  <div class="usermenu">
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-dd" id="userMenuDd">
+      <div class="usermenu-head">
+        <div class="av" style="background:linear-gradient(155deg,#3f6e85,#2c4e60);">PM</div>
+        <div><div class="n">P. Menon</div><div class="r">MXM &middot; Bengaluru</div></div>
+      </div>
+      <div class="usermenu-rows">
+        <div class="usermenu-row"><span class="k">Email</span><span class="v">p.menon@savomart.com</span></div>
+        <div class="usermenu-row"><span class="k">Role</span><span class="v">MXM</span></div>
+        <div class="usermenu-row"><span class="k">City access</span><span class="v">Bengaluru</span></div>
+      </div>
+      <button class="usermenu-out" id="userMenuSignOut">Sign out</button>
+    </div>
+  </div>
+</div>
+<div class="app">
+  <div class="side">
+    <div class="mark">
+      <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+      <div class="name">PropFlow</div>
+    </div>
+    <div class="nav">
+      <div class="navlabel">Workspace</div>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
+      <a class="nitem" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
+      <a class="nitem on" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
+    </div>
+    <div class="sidestats" id="sideStats"></div>
+    <div class="sidebottom">
+      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#3f6e85,#2c4e60);">PM</div>
+      <div><div class="who-name">P. Menon</div><div class="who-role">MXM &middot; Bengaluru</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="crumbbar">
+      <div class="crumb"><a class="back" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Catchment Reports</a> / <b id="crumbLabel">BLR1041</b></div>
+    </div>
+
+    <div class="wrap" style="max-width:980px;">
+
+      <div class="head">
+        <div class="htitle"><h1 id="propName">Whitefield Main Road</h1><span class="code" id="propCode">Prop ID: 1041 (BLR1041)</span></div>
+        <div class="hgrid">
+          <div><label>Property ID</label><div class="fld linked" id="propLink">&#8599; Open property</div></div>
+          <div><label>Status</label>
+            <select class="fld" id="statusSelect">
+              <option value="notstarted">Not Started</option>
+              <option value="progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="hgrid span2">
+          <div><label>Notes</label><textarea class="fld" id="notesFld" placeholder="Internal notes on this catchment study&hellip;"></textarea></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sectionhead">SURVEY SUMMARY</div>
+        <div class="sectionbody">
+          <div class="maparea">
+            <div class="mapbox" id="mapBox"></div>
+            <div class="maplegend">
+              <div class="lgitem"><div class="lgswatch" style="background:#4a7d95;"></div>Left Back</div>
+              <div class="lgitem"><div class="lgswatch" style="background:#4a8a5f;"></div>Left Front</div>
+              <div class="lgitem"><div class="lgswatch" style="background:#c9922f;"></div>Right Back</div>
+              <div class="lgitem"><div class="lgswatch" style="background:#8a5fa8;"></div>Right Front</div>
+              <div class="lgitem"><div class="lgpin" style="background:#9aa3ad;"></div>Pending</div>
+              <div class="lgitem"><div class="lgpin" style="background:#c0392b;"></div>Store</div>
+            </div>
+          </div>
+          <div class="mapcaption" id="mapCaption">No completed surveys yet.</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sectionbody">
+          <div class="trackhead" id="trackToggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg><b style="font-size:13px;">Tracking</b></div>
+          <div class="trackbody" id="trackBody">
+            <div class="tritem"><div class="k">Created</div><div class="v" id="trkCreated">—</div></div>
+            <div class="tritem"><div class="k">Last Updated</div><div class="v" id="trkUpdated">—</div></div>
+            <div class="tritem"><div class="k">Completed</div><div class="v" id="trkCompleted">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sectionhead">SURVEYS</div>
+        <div class="sectionbody">
+          <table>
+            <thead><tr><th>Catchment Side</th><th>Distance Bin</th><th>Assigned MXE</th><th>Status</th><th>Total Households</th><th>Competition</th><th>Activity</th><th></th></tr></thead>
+            <tbody id="surveyRows"></tbody>
+          </table>
+          <div class="emptysurveys" id="emptySurveys" style="display:none;">No surveys added yet.</div>
+          <div class="addrow" id="addRowBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add another Catchment Survey</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+var qp = new URLSearchParams(window.location.search);
+var propCode = qp.get('code') || 'BLR1041';
+var propName = qp.get('name') || 'Whitefield Main Road';
+var propId = propCode.replace(/[A-Z]/g, '');
+
+document.title = propCode + ' Catchment — PropFlow';
+document.getElementById('crumbLabel').textContent = propCode;
+document.getElementById('propName').textContent = propName;
+document.getElementById('propCode').textContent = 'Prop ID: ' + propId + ' (' + propCode + ')';
+document.getElementById('propLink').addEventListener('click', function () { window.location.href = 'property.html'; });
+
+var SIDES = ['Left Back', 'Left Front', 'Right Back', 'Right Front'];
+var SIDE_COLORS = { 'Left Back':'#4a7d95', 'Left Front':'#4a8a5f', 'Right Back':'#c9922f', 'Right Front':'#8a5fa8' };
+var BINS = ['0-100m','100-200m','200-300m','300-400m','400-500m','500-600m','600-700m','700-800m','800-900m','900-1000m'];
+var MXES = ['K. Fernandes', 'A. Bhatt', 'S. Iqbal'];
+
+// Seed data per property code — a small illustrative set, not all 40 combinations,
+// matching the real add-as-you-go pattern (nothing pre-populates every cell).
+var SEEDS = {
+  BLR1041: {
+    status: 'progress', created: '20 Aug 2026', updated: '2 Sep 2026', completed: null,
+    rows: [
+      { side:'Left Front', bin:'0-100m', mxe:'K. Fernandes', status:'completed', hh:40, comp:2, act:3 },
+      { side:'Left Front', bin:'100-200m', mxe:'K. Fernandes', status:'completed', hh:68, comp:1, act:4 },
+      { side:'Right Back', bin:'0-100m', mxe:'A. Bhatt', status:'completed', hh:54, comp:3, act:2 },
+      { side:'Right Front', bin:'200-300m', mxe:'S. Iqbal', status:'pending', hh:0, comp:0, act:0 },
+      { side:'Left Back', bin:'0-100m', mxe:null, status:'pending', hh:0, comp:0, act:0 },
+    ],
+  },
+  BLR1042: { status: 'notstarted', created: '6 Sep 2026', updated: '6 Sep 2026', completed: null, rows: [] },
+  BLR1044: { status: 'notstarted', created: '6 Sep 2026', updated: '6 Sep 2026', completed: null, rows: [] },
+  CHN1028: {
+    status: 'completed', created: '10 Aug 2026', updated: '6 Sep 2026', completed: '6 Sep 2026',
+    rows: SIDES.flatMap(function (side) {
+      return BINS.slice(0, 3).map(function (bin, i) {
+        return { side: side, bin: bin, mxe: MXES[i % 3], status: 'completed', hh: 40 + i * 20, comp: i % 3, act: 2 + i % 2 };
+      });
+    }),
+  },
+  CHN1030: {
+    status: 'completed', created: '9 Aug 2026', updated: '5 Sep 2026', completed: '5 Sep 2026',
+    rows: SIDES.flatMap(function (side) {
+      return BINS.slice(0, 2).map(function (bin, i) {
+        return { side: side, bin: bin, mxe: MXES[(i + 1) % 3], status: 'completed', hh: 50 + i * 15, comp: i % 2, act: 3 };
+      });
+    }),
+  },
+  HYD1015: {
+    status: 'progress', created: '18 Aug 2026', updated: '6 Sep 2026', completed: null,
+    rows: [
+      { side:'Left Front', bin:'0-100m', mxe:'A. Bhatt', status:'completed', hh:44, comp:1, act:2 },
+      { side:'Left Back', bin:'0-100m', mxe:null, status:'pending', hh:0, comp:0, act:0 },
+    ],
+  },
+};
+var data = SEEDS[propCode] || SEEDS.BLR1042;
+
+document.getElementById('statusSelect').value = data.status;
+document.getElementById('notesFld').value = '';
+document.getElementById('trkCreated').textContent = data.created;
+document.getElementById('trkUpdated').textContent = data.updated;
+document.getElementById('trkCompleted').textContent = data.completed || 'Not yet';
+
+var rows = data.rows.map(function (r) { return Object.assign({}, r); });
+
+function renderMap() {
+  var completed = rows.filter(function (r) { return r.status === 'completed'; });
+  var box = document.getElementById('mapBox');
+  var rings = [1,2,3,4,5].map(function (i) {
+    var r = i * 30;
+    return '<circle cx="170" cy="170" r="' + r + '" fill="none" stroke="#b9c2ae" stroke-width="1"/>' +
+           '<text x="' + (170 + r + 3) + '" y="166" font-size="8" fill="#7c8a6f" font-family="JetBrains Mono, monospace">' + (i*100) + 'm</text>';
+  }).join('');
+  var wedges =
+    '<path d="M170,170 L170,20 A150,150 0 0,0 20,170 Z" fill="' + SIDE_COLORS['Left Front'] + '" opacity=".18"/>' +
+    '<path d="M170,170 L20,170 A150,150 0 0,0 170,320 Z" fill="' + SIDE_COLORS['Left Back'] + '" opacity=".18"/>' +
+    '<path d="M170,170 L170,320 A150,150 0 0,0 320,170 Z" fill="' + SIDE_COLORS['Right Back'] + '" opacity=".18"/>' +
+    '<path d="M170,170 L320,170 A150,150 0 0,0 170,20 Z" fill="' + SIDE_COLORS['Right Front'] + '" opacity=".18"/>';
+  var pins = rows.map(function (r, i) {
+    var angleBySide = { 'Left Front': 135, 'Left Back': 225, 'Right Back': 315, 'Right Front': 45 };
+    var binIdx = BINS.indexOf(r.bin);
+    var dist = 22 + binIdx * 13;
+    var ang = (angleBySide[r.side] || 0) * Math.PI / 180 + (i % 3 - 1) * 0.18;
+    var x = 170 + Math.cos(ang) * dist;
+    var y = 170 + Math.sin(ang) * dist;
+    var fill = r.status === 'completed' ? SIDE_COLORS[r.side] : '#9aa3ad';
+    return '<circle cx="' + x + '" cy="' + y + '" r="5" fill="' + fill + '" stroke="#fff" stroke-width="1.5"/>';
+  }).join('');
+  box.innerHTML = '<svg viewBox="0 0 340 340">' + wedges + rings +
+    '<circle cx="170" cy="170" r="8" fill="#c0392b" stroke="#fff" stroke-width="2"/>' + pins + '</svg>';
+  document.getElementById('mapCaption').textContent = completed.length
+    ? completed.length + ' completed survey' + (completed.length === 1 ? '' : 's') + ' plotted.'
+    : 'No completed surveys yet.';
+}
+
+function renderSurveys() {
+  var tbody = document.getElementById('surveyRows');
+  document.getElementById('emptySurveys').style.display = rows.length ? 'none' : 'block';
+  tbody.innerHTML = rows.map(function (r, i) {
+    var statusCls = r.status === 'completed' ? 'completed' : 'pending';
+    var statusLabel = r.status === 'completed' ? 'Completed' : 'Pending';
+    return '<tr>' +
+      '<td>' + selectHtml('side-' + i, SIDES, r.side) + '</td>' +
+      '<td>' + selectHtml('bin-' + i, BINS, r.bin) + '</td>' +
+      '<td>' + selectHtml('mxe-' + i, MXES, r.mxe) + '</td>' +
+      '<td><span class="rowstatus ' + statusCls + '">' + statusLabel + '</span></td>' +
+      '<td class="num">' + r.hh + '</td>' +
+      '<td class="num">' + r.comp + '</td>' +
+      '<td class="num">' + r.act + '</td>' +
+      '<td><div class="delbtn" data-i="' + i + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div></td>' +
+      '</tr>';
+  }).join('');
+
+  Array.prototype.forEach.call(document.querySelectorAll('.delbtn'), function (el) {
+    el.addEventListener('click', function () {
+      rows.splice(Number(el.getAttribute('data-i')), 1);
+      render();
+    });
+  });
+  Array.prototype.forEach.call(tbody.querySelectorAll('select'), function (el) {
+    el.addEventListener('change', function () {
+      var parts = el.id.split('-'), field = parts[0], i = Number(parts[1]);
+      var key = field === 'side' ? 'side' : field === 'bin' ? 'bin' : 'mxe';
+      rows[i][key] = el.value || null;
+      if (rows[i].mxe && rows[i].side && rows[i].bin && rows[i].status === 'pending') {
+        showToast('Assigned to ' + rows[i].mxe + ' — survey stays Pending until they complete it');
+      }
+      renderMap();
+    });
+  });
+}
+
+function selectHtml(id, options, current) {
+  var opts = '<option value=""' + (!current ? ' selected' : '') + '>&mdash;&mdash;&mdash;&mdash;&mdash;</option>' +
+    options.map(function (o) { return '<option value="' + o + '"' + (o === current ? ' selected' : '') + '>' + o + '</option>'; }).join('');
+  return '<select class="cellsel" id="' + id + '">' + opts + '</select>';
+}
+
+document.getElementById('addRowBtn').addEventListener('click', function () {
+  rows.push({ side:null, bin:null, mxe:null, status:'pending', hh:0, comp:0, act:0 });
+  render();
+  showToast('New survey row added — pick side, bin and MXE');
+});
+
+document.getElementById('trackToggle').addEventListener('click', function () {
+  document.getElementById('trackToggle').classList.toggle('open');
+  document.getElementById('trackBody').classList.toggle('open');
+});
+
+document.getElementById('statusSelect').addEventListener('change', function () {
+  showToast('Status set to ' + this.options[this.selectedIndex].text);
+});
+
+function render() { renderMap(); renderSurveys(); }
+render();
+initUserMenu();
+</script>
+</body>
+</html>

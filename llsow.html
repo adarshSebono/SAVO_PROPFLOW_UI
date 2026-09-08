@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LL SoW — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+  h1{font-size:21px; font-weight:800; margin:0; letter-spacing:-.01em;}
+  .htitle{display:flex; align-items:center; gap:12px;}
+  .head{display:flex; align-items:flex-start; justify-content:space-between; gap:24px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px 24px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both;}
+  .timeline{display:flex; gap:22px; margin-top:12px;}
+  .tl{font-size:11.5px; color:var(--faint);}
+  .tl b{color:var(--muted); font-weight:600;}
+  .headactions{display:flex; gap:10px;}
+
+  .split{display:grid; grid-template-columns:1fr 320px; gap:18px; align-items:start; animation:riseIn .4s .05s ease-out both;}
+  .itable{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); overflow:hidden;}
+  .itophead{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line);}
+  .itophead h2{font-size:14px; font-weight:700; margin:0;}
+  .addbtn{font-size:11.5px; font-weight:700; color:var(--accent); display:flex; align-items:center; gap:5px; cursor:pointer;}
+  .addbtn svg{width:13px;height:13px;}
+  table{width:100%; border-collapse:collapse; font-size:12.8px;}
+  th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--faint); padding:9px 14px; border-bottom:1px solid var(--line); background:var(--line-soft);}
+  td{padding:12px 14px; border-bottom:1px solid var(--line-soft); vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  .scopetype{font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--accent-ink); background:var(--accent-soft); padding:3px 8px; border-radius:100px; white-space:nowrap;}
+  .desc{font-size:12.8px; color:var(--ink); max-width:220px;}
+  .pill{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; cursor:pointer; transition:all .15s; white-space:nowrap;}
+  .pill:hover{filter:brightness(.97);}
+  .pill.yes{background:var(--good-bg); color:var(--good);}
+  .pill.no{background:var(--bad-bg); color:var(--bad);}
+  .pill.wait{background:var(--pend-bg); color:var(--pend);}
+  .pill.neut{background:var(--neut-bg); color:var(--neut);}
+  .pill.locked{background:var(--line-soft); color:var(--faint); cursor:default;}
+  .collabel{font-size:9px; color:var(--faint); font-weight:600; display:block; margin-top:2px;}
+
+  .blockcard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); padding:20px 22px;}
+  .blockcard h2{font-size:14px; font-weight:700; margin:0 0 4px;}
+  .blocksub{font-size:11.5px; color:var(--faint); margin:0 0 16px;}
+  .blist{display:flex; flex-direction:column; gap:9px;}
+  .brow{display:flex; align-items:flex-start; gap:9px; font-size:12.3px; color:var(--muted); line-height:1.5;}
+  .brow .ic{width:16px;height:16px; border-radius:5px; flex:none; margin-top:1px; display:flex; align-items:center; justify-content:center;}
+  .brow.block .ic{background:var(--bad-bg); color:var(--bad);}
+  .brow svg{width:9px;height:9px;}
+  .allclear{display:flex; flex-direction:column; align-items:center; text-align:center; padding:20px 10px; color:var(--good);}
+  .allclear .bigic{width:40px;height:40px;border-radius:50%; background:var(--good-bg); display:flex; align-items:center; justify-content:center; margin-bottom:10px;}
+  .allclear .bigic svg{width:20px;height:20px;}
+  .allclear .t{font-size:13px; font-weight:700; color:var(--ink);}
+  .allclear .d{font-size:11.5px; color:var(--muted); margin-top:3px;}
+</style>
+</head>
+<body>
+<div class="gtopbar">
+  <div class="brand">
+    <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+    <div class="name">PropFlow</div>
+  </div>
+  <div class="usermenu">
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-dd" id="userMenuDd">
+      <div class="usermenu-head">
+        <div class="av" style="background:linear-gradient(155deg,#3f6e85,#2c4e60);">RK</div>
+        <div><div class="n">R. Kapoor</div><div class="r">PM &middot; Bengaluru</div></div>
+      </div>
+      <div class="usermenu-rows">
+        <div class="usermenu-row"><span class="k">Email</span><span class="v">r.kapoor@savomart.com</span></div>
+        <div class="usermenu-row"><span class="k">Role</span><span class="v">PM</span></div>
+        <div class="usermenu-row"><span class="k">City access</span><span class="v">Bengaluru</span></div>
+      </div>
+      <button class="usermenu-out" id="userMenuSignOut">Sign out</button>
+    </div>
+  </div>
+</div>
+<div class="app">
+  <div class="side">
+    <div class="mark">
+      <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+      <div class="name">PropFlow</div>
+    </div>
+    <div class="nav">
+      <div class="navlabel">Workspace</div>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
+      <a class="nitem" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
+      <a class="nitem" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
+    </div>
+    <div class="sidestats" id="sideStats"></div>
+    <div class="sidebottom">
+      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#3f6e85,#2c4e60);">RK</div>
+      <div><div class="who-name">R. Kapoor</div><div class="who-role">PM &middot; Bengaluru</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="crumbbar">
+      <div class="crumb"><a class="back" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Properties</a> / <a href="property.html">BLR1041</a> / <b>LL Scope of Work</b></div>
+    </div>
+
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <div class="htitle"><h1>Whitefield Main Road &mdash; LL SoW</h1><span class="status" id="statusPill"></span></div>
+          <div class="timeline"><div class="tl">Initiated <b>18 Aug</b> by M. Iyer</div><div class="tl">Sent to BD <b id="sentDate">&mdash;</b></div></div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+          <button class="reset" id="resetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg>Reset demo</button>
+          <div class="headactions" id="headActions"></div>
+        </div>
+      </div>
+
+      <div class="split">
+        <div class="itable">
+          <div class="itophead"><h2>Scope Items</h2><div class="addbtn" onclick="notWired('Add item')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add item</div></div>
+          <table>
+            <thead><tr><th>Scope Type</th><th>Description</th><th>Accepted</th><th>Work Progress</th><th>Final Status</th></tr></thead>
+            <tbody id="itemRows"></tbody>
+          </table>
+        </div>
+        <div class="blockcard">
+          <h2>HOTO Readiness</h2>
+          <p class="blocksub">Live from every item's Final Status &mdash; the same check that gates the real handover.</p>
+          <div id="blockers"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+var items = [
+  { type:'Signage', desc:'Landlord to permit facade signage installation per approved design.', accepted:true, work:'completed', final:'completed' },
+  { type:'Electrical', desc:'3-phase power connection upgrade to 15kW before fit-out begins.', accepted:true, work:'in_progress', final:'in_progress' },
+  { type:'Structural', desc:'Reinforce mezzanine slab load rating to 500kg/sqm.', accepted:true, work:'pending', final: null },
+  { type:'Access', desc:'Widen rear service entrance to 6ft for delivery access.', accepted: null, work:null, final:null },
+];
+var sentToBd = true;
+var ORDER = [null, 'pending', 'in_progress', 'completed'];
+
+function pillFor(kind, val) {
+  if (kind === 'accept') {
+    if (val === true) return { cls:'yes', label:'Accepted' };
+    if (val === false) return { cls:'no', label:'Rejected' };
+    return { cls:'wait', label:'Awaiting' };
+  }
+  var map = { completed:{cls:'yes',label:'Completed'}, in_progress:{cls:'wait',label:'In Progress'}, pending:{cls:'neut',label:'Pending'} };
+  return val ? map[val] : { cls:'wait', label: kind === 'final' ? 'Unset' : 'Pending' };
+}
+
+function cycleAccept(i) {
+  var it = items[i];
+  it.accepted = it.accepted === null ? true : it.accepted === true ? false : null;
+  if (it.accepted !== true) { it.work = null; it.final = null; }
+  render();
+}
+function cycleWork(i) {
+  var it = items[i]; if (it.accepted !== true) return;
+  it.work = ORDER[(ORDER.indexOf(it.work) + 1) % ORDER.length] || 'pending';
+  render();
+}
+function cycleFinal(i) {
+  var it = items[i]; if (it.accepted !== true) return;
+  it.final = ORDER[(ORDER.indexOf(it.final) + 1) % ORDER.length];
+  render();
+}
+
+function renderItems() {
+  document.getElementById('itemRows').innerHTML = items.map(function (it, i) {
+    var ac = pillFor('accept', it.accepted);
+    var locked = it.accepted !== true;
+    var wp = locked ? { cls:'locked', label:'—' } : pillFor('work', it.work);
+    var fs = locked ? { cls:'locked', label:'—' } : pillFor('final', it.final);
+    return '<tr><td><span class="scopetype">' + it.type + '</span></td><td class="desc">' + it.desc + '</td>' +
+      '<td><div class="pill ' + ac.cls + '" data-act="accept" data-i="' + i + '">' + ac.label + '</div><span class="collabel">BD</span></td>' +
+      '<td><div class="pill ' + wp.cls + '" data-act="work" data-i="' + i + '">' + wp.label + '</div><span class="collabel">BD</span></td>' +
+      '<td><div class="pill ' + fs.cls + '" data-act="final" data-i="' + i + '">' + fs.label + '</div><span class="collabel">PM &middot; gates HOTO</span></td></tr>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.pill[data-act]'), function (el) {
+    el.addEventListener('click', function () {
+      var i = Number(el.getAttribute('data-i')), act = el.getAttribute('data-act');
+      if (act === 'accept') cycleAccept(i); else if (act === 'work') cycleWork(i); else cycleFinal(i);
+    });
+  });
+}
+
+function renderStatus() {
+  var unaccepted = items.filter(function (i) { return i.accepted === null; }).length;
+  var incomplete = items.filter(function (i) { return i.accepted === true && i.final !== 'completed'; }).length;
+  var label = !sentToBd ? 'In Progress' : unaccepted ? 'BD Pending' : 'Verification Pending';
+  var bg = !sentToBd ? '#f2e3f7' : '#fbf1dc', color = !sentToBd ? '#7c2d8e' : '#a9740c';
+  var pill = document.getElementById('statusPill');
+  pill.style.background = bg; pill.style.color = color;
+  pill.innerHTML = '<span class="dot"></span>' + label;
+  document.getElementById('sentDate').textContent = sentToBd ? '19 Aug by R. Kapoor' : '—';
+
+  var actions = '';
+  if (!sentToBd) actions = '<div class="hbtn primary" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>Send to BD</div>';
+  else if (sentToBd && !unaccepted && !incomplete) actions = '<a class="hbtn primary" href="hoto.html">Initiate HOTO</a>';
+  document.getElementById('headActions').innerHTML = actions;
+  var sendBtn = document.getElementById('sendBtn');
+  if (sendBtn) sendBtn.addEventListener('click', function () { sentToBd = true; render(); showToast('Sent to BD — items now open for acceptance'); });
+
+  var blockers = [];
+  if (unaccepted) blockers.push(unaccepted + ' item(s) awaiting BD acceptance');
+  if (incomplete) blockers.push(incomplete + ' accepted item(s) awaiting PM final status');
+  blockers.push('HOTO details not yet filled');
+
+  var el = document.getElementById('blockers');
+  if (blockers.length) {
+    el.innerHTML = '<div class="blist">' + blockers.map(function (b) {
+      return '<div class="brow block"><div class="ic">' + ICON_X + '</div>' + b + '</div>';
+    }).join('') + '</div>';
+  } else {
+    el.innerHTML = '<div class="allclear"><div class="bigic">' + ICON.check + '</div><div class="t">Ready for HOTO</div><div class="d">Every accepted item has a Final Status. HOTO Details can now be filled.</div></div>';
+  }
+}
+
+var ICON_X = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+function render() { renderItems(); renderStatus(); }
+
+document.getElementById('resetBtn').addEventListener('click', function () {
+  items = [
+    { type:'Signage', desc:'Landlord to permit facade signage installation per approved design.', accepted:true, work:'completed', final:'completed' },
+    { type:'Electrical', desc:'3-phase power connection upgrade to 15kW before fit-out begins.', accepted:true, work:'in_progress', final:'in_progress' },
+    { type:'Structural', desc:'Reinforce mezzanine slab load rating to 500kg/sqm.', accepted:true, work:'pending', final: null },
+    { type:'Access', desc:'Widen rear service entrance to 6ft for delivery access.', accepted: null, work:null, final:null },
+  ];
+  sentToBd = true;
+  render();
+});
+
+render();
+initUserMenu();
+</script>
+</body>
+</html>

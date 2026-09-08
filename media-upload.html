@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add Photo — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+  body{display:flex; justify-content:center;}
+  .phone{width:390px; min-height:100vh; display:flex; flex-direction:column; background:var(--panel); border-left:1px solid var(--line); border-right:1px solid var(--line);}
+  .topbar{flex:none; height:52px; display:flex; align-items:center; justify-content:space-between; padding:0 14px; border-bottom:1px solid var(--line);}
+  .iconbtn{width:34px;height:34px;border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--ink); cursor:pointer; border:none; background:none;}
+  .iconbtn svg{width:19px;height:19px;}
+  .toptitle{font-size:14.5px; font-weight:700;}
+  .content{flex:1; padding:20px 20px 24px;}
+  .preview{width:100%; aspect-ratio:4/3; border-radius:16px; background:linear-gradient(150deg,#9fb3c0,#4a7d95); position:relative; overflow:hidden; box-shadow:var(--shadow-sm); margin-bottom:20px;}
+  .preview .tag{position:absolute; top:10px; left:10px; background:rgba(255,255,255,.92); color:var(--bad); font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:100px;}
+  .preview .name{position:absolute; bottom:10px; left:12px; color:#fff; font-weight:700; font-size:13px; text-shadow:0 1px 3px rgba(0,0,0,.4);}
+  .stepline{display:flex; align-items:flex-start; gap:0; margin-bottom:22px;}
+  .sp{flex:1; text-align:center;}
+  .sp .n{width:26px;height:26px;border-radius:50%;background:var(--line-soft); color:var(--faint); font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; display:flex; align-items:center; justify-content:center; margin:0 auto 6px;}
+  .sp.done .n{background:var(--good); color:#fff;}
+  .sp.on .n{background:var(--accent); color:#fff;}
+  .sp .l{font-size:9.5px; font-weight:700; color:var(--muted);}
+  .spline{flex:0 0 30px; height:2px; background:var(--line); margin-top:-19px;}
+  .spline.done{background:var(--good);}
+  .progresscard{border:1.5px solid var(--accent); border-radius:16px; background:var(--panel); padding:16px; box-shadow:var(--shadow-sm); margin-bottom:18px;}
+  .pc-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .pc-label{font-size:13px; font-weight:700;}
+  .pc-pct{font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:var(--accent-ink);}
+  .ptrack{height:8px; border-radius:5px; background:var(--line-soft); overflow:hidden;}
+  .pfill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-deep)); border-radius:5px; transition:width .2s linear;}
+  .pnote{font-size:11px; color:var(--faint); margin-top:9px;}
+  .donecard{display:flex; flex-direction:column; align-items:center; text-align:center; padding:26px 16px; animation:fadeUp .3s ease-out both;}
+  .donecard .ic{width:56px;height:56px;border-radius:50%; background:var(--good-bg); color:var(--good); display:flex; align-items:center; justify-content:center; margin-bottom:14px; animation:pop .4s ease-out both;}
+  .donecard .ic svg{width:26px;height:26px;}
+  .donecard .t{font-size:15px; font-weight:800; margin-bottom:5px;}
+  .donecard .d{font-size:12.5px; color:var(--muted); max-width:26ch; line-height:1.5;}
+  .btnrow{display:flex; gap:10px; margin-top:18px;}
+  .btn{flex:1; height:46px; border-radius:12px; font-size:13.5px; font-weight:700; display:flex; align-items:center; justify-content:center; border:none; cursor:pointer;}
+  .btn.primary{background:var(--accent); color:#fff; box-shadow:var(--shadow-sm);}
+  .btn.ghost{background:var(--line-soft); color:var(--ink);}
+  .note{margin-top:20px; border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:13px 14px; font-size:11.5px; color:var(--muted); line-height:1.6; box-shadow:var(--shadow-sm);}
+  .note b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="topbar">
+    <button class="iconbtn" onclick="window.location.href='property.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <div class="toptitle">Add Front Photo</div>
+    <button class="iconbtn" id="resetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg></button>
+  </div>
+  <div class="content">
+    <div class="preview"><div class="tag">Required</div><div class="name">IMG_20260907.jpg</div></div>
+
+    <div class="stepline">
+      <div class="sp done"><div class="n" id="step1n"></div><div class="l">Select</div></div>
+      <div class="spline done"></div>
+      <div class="sp done"><div class="n" id="step2n"></div><div class="l">Compress</div></div>
+      <div class="spline done" id="line2"></div>
+      <div class="sp" id="step3"><div class="n" id="step3n">3</div><div class="l">Upload</div></div>
+      <div class="spline" id="line3"></div>
+      <div class="sp" id="step4"><div class="n">4</div><div class="l">Attach</div></div>
+    </div>
+
+    <div id="progressZone"></div>
+
+    <div class="note"><b>Behind the scenes, unchanged:</b> a 15-minute signed PUT URL, extension + content-type checked, path-regex validated before it's attached &mdash; identical to today's flow, just shown as it happens.</div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+document.getElementById('step1n').innerHTML = ICON.check.replace('#fff','currentColor');
+document.getElementById('step2n').innerHTML = ICON.check.replace('#fff','currentColor');
+
+var pct = 0, timer = null;
+function start() {
+  pct = 0;
+  clearInterval(timer);
+  render();
+  timer = setInterval(function () {
+    pct = Math.min(100, pct + Math.round(4 + Math.random() * 9));
+    render();
+    if (pct >= 100) clearInterval(timer);
+  }, 220);
+}
+
+function render() {
+  var done = pct >= 100;
+  document.getElementById('step3').className = 'sp ' + (done ? 'done' : 'on');
+  document.getElementById('step3n').innerHTML = done ? ICON.check.replace('#fff','currentColor') : '3';
+  document.getElementById('line3').className = 'spline' + (done ? ' done' : '');
+  document.getElementById('step4').className = 'sp' + (done ? ' done' : '');
+
+  if (!done) {
+    document.getElementById('progressZone').innerHTML =
+      '<div class="progresscard"><div class="pc-top"><span class="pc-label">Uploading to GCS&hellip;</span><span class="pc-pct">' + pct + '%</span></div>' +
+      '<div class="ptrack"><div class="pfill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="pnote">' + (18.2 * pct / 100).toFixed(1) + ' / 18.2 MB &middot; compressed from 51 MB on-device</div></div>';
+  } else {
+    document.getElementById('progressZone').innerHTML =
+      '<div class="donecard"><div class="ic">' + ICON.check.replace('#fff','currentColor') + '</div><div class="t">Front photo attached</div><div class="d">18.2 MB uploaded and linked to BLR1041</div></div>' +
+      '<div class="btnrow"><div class="btn ghost" id="againBtn">Add another</div><a class="btn primary" href="property.html">Done</a></div>';
+    var again = document.getElementById('againBtn');
+    if (again) again.addEventListener('click', start);
+  }
+}
+
+document.getElementById('resetBtn').addEventListener('click', start);
+start();
+</script>
+</body>
+</html>

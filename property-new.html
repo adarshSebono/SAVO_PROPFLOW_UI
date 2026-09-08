@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>New Submission — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+  .app{width:100%;}
+  .topbar{position:sticky; top:var(--gtop-h); z-index:50; height:52px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:space-between; padding:0 32px;}
+
+  .pagewrap{max-width:1180px; margin:0 auto; padding:24px 32px 60px;}
+  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both;}
+  .htop{display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
+  .htitle{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+  h1{font-size:22px; font-weight:800; margin:0; letter-spacing:-.01em;}
+  .code{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; color:var(--muted); background:var(--line-soft); padding:4px 10px; border-radius:7px;}
+  .hmeta{font-size:12.5px; color:var(--faint); margin-top:7px; display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .hmeta .av{width:18px;height:18px;font-size:8px;}
+  .storecard{border:1px solid var(--line); border-radius:12px; background:var(--paper); padding:12px 15px; min-width:210px;}
+  .storecard .k{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:5px;}
+  .storecard .v{font-size:13px; font-weight:700;}
+  .storecard .sub{font-size:11px; color:var(--muted); margin-top:2px;}
+
+  .tabbar{position:relative; display:flex; gap:0; border-bottom:1px solid var(--line); margin-top:24px;}
+  .tabbtn{padding:12px 4px; margin-right:26px; font-size:13.5px; font-weight:700; color:var(--faint); cursor:pointer; transition:color .15s;}
+  .tabbtn:hover{color:var(--muted);}
+  .tabbtn.on{color:var(--accent-ink);}
+  .tabindicator{position:absolute; bottom:-1px; height:2px; background:var(--accent); border-radius:2px 2px 0 0; transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);}
+
+  .bodygrid{display:grid; grid-template-columns:260px 1fr; gap:20px; margin-top:20px; align-items:start;}
+  .leftcol{position:sticky; top:calc(var(--gtop-h) + 68px); border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); padding:18px; animation:riseIn .4s .05s ease-out both;}
+  .leftcol h3{font-size:12.5px; font-weight:800; margin:0 0 4px;}
+  .leftsub{font-size:11px; color:var(--faint); margin-bottom:12px;}
+  .mtabs{display:flex; gap:4px; background:var(--paper); padding:3px; border-radius:8px; margin-bottom:12px;}
+  .mtab{flex:1; text-align:center; font-size:11px; font-weight:700; padding:6px 0; border-radius:6px; color:var(--muted); cursor:pointer;}
+  .mtab.on{background:var(--panel); color:var(--ink); box-shadow:var(--shadow-sm);}
+  .mtiles{display:flex; flex-direction:column; gap:9px;}
+  .tile{height:70px; border-radius:10px; display:flex; align-items:flex-end; position:relative; overflow:hidden; cursor:pointer;}
+  .tile.filled{background:linear-gradient(150deg,#9fb3c0,#4a7d95);}
+  .tile.req::before{content:"Required"; position:absolute; top:6px; left:6px; font-family:'JetBrains Mono',monospace; font-size:7.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; background:rgba(255,255,255,.92); color:var(--bad); padding:2px 6px; border-radius:100px;}
+  .tile .lb{padding:6px 9px; font-size:10.5px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
+  .tile.add{background:var(--paper); border:1.5px dashed var(--line); color:var(--faint); align-items:center; justify-content:center;}
+  .tile.add:hover{border-color:var(--accent); color:var(--accent);}
+  .tile.add svg{width:18px;height:18px;}
+  .doctile{height:52px; border-radius:9px; background:linear-gradient(150deg,#c7cdd2,#8f9aa3); display:flex; align-items:flex-end; padding:6px 9px; margin-bottom:9px;}
+  .doctile .lb{font-size:10px; font-weight:700; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.3);}
+
+  .stcard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:20px 22px; margin-bottom:16px; animation:riseIn .35s ease-out both;}
+  .stcard.current{border-color:var(--accent); box-shadow:var(--shadow-md);}
+  .stcard.dim{opacity:.6;}
+  .stchead{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .stbadge{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;}
+  .stbadge svg{width:13px;height:13px;}
+  .stbadge.done{background:var(--good-bg); color:var(--good);}
+  .stbadge.current{background:var(--accent); color:#fff;}
+  .stbadge.future{background:var(--line-soft); color:var(--faint);}
+  .stname{font-size:14.5px; font-weight:700;}
+  .sttag{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:3px 9px; border-radius:100px; margin-left:auto;}
+  .sttag.done{background:var(--good-bg); color:var(--good);}
+  .sttag.current{background:var(--accent-soft); color:var(--accent-ink);}
+  .sttag.future{background:var(--line-soft); color:var(--faint);}
+
+  .fieldgrid{display:grid; grid-template-columns:repeat(4, 1fr); gap:18px;}
+  .fitem .k{font-size:10px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;}
+  .fitem .v{font-size:13.5px; font-weight:700;}
+
+  .lockrow{display:flex; align-items:center; gap:9px; color:var(--faint); font-size:12.5px;}
+  .lockrow svg{width:15px;height:15px; flex:none;}
+
+  .negtable{width:100%; border-collapse:collapse; font-size:12.5px;}
+  .negtable th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); padding:8px 10px; border-bottom:1px solid var(--line);}
+  .negtable td{padding:10px; border-bottom:1px solid var(--line-soft);}
+
+  .summarycard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:22px; margin-bottom:16px;}
+  .panetitle{font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:0 0 16px;}
+  .openlink{margin-top:16px; display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--accent);}
+  .openlink:hover{color:var(--accent-deep);}
+  .openlink svg{width:13px;height:13px;}
+
+  .sharewrap{position:relative;}
+  .sharebtn{height:32px; padding:0 13px; border-radius:100px; border:1px solid var(--line); background:var(--panel); color:var(--muted); font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer; transition:border-color .15s, color .15s;}
+  .sharebtn:hover{border-color:var(--accent); color:var(--accent);}
+  .sharebtn svg{width:14px;height:14px;}
+  .share-pop{position:absolute; top:calc(100% + 8px); right:0; width:320px; background:var(--panel); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg); padding:16px; z-index:150; opacity:0; pointer-events:none; transform:translateY(-6px); transition:opacity .15s, transform .15s;}
+  .share-pop.open{opacity:1; pointer-events:auto; transform:translateY(0);}
+  .share-title{font-size:13px; font-weight:700; margin-bottom:12px;}
+  .share-linkrow{display:flex; gap:8px;}
+  .share-input{flex:1; min-width:0; height:36px; border:1.5px solid var(--line); border-radius:8px; background:var(--paper); padding:0 10px; font-size:11.5px; font-family:'JetBrains Mono',monospace; color:var(--muted);}
+  .share-copybtn{height:36px; padding:0 14px; border-radius:8px; background:var(--accent); color:#fff; font-size:12px; font-weight:700; border:none; cursor:pointer; flex:none;}
+  .share-copybtn:hover{filter:brightness(.96);}
+  .share-copybtn.copied{background:var(--good);}
+  .share-note{font-size:11px; color:var(--faint); line-height:1.5; margin-top:10px;}
+
+  .empty404{max-width:520px; text-align:center; margin:80px auto; color:var(--muted);}
+  .empty404 h2{font-size:18px; margin:0 0 8px; color:var(--ink);}
+  .empty404 a{color:var(--accent); font-weight:600;}
+
+  .tabbtn.mobile-only{display:none;}
+  @media (max-width: 720px){
+    body{overflow-x:hidden;}
+    .htop{flex-direction:column;}
+    .storecard{width:100%;}
+    .fieldgrid{grid-template-columns:repeat(2, 1fr);}
+    .bodygrid{grid-template-columns:1fr;}
+    .leftcol{position:static; width:100%; display:none;}
+    .leftcol.show{display:block;}
+    .tabbtn.mobile-only{display:inline-block;}
+    .flow{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px;}
+    .tabbar{overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;}
+    .tabbtn{white-space:nowrap;}
+  }
+</style>
+</head>
+<body>
+<div class="gtopbar">
+  <div class="brand">
+    <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+    <div class="name">PropFlow</div>
+  </div>
+  <div class="usermenu">
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-dd" id="userMenuDd">
+      <div class="usermenu-head">
+        <div class="av" style="background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
+        <div><div class="n">M. Iyer</div><div class="r">BDM &middot; Bengaluru</div></div>
+      </div>
+      <div class="usermenu-rows">
+        <div class="usermenu-row"><span class="k">Email</span><span class="v">m.iyer@savomart.com</span></div>
+        <div class="usermenu-row"><span class="k">Role</span><span class="v">BDM</span></div>
+        <div class="usermenu-row"><span class="k">City access</span><span class="v">Bengaluru</span></div>
+      </div>
+      <button class="usermenu-out" id="userMenuSignOut">Sign out</button>
+    </div>
+  </div>
+</div>
+<div class="app">
+  <div class="side">
+    <div class="mark">
+      <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+      <div class="name">PropFlow</div>
+    </div>
+    <div class="nav">
+      <div class="navlabel">Workspace</div>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
+      <a class="nitem on" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
+      <a class="nitem" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
+    </div>
+    <div class="sidestats" id="sideStats"></div>
+    <div class="sidebottom">
+      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#7c4f96,#5a3970);">MI</div>
+      <div><div class="who-name">M. Iyer</div><div class="who-role">BDM &middot; Bengaluru</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="crumb"><a class="back" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Properties</a> / <b id="crumbCode">&hellip;</b></div>
+      <div class="sharewrap">
+        <div class="sharebtn" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>Share</div>
+        <div class="share-pop" id="sharePop">
+          <div class="share-title">Share this property</div>
+          <div class="share-linkrow">
+            <input class="share-input" id="shareLink" readonly>
+            <button class="share-copybtn" id="shareCopyBtn">Copy</button>
+          </div>
+          <div class="share-note">Anyone with a PropFlow account and access to Bengaluru properties can open this link.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagewrap" id="pagewrap"></div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+var params = new URLSearchParams(window.location.search);
+var code = params.get('code');
+var stored = [];
+try { stored = JSON.parse(localStorage.getItem('propflow_new_properties') || '[]'); } catch (e) {}
+var record = stored.find(function (r) { return r.code === code; });
+
+var ICONS = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+  dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-6"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+};
+
+if (!record) {
+  document.getElementById('pagewrap').innerHTML =
+    '<div class="empty404"><h2>No submission found</h2><p>This link doesn\'t match a property submitted in this browser. Submissions are stored locally per browser and reset if storage is cleared.</p><a href="new-property.html">Submit a new property &rarr;</a> &middot; <a href="dashboard.html">Back to Properties</a></div>';
+} else {
+  document.getElementById('crumbCode').textContent = record.code + ' · ' + record.detail.locality;
+  document.title = record.code + ' — PropFlow';
+
+  var STAGES = ['Hunter','BDE','Site Eval','BDM','Negotiation','CXO','IC'];
+
+  function fieldGrid(items) {
+    return '<div class="fieldgrid">' + items.map(function (it) {
+      return '<div class="fitem"><div class="k">' + it[0] + '</div><div class="v">' + it[1] + '</div></div>';
+    }).join('') + '</div>';
+  }
+
+  function renderFlow() {
+    var html = STAGES.map(function (label, i) {
+      var cls = i === 0 ? 'done' : i === 1 ? 'current' : 'future';
+      var icon = i === 0 ? ICONS.check : i === 1 ? ICONS.clock : ICONS.lock;
+      return '<div class="flowstep ' + cls + '"><div class="fline"></div><div class="fdot">' + icon + '</div><div class="flbl">' + label + '</div></div>';
+    }).join('');
+    document.getElementById('flowStepper').innerHTML = html;
+  }
+
+  function explainFor(key) {
+    switch (key) {
+      case 'siteeval': return 'Location, property, catchment and competition scoring — opens once BDE approves.';
+      case 'bdm': return 'This is where a BDM acts — once Site Evaluation is complete.';
+      case 'neg': return 'Opens if the BDM marks negotiation required on approval.';
+      case 'cxo': return 'Max rent / deposit approval — unlocks once BDM approves.';
+      case 'ic': return 'Final approval &amp; canonical property name — unlocks once CXO approves.';
+      default: return '';
+    }
+  }
+
+  function renderStages() {
+    var html = '';
+
+    html += '<div class="stcard"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Hunter Submission</div><span class="sttag done">Complete</span></div>' +
+      fieldGrid([
+        ['Locality', record.detail.locality],
+        ['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],
+        ['Expected Rent', record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—'],
+        ['Landlord', record.detail.landlord],
+        ['Landlord Phone', record.detail.phone],
+        ['Source', record.detail.source],
+        ['City', record.detail.city],
+        ['Submitted', record.detail.submittedAt],
+      ]) + '</div>';
+
+    html += '<div class="stcard current"><div class="stchead"><div class="stbadge current">' + ICONS.clock + '</div><div class="stname">BDE Review</div><span class="sttag current">Awaiting BDE</span></div>' +
+      '<div class="lockrow">' + ICONS.clock + 'BDE reviews feasibility, deposit and rent-fit next — this reaches BDM Review once BDE approves.</div></div>';
+
+    ['siteeval', 'bdm', 'neg', 'cxo', 'ic'].forEach(function (key, i) {
+      var names = { siteeval:'Site Evaluation', bdm:'BDM Review', neg:'Negotiation Rounds', cxo:'CXO Review', ic:'IC Decision' };
+      var icon = key === 'neg' ? ICONS.dollar : ICONS.lock;
+      html += '<div class="stcard dim"><div class="stchead"><div class="stbadge future">' + icon + '</div><div class="stname">' + names[key] + '</div><span class="sttag future">Locked</span></div><div class="lockrow">' + ICONS.lock + explainFor(key) + '</div></div>';
+    });
+
+    document.getElementById('stageStack').innerHTML = html;
+  }
+
+  function renderMedia() {
+    document.getElementById('mediaBody').innerHTML = '<div class="mtiles">' +
+      '<div class="tile add req" onclick="window.location.href=\'media-upload.html\'">' + ICONS.plus + '</div>' +
+      '<div class="tile add" onclick="window.location.href=\'media-upload.html\'">' + ICONS.plus + '</div>' +
+      '<div class="tile add" onclick="window.location.href=\'media-upload.html\'">' + ICONS.plus + '</div></div>';
+  }
+
+  function moveTabIndicator(btn) {
+    var ind = document.getElementById('tabIndicator');
+    ind.style.left = btn.offsetLeft + 'px';
+    ind.style.width = btn.offsetWidth + 'px';
+  }
+
+  document.getElementById('pagewrap').innerHTML =
+    '<div class="pagehead">' +
+      '<div class="htop">' +
+        '<div>' +
+          '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="code">' + record.code + '</span><span class="status" style="background:#e2ebee; color:#1f3947;"><span class="dot"></span>BDE Review Pending</span></div>' +
+          '<div class="hmeta">Submitted by <div class="av" style="background:#7c4f96;">MI</div> You (M. Iyer) &nbsp;&middot;&nbsp; ' + record.detail.city + ' &nbsp;&middot;&nbsp; ' + record.detail.submittedAt + '</div>' +
+        '</div>' +
+        '<div class="storecard"><div class="k">City</div><div class="v">' + record.detail.city + '</div><div class="sub">Nearest store TBD after BDE review</div></div>' +
+      '</div>' +
+      '<div class="flow" id="flowStepper"></div>' +
+    '</div>' +
+
+    '<div class="tabbar" id="tabBar">' +
+      '<div class="tabbtn on" data-tab="overview">Overview</div>' +
+      '<div class="tabbtn mobile-only" data-tab="media">Media</div>' +
+      '<div class="tabbtn" data-tab="propflow">PropFlow</div>' +
+      '<div class="tabbtn" data-tab="launchflow">Launch Flow</div>' +
+      '<div class="tabbtn" data-tab="marketops">Market Ops</div>' +
+      '<div class="tabindicator" id="tabIndicator"></div>' +
+    '</div>' +
+
+    '<div class="bodygrid">' +
+      '<div class="leftcol" id="media">' +
+        '<h3>Media</h3>' +
+        '<div class="leftsub">0 photos &middot; 0 docs</div>' +
+        '<div class="mtabs"><div class="mtab on" id="tabPhotos">Photos</div><div class="mtab" id="tabDocs">Documents</div></div>' +
+        '<div id="mediaBody"></div>' +
+      '</div>' +
+
+      '<div>' +
+        '<div class="tabpane" data-pane="overview" id="overview">' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Property Details</div>' +
+            '<div class="fieldgrid">' +
+              '<div class="fitem"><div class="k">Locality</div><div class="v">' + record.detail.locality + '</div></div>' +
+              '<div class="fitem"><div class="k">Size</div><div class="v">' + (record.detail.size ? record.detail.size + ' sqft' : '—') + '</div></div>' +
+              '<div class="fitem"><div class="k">Expected Rent</div><div class="v">' + (record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—') + '</div></div>' +
+              '<div class="fitem"><div class="k">City</div><div class="v">' + record.detail.city + '</div></div>' +
+              '<div class="fitem"><div class="k">Landlord</div><div class="v">' + record.detail.landlord + '</div></div>' +
+              '<div class="fitem"><div class="k">Landlord Phone</div><div class="v">' + record.detail.phone + '</div></div>' +
+              '<div class="fitem"><div class="k">Source</div><div class="v">' + record.detail.source + '</div></div>' +
+              '<div class="fitem"><div class="k">Nearest Store</div><div class="v">TBD after BDE review</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Sourcing &amp; Assignment</div>' +
+            '<div class="fieldgrid">' +
+              '<div class="fitem"><div class="k">Hunter</div><div class="v">You (M. Iyer)</div></div>' +
+              '<div class="fitem"><div class="k">Submitted</div><div class="v">' + record.detail.submittedAt + '</div></div>' +
+              '<div class="fitem"><div class="k">Assigned To</div><div class="v">Unassigned</div></div>' +
+              '<div class="fitem"><div class="k">Current Stage</div><div class="v">BDE Review Pending</div></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tabpane" data-pane="propflow" id="propflow" style="display:none;"><div id="stageStack"></div></div>' +
+        '<div class="tabpane" data-pane="launchflow" id="launchflow" style="display:none;">' +
+          '<div class="summarycard"><span class="status" style="background:var(--line-soft); color:var(--faint);"><span class="dot"></span>Not eligible yet</span>' +
+          '<p style="font-size:12.5px; color:var(--muted); margin:10px 0 0; line-height:1.6;">LL SoW is auto-created once CXO approves this property, then initiated by BDM. Nothing to do here yet — this property is still at BDE Review.</p></div>' +
+        '</div>' +
+        '<div class="tabpane" data-pane="marketops" id="marketops" style="display:none;">' +
+          '<div class="summarycard"><span class="status" style="background:var(--line-soft); color:var(--faint);"><span class="dot"></span>Not eligible yet</span>' +
+          '<p style="font-size:12.5px; color:var(--muted); margin:10px 0 0; line-height:1.6;">An MXM can initiate a Catchment Report from BDM Review onward, not before.</p></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  renderFlow();
+  renderStages();
+  renderMedia();
+
+  document.getElementById('tabPhotos').addEventListener('click', function () { document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
+  document.getElementById('tabDocs').addEventListener('click', function () {
+    document.getElementById('tabDocs').classList.add('on'); document.getElementById('tabPhotos').classList.remove('on');
+    document.getElementById('mediaBody').innerHTML = '<div class="mtiles"><div class="tile add req" onclick="window.location.href=\'media-upload.html\'">' + ICONS.plus + '</div><div class="tile add" onclick="window.location.href=\'media-upload.html\'">' + ICONS.plus + '</div></div>';
+  });
+
+  document.querySelectorAll('.tabbtn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.tabbtn').forEach(function (b) { b.classList.remove('on'); });
+      btn.classList.add('on');
+      moveTabIndicator(btn);
+      var tab = btn.getAttribute('data-tab');
+      document.querySelectorAll('.tabpane').forEach(function (p) {
+        p.style.display = (p.getAttribute('data-pane') === tab) ? '' : 'none';
+      });
+      document.getElementById('media').classList.toggle('show', tab === 'media');
+    });
+  });
+  moveTabIndicator(document.querySelector('.tabbtn.on'));
+  window.addEventListener('resize', function () { moveTabIndicator(document.querySelector('.tabbtn.on')); });
+}
+
+initUserMenu();
+
+var shareBtn = document.getElementById('shareBtn');
+var sharePop = document.getElementById('sharePop');
+var shareLink = document.getElementById('shareLink');
+shareLink.value = window.location.href;
+shareBtn.addEventListener('click', function (e) {
+  e.stopPropagation();
+  sharePop.classList.toggle('open');
+});
+document.addEventListener('click', function (e) {
+  if (!sharePop.contains(e.target) && e.target !== shareBtn) sharePop.classList.remove('open');
+});
+document.getElementById('shareCopyBtn').addEventListener('click', function () {
+  var btn = this;
+  shareLink.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareLink.value).catch(function () {});
+  }
+  try { document.execCommand('copy'); } catch (e) {}
+  btn.textContent = 'Copied!';
+  btn.classList.add('copied');
+  showToast('Link copied to clipboard');
+  setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+});
+</script>
+</body>
+</html>

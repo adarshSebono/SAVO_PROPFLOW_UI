@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PropFlow UI Revamp — Prototype</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+  body{background:var(--paper);}
+  .pagewrap{max-width:760px; margin:0 auto; padding:64px 32px 80px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:8px; margin-bottom:14px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+  h1{font-size:30px; font-weight:800; margin:0 0 10px; letter-spacing:-.01em;}
+  .sub{font-size:14.5px; color:var(--muted); max-width:60ch; margin:0 0 36px; line-height:1.6;}
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .card{border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:18px 20px; box-shadow:var(--shadow-sm); display:flex; align-items:flex-start; gap:14px; transition:transform .12s, box-shadow .12s;}
+  .card:hover{transform:translateY(-2px); box-shadow:var(--shadow-md);}
+  .card .ic{width:36px;height:36px;border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; flex:none;}
+  .card .ic svg{width:18px;height:18px;}
+  .card .t{font-size:14px; font-weight:700; margin-bottom:3px;}
+  .card .d{font-size:12px; color:var(--muted); line-height:1.5;}
+  .section{margin-bottom:34px;}
+  .section h2{font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--faint); margin:0 0 14px; font-family:'JetBrains Mono',monospace;}
+  .cta{display:inline-flex; align-items:center; gap:8px; height:44px; padding:0 22px; border-radius:11px; background:var(--accent); color:#fff; font-weight:700; font-size:14px; box-shadow:var(--shadow-md); margin-top:6px;}
+  .cta svg{width:15px;height:15px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow"><span class="dot"></span>PropFlow &middot; UI Revamp</div>
+  <h1>Prototype</h1>
+  <p class="sub">A fully clickable local build — every link below actually navigates. Start at Sign In to walk the real flow, or jump straight to any screen.</p>
+
+  <div class="section">
+    <h2>Start here</h2>
+    <a class="cta" href="login.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      Enter the app
+    </a>
+  </div>
+
+  <div class="section">
+    <h2>Reference</h2>
+    <div class="grid">
+      <a class="card" href="architecture.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <div><div class="t">Architecture &amp; Security</div><div class="d">Where the new UI sits, what stays server-enforced</div></div>
+      </a>
+      <a class="card" href="access-control.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+        <div><div class="t">Access Control Matrix</div><div class="d">Role × stage permissions, city scope, assignee lock</div></div>
+      </a>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Screens</h2>
+    <div class="grid">
+      <a class="card" href="inbox.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg></div>
+        <div><div class="t">Inbox</div><div class="d">Need You + Your Pipeline — the real landing page</div></div>
+      </a>
+      <a class="card" href="dashboard.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></div>
+        <div><div class="t">Properties</div><div class="d">Filterable list, live counts</div></div>
+      </a>
+      <a class="card" href="property.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <div><div class="t">Property Detail</div><div class="d">Flow stepper, sticky sub-nav, media rail, single scroll</div></div>
+      </a>
+      <a class="card" href="catchment-reports.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg></div>
+        <div><div class="t">Catchment Report</div><div class="d">4×10 grid — assign &amp; mark complete</div></div>
+      </a>
+      <a class="card" href="llsow.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div><div class="t">LL Scope of Work</div><div class="d">BD/PM dual signoff, live HOTO readiness</div></div>
+      </a>
+      <a class="card" href="hoto.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <div><div class="t">HOTO Details</div><div class="d">Click-to-fill handover form</div></div>
+      </a>
+      <a class="card" href="media-upload.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 17-5-5-4 4-3-3-6 6"/></svg></div>
+        <div><div class="t">Add Photo</div><div class="d">Live compress → upload progress</div></div>
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

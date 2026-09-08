@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catchment Reports — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="common.css">
+<style>
+  .app{width:100%;}
+  .header{display:flex; align-items:center; justify-content:space-between; padding:22px 32px 0;}
+  h1{font-size:23px; font-weight:800; margin:0; letter-spacing:-.01em;}
+  .headsub{font-size:12.5px; color:var(--faint); margin-top:3px;}
+  .toolbar{display:flex; align-items:center; gap:10px; margin:20px 32px 16px; flex-wrap:wrap;}
+  .search{height:36px; width:280px; border:1px solid var(--line); border-radius:9px; background:var(--panel); display:flex; align-items:center; padding:0 12px; gap:8px; color:var(--faint); font-size:13px; box-shadow:var(--shadow-sm);}
+  .search svg{width:14px;height:14px; flex:none;}
+  #chips{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .fchip{height:32px; padding:0 13px; border:1px solid var(--line); border-radius:100px; font-size:12.5px; font-weight:600; color:var(--muted); background:var(--panel); display:flex; align-items:center; gap:6px; cursor:pointer;}
+  .fchip:hover{border-color:var(--accent);}
+  .fchip.on{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .fchip .n{font-family:'JetBrains Mono',monospace; font-size:10px; opacity:.65;}
+  .tablewrap{margin:0 32px 32px; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--panel); box-shadow:var(--shadow-md);}
+  table{width:100%; border-collapse:collapse; font-size:13.3px;}
+  th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); padding:12px 18px; border-bottom:1px solid var(--line); background:var(--line-soft);}
+  td{padding:14px 18px; border-bottom:1px solid var(--line-soft); vertical-align:middle;}
+  tbody tr{transition:background .15s; animation:riseIn .3s ease-out both; cursor:pointer;}
+  tbody tr:hover{background:var(--paper);}
+  tr:last-child td{border-bottom:none;}
+  .propcell{display:flex; align-items:center; gap:11px;}
+  .thumb{width:38px;height:38px;border-radius:9px; flex:none; box-shadow:var(--shadow-sm);}
+  .propname{font-weight:700; font-size:13.5px;}
+  .propcode{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--faint); margin-top:1px;}
+  .muted{color:var(--faint);}
+  .progcell{display:flex; align-items:center; gap:9px;}
+  .progtrack{width:64px; height:6px; border-radius:4px; background:var(--line-soft); overflow:hidden; flex:none;}
+  .progfill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-deep)); border-radius:4px;}
+  .prognum{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); white-space:nowrap;}
+  .chevbtn{width:26px;height:26px;border-radius:7px; display:flex; align-items:center; justify-content:center; color:var(--faint);}
+  .chevbtn svg{width:15px;height:15px;}
+  .empty{padding:60px 20px; text-align:center; color:var(--faint); font-size:13px;}
+</style>
+</head>
+<body>
+<div class="gtopbar">
+  <div class="brand">
+    <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+    <div class="name">PropFlow</div>
+  </div>
+  <div class="usermenu">
+    <div class="usermenu-btn" id="userMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
+    <div class="usermenu-dd" id="userMenuDd">
+      <div class="usermenu-head">
+        <div class="av" style="background:linear-gradient(155deg,#3f6e85,#2c4e60);">PM</div>
+        <div><div class="n">P. Menon</div><div class="r">MXM &middot; Bengaluru</div></div>
+      </div>
+      <div class="usermenu-rows">
+        <div class="usermenu-row"><span class="k">Email</span><span class="v">p.menon@savomart.com</span></div>
+        <div class="usermenu-row"><span class="k">Role</span><span class="v">MXM</span></div>
+        <div class="usermenu-row"><span class="k">City access</span><span class="v">Bengaluru</span></div>
+      </div>
+      <button class="usermenu-out" id="userMenuSignOut">Sign out</button>
+    </div>
+  </div>
+</div>
+<div class="app">
+  <div class="side">
+    <div class="mark">
+      <div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/></svg></div>
+      <div class="name">PropFlow</div>
+    </div>
+    <div class="nav">
+      <div class="navlabel">Workspace</div>
+      <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>Inbox</a>
+      <a class="nitem" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
+      <a class="nitem on" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
+    </div>
+    <div class="sidestats" id="sideStats"></div>
+    <div class="sidebottom">
+      <div class="av" style="width:32px;height:32px;font-size:11px;background:linear-gradient(155deg,#3f6e85,#2c4e60);">PM</div>
+      <div><div class="who-name">P. Menon</div><div class="who-role">MXM &middot; Bengaluru</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <div>
+        <h1>Catchment Reports</h1>
+        <div class="headsub" id="headsub"></div>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Search property, city&hellip;</div>
+      <div id="chips"></div>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Property</th><th>City</th><th>Status</th><th>Progress</th><th>Created By</th><th>Updated</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="emptyState" style="display:none;">No catchment reports match this filter.</div>
+    </div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+var ALL_ROWS = [
+  { code:'BLR1041', name:'Whitefield Main Road', city:'Bengaluru', status:'progress', pct:55, done:22, total:40, createdBy:'P. Menon', updated:'2 Sep', thumb:'linear-gradient(135deg,#8fb0bf,#4a7d95)',
+    href:'catchment.html?code=BLR1041&name=' + encodeURIComponent('Whitefield Main Road') + '&city=Bengaluru' },
+  { code:'BLR1042', name:'HSR Layout Sector 3', city:'Bengaluru', status:'notstarted', pct:0, done:0, total:40, createdBy:'—', updated:'—', thumb:'linear-gradient(135deg,#c9a97e,#a97b4a)',
+    href:'catchment.html?code=BLR1042&name=' + encodeURIComponent('HSR Layout Sector 3') + '&city=Bengaluru&fresh=1' },
+  { code:'CHN1028', name:'Anna Nagar West', city:'Chennai', status:'completed', pct:100, done:40, total:40, createdBy:'K. Fernandes', updated:'6 Sep', thumb:'linear-gradient(135deg,#9fc2a6,#4a7d5a)',
+    href:'catchment.html?code=CHN1028&name=' + encodeURIComponent('Anna Nagar West') + '&city=Chennai&full=1' },
+  { code:'HYD1015', name:'Gachibowli Circle', city:'Hyderabad', status:'progress', pct:18, done:7, total:40, createdBy:'A. Bhatt', updated:'6 Sep', thumb:'linear-gradient(135deg,#a7b8c9,#5a7a95)',
+    href:'catchment.html?code=HYD1015&name=' + encodeURIComponent('Gachibowli Circle') + '&city=Hyderabad' },
+  { code:'BLR1044', name:'Koramangala 5th Blk', city:'Bengaluru', status:'notstarted', pct:0, done:0, total:40, createdBy:'—', updated:'—', thumb:'linear-gradient(135deg,#d1c398,#a98f4a)',
+    href:'catchment.html?code=BLR1044&name=' + encodeURIComponent('Koramangala 5th Blk') + '&city=Bengaluru&fresh=1' },
+  { code:'CHN1030', name:'Velachery Bypass', city:'Chennai', status:'completed', pct:100, done:40, total:40, createdBy:'S. Iqbal', updated:'5 Sep', thumb:'linear-gradient(135deg,#93c2b0,#3f8a6d)',
+    href:'catchment.html?code=CHN1030&name=' + encodeURIComponent('Velachery Bypass') + '&city=Chennai&full=1' },
+];
+var STATUS_MAP = {
+  notstarted: { label:'Not Started', bg:'#eef1f3', color:'#95a2ac' },
+  progress:   { label:'In Progress', bg:'#fbf1dc', color:'#a9740c' },
+  completed:  { label:'Completed',   bg:'#e6f2ea', color:'#2f7a53' },
+};
+var CHIP_DEFS = [
+  { key:'all', label:'All' }, { key:'notstarted', label:'Not Started' }, { key:'progress', label:'In Progress' }, { key:'completed', label:'Completed' },
+];
+var currentFilter = 'all';
+
+document.getElementById('headsub').textContent = ALL_ROWS.length + ' properties with a catchment study';
+
+function renderChips() {
+  document.getElementById('chips').innerHTML = CHIP_DEFS.map(function (c) {
+    var count = c.key === 'all' ? ALL_ROWS.length : ALL_ROWS.filter(function (r) { return r.status === c.key; }).length;
+    return '<div class="fchip' + (currentFilter === c.key ? ' on' : '') + '" data-key="' + c.key + '">' + c.label + '<span class="n">' + count + '</span></div>';
+  }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('.fchip'), function (el) {
+    el.addEventListener('click', function () { currentFilter = el.getAttribute('data-key'); renderAll(); });
+  });
+}
+
+function renderRows() {
+  var filtered = currentFilter === 'all' ? ALL_ROWS : ALL_ROWS.filter(function (r) { return r.status === currentFilter; });
+  document.getElementById('emptyState').style.display = filtered.length === 0 ? 'block' : 'none';
+  document.getElementById('rows').innerHTML = filtered.map(function (r) {
+    var s = STATUS_MAP[r.status];
+    return '<tr onclick="window.location.href=\'' + r.href + '\'">' +
+      '<td><div class="propcell"><div class="thumb" style="background:' + r.thumb + ';"></div><div><div class="propname">' + r.name + '</div><div class="propcode mono">' + r.code + '</div></div></div></td>' +
+      '<td class="muted">' + r.city + '</td>' +
+      '<td><span class="status" style="background:' + s.bg + '; color:' + s.color + ';"><span class="dot"></span>' + s.label + '</span></td>' +
+      '<td><div class="progcell"><div class="progtrack"><div class="progfill" style="width:' + r.pct + '%;"></div></div><span class="prognum">' + r.done + '/' + r.total + '</span></div></td>' +
+      '<td class="muted">' + r.createdBy + '</td>' +
+      '<td class="muted">' + r.updated + '</td>' +
+      '<td><div class="chevbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></div></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function renderAll() { renderChips(); renderRows(); }
+renderAll();
+initUserMenu();
+</script>
+</body>
+</html>

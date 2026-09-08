@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Access Control — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ink:#141c24; --muted:#5b6b78; --faint:#95a2ac;
+    --line:#dfe4e8; --line-soft:#eef1f3; --paper:#f6f8f9; --panel:#ffffff;
+    --accent:#7c2d8e; --accent-soft:#f2e3f7; --accent-ink:#5a1a68;
+    --good:#2f7a53; --good-bg:#e6f2ea;
+    --shadow-sm:0 1px 2px rgba(20,28,36,.04);
+    --shadow-md:0 1px 2px rgba(20,28,36,.04), 0 10px 28px rgba(20,28,36,.07);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:'Manrope',-apple-system,'Segoe UI',sans-serif; background:var(--paper); color:var(--ink); -webkit-font-smoothing:antialiased;}
+  a{color:var(--accent);} a:hover{color:var(--accent-ink);}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .wrap{max-width:1180px; margin:0 auto; padding:40px 40px 60px;}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--muted); margin-bottom:24px;}
+  .back svg{width:13px;height:13px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; display:flex; align-items:center; gap:8px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+  h1{font-size:22px; font-weight:800; margin:0 0 8px;}
+  .sub{font-size:13.5px; color:var(--muted); max-width:78ch; margin:0 0 26px; line-height:1.6;}
+  table{width:100%; border-collapse:collapse; border:1px solid var(--line); border-radius:14px; overflow:hidden; font-size:13px; background:var(--panel); box-shadow:var(--shadow-md);}
+  th, td{padding:13px 14px; border-bottom:1px solid var(--line-soft); border-right:1px solid var(--line-soft); text-align:center;}
+  th:first-child, td:first-child{text-align:left;}
+  tr:last-child td{border-bottom:none;}
+  th:last-child, td:last-child{border-right:none;}
+  thead th{background:var(--line-soft); font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--faint);}
+  .role{font-weight:700; display:flex; align-items:center; gap:10px;}
+  .av{width:26px;height:26px;border-radius:8px; color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex:none;}
+  .cell{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px;}
+  .cell.edit{background:var(--good-bg); color:var(--good);}
+  .cell.view{background:var(--accent-soft); color:var(--accent-ink);}
+  .cell.no{background:var(--line-soft); color:var(--faint);}
+  .cell svg{width:13px;height:13px;}
+  .legend{display:flex; gap:22px; margin-top:16px; font-size:12px; color:var(--muted);}
+  .legend .li{display:flex; align-items:center; gap:8px;}
+  .footer{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:28px;}
+  .note{border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:17px 19px; box-shadow:var(--shadow-sm);}
+  .note .k{font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:8px;}
+  .note .d{font-size:12.5px; color:var(--muted); line-height:1.6;}
+  .note .d span{color:var(--ink); font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>All screens</a>
+  <div class="eyebrow"><span class="dot"></span>PropFlow &middot; Access Control</div>
+  <h1>Who can see, and act on, what</h1>
+  <p class="sub">Reads straight off <span class="mono">STATUS_ROLE_MAP</span> &mdash; a role only gets an edit cell on the pipeline stage(s) currently active for that property's status. Every cell below is re-checked server-side on every request; nothing here is a client-side gate.</p>
+
+  <table>
+    <thead><tr><th>Role</th><th>Hunter</th><th>BDE</th><th>Site Eval</th><th>BDM</th><th>Negotiation</th><th>CXO</th><th>IC</th></tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+
+  <div class="legend">
+    <div class="li"><div class="cell edit" style="width:20px;height:20px;"></div>Edit &mdash; only while it's their acting turn</div>
+    <div class="li"><div class="cell view" style="width:20px;height:20px;"></div>View &mdash; read-only</div>
+    <div class="li"><div class="cell no" style="width:20px;height:20px;">&ndash;</div>No access to that stage's detail</div>
+  </div>
+
+  <div class="footer">
+    <div class="note"><div class="k">City scope</div><div class="d">Every role above is <span>also</span> filtered by assigned city &mdash; a BDM for Bengaluru never sees a Chennai property, regardless of stage. Superusers are unscoped.</div></div>
+    <div class="note"><div class="k">Single-assignee lock</div><div class="d">If a property has an <span>Assigned To</span> user set, only that person may act at the current stage &mdash; mirrored from <span class="mono">PropertyIndex.assigned_to</span>, not a new rule.</div></div>
+    <div class="note"><div class="k">Multi-role users</div><div class="d">Someone holding two roles (e.g. BDE + BDM) can act whenever <span>either</span> role is the current acting role &mdash; same OR logic as today, not additive permissions.</div></div>
+    <div class="note"><div class="k">Viewer PF</div><div class="d">Read-only overlay across every stage, city-scoped, no edit rights anywhere &mdash; unaffected by the table above; layered on top of it.</div></div>
+  </div>
+</div>
+<script>
+var EDIT = '<div class="cell edit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 21h4L19 10a2.83 2.83 0 0 0-4-4L4 17z"/></svg></div>';
+var VIEW = '<div class="cell view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div>';
+var NO = '<div class="cell no">&ndash;</div>';
+var roles = [
+  { name:'Hunter', color:'#3f6e85', initials:'HN', cells:[EDIT,NO,NO,NO,NO,NO,NO] },
+  { name:'BDE',    color:'#a9740c', initials:'BE', cells:[VIEW,EDIT,EDIT,VIEW,EDIT,VIEW,VIEW] },
+  { name:'BDM',    color:'#2f7a53', initials:'BM', cells:[NO,VIEW,VIEW,EDIT,VIEW,VIEW,VIEW] },
+  { name:'CXO',    color:'#7c4f96', initials:'CX', cells:[NO,NO,NO,VIEW,VIEW,EDIT,VIEW] },
+  { name:'IC',     color:'#ad3d3d', initials:'IC', cells:[NO,NO,NO,NO,NO,VIEW,EDIT] },
+  { name:'Viewer PF', color:'#95a2ac', initials:'VW', cells:[VIEW,VIEW,VIEW,VIEW,VIEW,VIEW,VIEW] },
+  { name:'Superuser', color:'#141c24', initials:'SU', cells:[EDIT,EDIT,EDIT,EDIT,EDIT,EDIT,EDIT] },
+];
+document.getElementById('tbody').innerHTML = roles.map(function (r) {
+  return '<tr><td><div class="role"><div class="av" style="background:' + r.color + ';">' + r.initials + '</div>' + r.name + '</div></td>' +
+    r.cells.map(function (c) { return '<td>' + c + '</td>'; }).join('') + '</tr>';
+}).join('');
+</script>
+</body>
+</html>

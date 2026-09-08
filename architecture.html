@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Architecture &amp; Security — PropFlow</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ink:#141c24; --muted:#5b6b78; --faint:#8b98a3;
+    --line:#c7ced6; --line-soft:#e6eaee; --paper:#fafbfc; --panel:#ffffff;
+    --accent:#7c2d8e; --accent-soft:#f2e3f7; --accent-ink:#5a1a68;
+    --good:#2f7a53; --good-bg:#e6f2ea;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:'Manrope',-apple-system,'Segoe UI',sans-serif; background:var(--paper); color:var(--ink);}
+  a{color:var(--accent);} a:hover{color:var(--accent-ink);}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+  .page{max-width:1080px; margin:0 auto; padding:40px 40px 80px;}
+  .back{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--muted); margin-bottom:24px;}
+  .back svg{width:13px;height:13px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:8px; margin-bottom:14px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+  h1{font-size:34px; font-weight:800; letter-spacing:-.01em; margin:0 0 12px; line-height:1.15;}
+  .sub{font-size:16px; color:var(--muted); max-width:64ch; margin:0 0 36px; line-height:1.6;}
+  h2{font-size:19px; font-weight:700; margin:0 0 16px;}
+  .section{margin-bottom:48px;}
+  .diagram{border:1px solid var(--line); border-radius:16px; background:var(--panel); padding:36px 32px 28px; display:flex; flex-direction:column; align-items:center; gap:0; box-shadow:0 1px 2px rgba(20,28,36,.04), 0 12px 32px rgba(20,28,36,.06);}
+  .tier{width:100%; display:flex; justify-content:center; gap:16px;}
+  .box{border:1.5px solid var(--line); border-radius:11px; padding:14px 20px; background:var(--paper); text-align:center; min-width:190px; box-shadow:0 1px 2px rgba(20,28,36,.03);}
+  .box.new{border-color:var(--accent); background:var(--accent-soft); box-shadow:0 1px 2px rgba(20,28,36,.03), 0 4px 14px rgba(63,110,133,.12);}
+  .box .t{font-size:13.5px; font-weight:700; color:var(--ink);}
+  .box .d{font-size:11.5px; color:var(--muted); margin-top:3px; line-height:1.4;}
+  .badge{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; padding:2px 7px; border-radius:100px; background:var(--accent); color:#fff; margin-bottom:6px;}
+  .badge.keep{background:var(--faint);}
+  .arrow{width:44px; height:2px; background:var(--line); position:relative; margin:22px 0;}
+  .arrow::after{content:""; position:absolute; right:-1px; top:-4px; width:0; height:0; border-left:8px solid var(--line); border-top:5px solid transparent; border-bottom:5px solid transparent;}
+  .list{display:grid; gap:10px;}
+  .row{display:grid; grid-template-columns:22px 1fr; gap:12px; padding:13px 16px; border:1px solid var(--line); border-radius:10px; background:var(--panel); box-shadow:0 1px 2px rgba(20,28,36,.03);}
+  .row.same{border-color:color-mix(in srgb, var(--good) 30%, var(--line));}
+  .ic{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;}
+  .same .ic{background:var(--good-bg);}
+  .row .t{font-size:14.5px; font-weight:600; margin-bottom:2px;}
+  .row .d{font-size:13px; color:var(--muted); line-height:1.55;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .callout{border:1px solid var(--line); border-radius:13px; padding:20px 22px; background:var(--panel); margin-top:12px; box-shadow:0 1px 2px rgba(20,28,36,.03);}
+  .callout .k{font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); margin-bottom:8px;}
+  .footfoot{margin-top:60px; padding-top:20px; border-top:1px solid var(--line); font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg>All screens</a>
+  <div class="eyebrow"><span class="dot"></span>PropFlow &middot; UI Revamp</div>
+  <h1>Architecture &amp; Security</h1>
+  <p class="sub">Wireframes for a dedicated frontend that replaces Django Admin as the day-to-day tool for Hunters, BDE, BDM, CXO and IC — without changing what the system actually does. Every rule the admin enforces today keeps enforcing it; only the surface people touch changes.</p>
+
+  <div class="section">
+    <h2>Where the new layer sits</h2>
+    <div class="diagram">
+      <div class="tier">
+        <div class="box new"><span class="badge">New</span><div class="t">PropFlow Web App</div><div class="d">React/Vue SPA<br>replaces Admin for daily use</div></div>
+        <div class="box"><span class="badge keep">Kept</span><div class="t">Django Admin</div><div class="d">Stays live — superuser &amp; ops fallback</div></div>
+      </div>
+      <div class="arrow"></div>
+      <div class="tier">
+        <div class="box new" style="min-width:420px;"><span class="badge">New</span><div class="t">Django REST API layer</div><div class="d">Thin — wraps existing models/serializers. Session cookie + CSRF, same as Admin uses now. No new auth surface.</div></div>
+      </div>
+      <div class="arrow"></div>
+      <div class="tier">
+        <div class="box" style="min-width:640px;"><span class="badge keep">Unchanged</span><div class="t">Existing Django application</div><div class="d">PropertyIndex pipeline &middot; STATUS_ROLE_MAP &amp; city-scope checks &middot; signed-URL GCS upload flow &middot; signals, SLA timers, notifications</div></div>
+      </div>
+      <div class="arrow"></div>
+      <div class="tier">
+        <div class="box"><div class="t">PostgreSQL + PostGIS</div></div>
+        <div class="box"><div class="t">Google Cloud Storage</div></div>
+        <div class="box"><div class="t">Bridge Service / Celery</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>What stays exactly the same</h2>
+    <div class="list">
+      <div class="row same"><div class="ic">&#10003;</div><div><div class="t">Server is the only place a permission is decided</div><div class="d">The API re-runs the same <span class="mono">_can_user_act</span> / <span class="mono">STATUS_ROLE_MAP</span> logic Admin uses today on every write. The UI reflects a role; it never grants one.</div></div></div>
+      <div class="row same"><div class="ic">&#10003;</div><div><div class="t">City-scoped visibility</div><div class="d">Every list and detail query stays filtered by the requesting user's assigned cities — the same scoping Admin applies, moved unchanged into the API querysets.</div></div></div>
+      <div class="row same"><div class="ic">&#10003;</div><div><div class="t">Media stays direct-to-GCS, signed and path-validated</div><div class="d">Photos, videos and documents keep using the existing short-lived signed-URL flow — the frontend just renders it, it doesn't touch how files move.</div></div></div>
+      <div class="row same"><div class="ic">&#10003;</div><div><div class="t">One record per stage, unchanged</div><div class="d">HunterSubmission &rarr; BDESubmission &rarr; SiteEvaluation &rarr; BDMReview &rarr; NegotiationRound &rarr; CXOReview &rarr; ICDecision stay the single source of truth; the UI is a new way to read and write them, not a new data model.</div></div></div>
+      <div class="row same"><div class="ic">&#10003;</div><div><div class="t">SLA timers, emails and push notifications</div><div class="d">Fire from the same signals as today — a stage transition made through the new UI looks identical to one made through Admin, downstream.</div></div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Security posture</h2>
+    <div class="grid2">
+      <div class="callout"><div class="k">Auth &amp; session</div><div class="d" style="font-size:13.3px; color:var(--muted); line-height:1.6;">Reuse the Django session cookie the Admin already issues — same login, same CSRF-protected write path. No JWT, no second credential store, nothing new to secure.</div></div>
+      <div class="callout"><div class="k">Authorization</div><div class="d" style="font-size:13.3px; color:var(--muted); line-height:1.6;">Every API mutation re-validates role + acting-stage + city, exactly like the admin formset checks today. A hidden button in the UI is a courtesy, not a control.</div></div>
+      <div class="callout"><div class="k">Media upload</div><div class="d" style="font-size:13.3px; color:var(--muted); line-height:1.6;">Signed PUT URLs stay 15-minute, extension + content-type checked, path-regex validated on the model side — identical to the current flow.</div></div>
+      <div class="callout"><div class="k">New hardening</div><div class="d" style="font-size:13.3px; color:var(--muted); line-height:1.6;">Rate-limit the signed-URL and auth endpoints (the Admin's session throttling doesn't cover a public API surface) and add structured audit logging on every stage-transition write.</div></div>
+    </div>
+  </div>
+
+  <div class="footfoot"><span>PropFlow &middot; UI Revamp Wireframes</span><span>Grounded in propflow/admin.py &amp; models.py</span></div>
+</div>
+</body>
+</html>
