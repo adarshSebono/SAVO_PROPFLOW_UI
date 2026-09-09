@@ -526,6 +526,14 @@ function renderStages() {
 
 // ---- Accordion open/close state (kept across re-renders) ----
 state.openStages = {};
+(function autoOpenActionableStage() {
+  var info = currentStageInfo();
+  var pendingKeyByIdx = { 3: 'bdm' };
+  var key = pendingKeyByIdx[info.idx];
+  if (key && getCurrentRole() === key && info.suffix === 'pending') {
+    state.openStages[key] = true;
+  }
+})();
 function applyOpenState() {
   document.querySelectorAll('#stageStack .stcard').forEach(function (card) {
     card.classList.toggle('open', !!state.openStages[card.getAttribute('data-key')]);
