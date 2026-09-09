@@ -185,8 +185,26 @@ function injectSwitchUser(dd) {
   });
 }
 
+// Hunter is a submit-and-track role: only "For you" (Your Submissions + New Property)
+// and their own submission's pages are in scope. No real auth here — this just hides
+// the nav and bounces a Hunter back to "For you" if they land on a page outside that set.
+var HUNTER_ALLOWED_PAGES = ['inbox.html', 'new-property.html', 'property-new.html', 'property.html', 'media-upload.html', ''];
+var HUNTER_HIDDEN_NAV_HREFS = ['dashboard.html', 'catchment-reports.html', 'bde-stats.html'];
+function applyRoleAccess() {
+  if (getCurrentRole() !== 'hunter') return;
+  HUNTER_HIDDEN_NAV_HREFS.forEach(function (href) {
+    var el = document.querySelector('.nitem[href="' + href + '"]');
+    if (el) el.style.display = 'none';
+  });
+  var page = location.pathname.split('/').pop();
+  if (HUNTER_ALLOWED_PAGES.indexOf(page) === -1) {
+    window.location.replace('inbox.html');
+  }
+}
+
 // Shared top-right user menu: call once per page after the DOM is in place.
 function initUserMenu() {
+  applyRoleAccess();
   applyCurrentUser();
   renderSideStats();
   var btn = document.getElementById('userMenuBtn');
