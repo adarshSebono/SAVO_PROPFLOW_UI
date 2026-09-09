@@ -215,8 +215,9 @@ function renderRows() {
     var assigneeHtml = r.assignee
       ? '<div class="assignee"><div class="av" style="width:22px;height:22px;font-size:9px;background:' + r.ac + ';">' + initials(r.assignee) + '</div>' + r.assignee + '</div>'
       : '<span class="muted">Unassigned</span>';
-    return '<tr onclick="window.location.href=\'' + r.href + '\'">' +
-      '<td><div class="propcell"><div class="thumb" style="background:' + r.thumb + ';"></div><div><div class="propname">' + r.name + '</div><div class="propcode mono">' + r.code + '</div></div></div></td>' +
+    var href = r.href.indexOf('?') === -1 ? r.href + '?code=' + r.code : r.href;
+    return '<tr onclick="window.location.href=\'' + href + '\'">' +
+      '<td><div class="propcell"><div><div class="propname">' + r.name + '</div><div class="propcode mono">' + r.code + '</div></div></div></td>' +
       '<td class="muted" style="font-weight:600;">' + r.hunter + '</td>' +
       '<td><span class="status" style="background:' + s.bg + '; color:' + s.color + ';"><span class="dot"></span>' + s.label + '</span></td>' +
       '<td>' + assigneeHtml + '</td>' +

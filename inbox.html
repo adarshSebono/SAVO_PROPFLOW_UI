@@ -13,11 +13,21 @@
   .header{padding:26px 32px 4px; display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
   .headtitle{font-size:23px; font-weight:800; margin:0; letter-spacing:-.01em;}
   .headsub{font-size:12.5px; color:var(--faint); margin-top:4px;}
-  .newbtn{height:38px; padding:0 16px; border-radius:9px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; gap:7px; border:none; box-shadow:var(--shadow-sm); cursor:pointer; flex:none;}
-  .newbtn:hover{filter:brightness(.96); transform:translateY(-1px);}
-  .newbtn svg{width:14px;height:14px;}
+  .headbtns{display:flex; align-items:center; gap:10px; flex:none;}
+  .subsbtn{height:54px; padding:0 16px; border-radius:14px; background:var(--panel); color:var(--ink); font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:7px; border:1px solid var(--line); box-shadow:var(--shadow-sm); cursor:pointer;}
+  .subsbtn:hover{border-color:var(--accent); color:var(--accent);}
+  .subsbtn svg{width:14px;height:14px;}
 
-  .metrics{display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin:20px 32px 6px;}
+  .newcard{display:flex; align-items:center; gap:10px; height:54px; padding:0 8px 0 8px; border-radius:14px; background:linear-gradient(135deg,var(--accent-soft),var(--panel)); border:1px solid var(--line); box-shadow:var(--shadow-sm); cursor:pointer; transition:transform .12s, box-shadow .12s;}
+  .newcard:hover{transform:translateY(-1px); box-shadow:var(--shadow-md);}
+  .newcard-ic{width:36px;height:36px;border-radius:10px; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; flex:none;}
+  .newcard-ic svg{width:17px;height:17px;}
+  .newcard-body{line-height:1.25;}
+  .newcard-t{font-size:12.5px; font-weight:800; color:var(--ink);}
+  .newcard-d{font-size:10.5px; color:var(--muted); white-space:nowrap;}
+  .newcard-btn{margin-left:6px; height:34px; padding:0 14px; border-radius:9px; background:var(--accent); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; flex:none;}
+
+  .metrics{display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; margin:20px 32px 6px;}
   .metric{border:1px solid var(--line); border-radius:14px; background:var(--panel); box-shadow:var(--shadow-sm); padding:16px 18px; animation:riseIn .3s ease-out both; cursor:pointer; transition:transform .12s, box-shadow .12s, border-color .12s;}
   .metric:hover{transform:translateY(-2px); box-shadow:var(--shadow-md);}
   .metric.on{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
@@ -99,7 +109,14 @@
         <h1 class="headtitle">Good to see you, M. Iyer</h1>
         <div class="headsub" id="headsub"></div>
       </div>
-      <a class="newbtn" href="new-property.html"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New Property</a>
+      <div class="headbtns">
+        <div class="subsbtn" id="subsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Your Submissions</div>
+        <a class="newcard" href="new-property.html">
+          <div class="newcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.686-7-11a7 7 0 0 1 14 0c0 5.314-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
+          <div class="newcard-body"><div class="newcard-t">New Property</div><div class="newcard-d">Capture a lead in minutes</div></div>
+          <div class="newcard-btn">+ Add</div>
+        </a>
+      </div>
     </div>
 
     <div class="metrics">
@@ -107,6 +124,7 @@
       <div class="metric" data-filter="hold"><div class="mval" id="mHold">0</div><div class="mlbl"><span class="mdot" style="background:#7c4f96;"></span>On Hold</div></div>
       <div class="metric" data-filter="next"><div class="mval" id="mNext">0</div><div class="mlbl"><span class="mdot" style="background:#3f6e85;"></span>Next in Line</div></div>
       <div class="metric" data-filter="pipe"><div class="mval" id="mPipe">0</div><div class="mlbl"><span class="mdot" style="background:#2f7a53;"></span>Your Pipeline</div></div>
+      <div class="metric" id="mySubsMetric"><div class="mval" id="mSubs">0</div><div class="mlbl"><span class="mdot" style="background:#c95fa8;"></span>Your Submissions</div></div>
     </div>
 
     <div class="filterbar" id="filterBar" style="display:none;">
@@ -136,6 +154,12 @@
       <div class="sectionhead"><h2>Your Pipeline</h2><span class="seccount" id="pipeCount">0</span></div>
       <div class="secdesc">Properties you already acted on — now with a later stage. For visibility, not action.</div>
       <div class="rowlist" id="pipeList"></div>
+    </div>
+
+    <div class="section" id="mySubmissions">
+      <div class="sectionhead"><h2>Your Submissions</h2><span class="seccount" id="subsCount">0</span></div>
+      <div class="secdesc">Properties you personally submitted, across every stage they've since moved through.</div>
+      <div class="rowlist" id="subsList"></div>
     </div>
   </div>
 </div>
@@ -176,13 +200,21 @@ document.getElementById('mHold').textContent = sections.hold.length;
 document.getElementById('mNext').textContent = sections.next.length;
 document.getElementById('mPipe').textContent = sections.pipe.length;
 
+var LOCAL_SUB_CODES = {};
+try {
+  JSON.parse(localStorage.getItem('propflow_new_properties') || '[]').forEach(function (r) { LOCAL_SUB_CODES[r.code] = true; });
+} catch (e) { /* ignore malformed storage */ }
+
+function propertyHref(code) {
+  return LOCAL_SUB_CODES[code] ? 'property-new.html?code=' + encodeURIComponent(code) : 'property.html?code=' + encodeURIComponent(code);
+}
+
 function renderList(elId, rows) {
   var el = document.getElementById(elId);
   if (!rows.length) { el.outerHTML = '<div class="emptysec" id="' + elId + '">Nothing here right now.</div>'; return; }
   el.innerHTML = rows.map(function (r) {
     var s = STATUS_MAP[r.status];
-    return '<div class="rowitem" onclick="window.location.href=\'property.html\'">' +
-      '<div class="thumb" style="background:' + r.thumb + ';"></div>' +
+    return '<div class="rowitem" onclick="window.location.href=\'' + propertyHref(r.code) + '\'">' +
       '<div class="rmain"><div class="rname">' + r.name + '</div><div class="rcode mono">' + r.code + '</div><div class="rnote">' + r.note + '</div></div>' +
       '<span class="rstatus" style="background:' + s.bg + '; color:' + s.color + ';"><span class="dot"></span>' + s.label + '</span>' +
       '<div class="chevbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg></div>' +
@@ -193,6 +225,23 @@ renderList('needList', sections.need);
 renderList('holdList', sections.hold);
 renderList('nextList', sections.next);
 renderList('pipeList', sections.pipe);
+
+// Your Submissions: properties this browser's user personally submitted (localStorage-backed
+// demo entries from the New Property flow), plus a few seeded examples so it's never empty.
+var MY_SUBMISSIONS = [
+  { code:'BLR1041', name:'Whitefield Main Road', status:'bdm', note:'Submitted 12 Aug — now with BDM' },
+  { code:'BLR1044', name:'Koramangala 5th Block', status:'siteeval', note:'Submitted 20 Aug — now in Site Evaluation' },
+  { code:'CHN1030', name:'Velachery Bypass', status:'approved', note:'Submitted 15 Aug — IC approved 5 Sep' },
+];
+try {
+  var storedSubs = JSON.parse(localStorage.getItem('propflow_new_properties') || '[]');
+  storedSubs.forEach(function (r) {
+    MY_SUBMISSIONS.unshift({ code:r.code, name:r.detail.locality, status:'bde', note:'Submitted ' + r.detail.submittedAt + ' — with BDE' });
+  });
+} catch (e) { /* ignore malformed storage */ }
+document.getElementById('subsCount').textContent = MY_SUBMISSIONS.length;
+document.getElementById('mSubs').textContent = MY_SUBMISSIONS.length;
+renderList('subsList', MY_SUBMISSIONS);
 
 var FILTER_LABELS = { need:'Needs Attention', hold:'On Hold', next:'Upcoming', pipe:'Your Pipeline' };
 var activeFilter = null;
@@ -214,7 +263,7 @@ function applyFilter() {
   }
 }
 
-document.querySelectorAll('.metric').forEach(function (m) {
+document.querySelectorAll('.metric[data-filter]').forEach(function (m) {
   m.addEventListener('click', function () {
     var key = m.getAttribute('data-filter');
     activeFilter = (activeFilter === key) ? null : key;
@@ -223,6 +272,10 @@ document.querySelectorAll('.metric').forEach(function (m) {
   });
 });
 document.getElementById('filterClear').addEventListener('click', function () { activeFilter = null; applyFilter(); });
+
+function scrollToSubmissions() { document.getElementById('mySubmissions').scrollIntoView({ behavior:'smooth', block:'start' }); }
+document.getElementById('mySubsMetric').addEventListener('click', scrollToSubmissions);
+document.getElementById('subsBtn').addEventListener('click', scrollToSubmissions);
 
 initUserMenu();
 </script>

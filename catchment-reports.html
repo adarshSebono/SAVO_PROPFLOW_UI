@@ -144,7 +144,7 @@ function renderRows() {
   document.getElementById('rows').innerHTML = filtered.map(function (r) {
     var s = STATUS_MAP[r.status];
     return '<tr onclick="window.location.href=\'' + r.href + '\'">' +
-      '<td><div class="propcell"><div class="thumb" style="background:' + r.thumb + ';"></div><div><div class="propname">' + r.name + '</div><div class="propcode mono">' + r.code + '</div></div></div></td>' +
+      '<td><div class="propcell"><div><div class="propname">' + r.name + '</div><div class="propcode mono">' + r.code + '</div></div></div></td>' +
       '<td class="muted">' + r.city + '</td>' +
       '<td><span class="status" style="background:' + s.bg + '; color:' + s.color + ';"><span class="dot"></span>' + s.label + '</span></td>' +
       '<td><div class="progcell"><div class="progtrack"><div class="progfill" style="width:' + r.pct + '%;"></div></div><span class="prognum">' + r.done + '/' + r.total + '</span></div></td>' +

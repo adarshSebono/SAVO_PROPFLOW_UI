@@ -117,12 +117,31 @@
   .lockrow{display:flex; align-items:center; gap:9px; color:var(--faint); font-size:12.5px;}
   .lockrow svg{width:15px;height:15px; flex:none;}
 
+  .fb-item{display:flex; gap:11px; margin-bottom:16px;}
+  .fb-item .av{width:30px;height:30px;font-size:10.5px; flex:none;}
+  .fb-body{flex:1; min-width:0;}
+  .fb-head{display:flex; align-items:baseline; gap:8px;}
+  .fb-name{font-size:12.5px; font-weight:700;}
+  .fb-time{font-size:11px; color:var(--faint);}
+  .fb-text{font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:2px;}
+  .fb-empty{font-size:12px; color:var(--faint); margin-bottom:14px;}
+  .fb-composer{display:flex; gap:10px; align-items:flex-end; padding-top:14px; border-top:1px solid var(--line-soft);}
+  .fb-textarea{flex:1; min-height:60px; resize:vertical; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:10px 12px; font-size:12.5px; font-family:inherit; color:var(--ink);}
+  .fb-textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .fb-postbtn{height:38px; padding:0 18px; border-radius:9px; background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; border:none; cursor:pointer; flex:none;}
+  .fb-postbtn:hover{filter:brightness(.96);}
+
   .negtable{width:100%; border-collapse:collapse; font-size:12.5px;}
   .negtable th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); padding:8px 10px; border-bottom:1px solid var(--line);}
   .negtable td{padding:10px; border-bottom:1px solid var(--line-soft);}
 
   .summarycard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:22px; margin-bottom:16px;}
   .panetitle{font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:0 0 16px;}
+  .mapbox{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#e8ecdd;}
+  .mapbox svg{display:block; width:100%; height:auto;}
+  .maplegend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px; font-size:11.5px; color:var(--muted); font-weight:600;}
+  .maplegend span{display:inline-flex; align-items:center; gap:6px;}
+  .maplegend i{width:9px;height:9px;border-radius:50%; display:inline-block;}
   .openlink{margin-top:16px; display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--accent);}
   .openlink:hover{color:var(--accent-deep);}
   .openlink svg{width:13px;height:13px;}
@@ -482,6 +501,39 @@ if (!record) {
             '</div>' +
           '</div>' +
           '<div class="summarycard">' +
+            '<div class="panetitle">Site Evaluation</div>' +
+            '<div class="fieldgrid">' +
+              '<div class="fitem"><div class="k">Facade / Frontage</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
+              '<div class="fitem"><div class="k">Road Width</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
+              '<div class="fitem"><div class="k">Stairs</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
+              '<div class="fitem"><div class="k">2-Wheeler Parking</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
+              '<div class="fitem"><div class="k">Shutters</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
+              '<div class="fitem"><div class="k">Ceiling Height</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Financials</div>' +
+            '<div class="fieldgrid">' +
+              '<div class="fitem"><div class="k">Expected Rent</div><div class="v">' + (record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—') + '</div></div>' +
+              '<div class="fitem"><div class="k">Expected Rent per Sqft</div><div class="v" style="color:var(--faint);">Pending BDE Review</div></div>' +
+              '<div class="fitem"><div class="k">Deposit (Months)</div><div class="v" style="color:var(--faint);">Pending BDE Review</div></div>' +
+              '<div class="fitem"><div class="k">Terms of Agreement</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
+              '<div class="fitem"><div class="k">Expected Sales &mdash; 1st Month</div><div class="v" style="color:var(--faint);">Pending BDM Review</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Competition &amp; Catchment</div>' +
+            '<div class="fieldgrid">' +
+              '<div class="fitem"><div class="k">GeoIQ Household Count</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
+              '<div class="fitem"><div class="k">Nearest Competitors (500m)</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Interactive Map</div>' +
+            '<div class="maplegend"><span><i style="background:#5b8a63;"></i>Property</span><span><i style="background:#c98a3a;"></i>Competitors</span><span><i style="background:#4c7ba6;"></i>Nearest Store</span></div>' +
+            '<div class="mapbox"><svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="180" fill="#e8ecdd"/><path d="M0 90 H400 M120 0 V180 M270 0 V180" stroke="#c9d0b8" stroke-width="2"/><circle cx="190" cy="95" r="7" fill="#5b8a63"/></svg></div>' +
+          '</div>' +
+          '<div class="summarycard">' +
             '<div class="panetitle">Sourcing &amp; Assignment</div>' +
             '<div class="fieldgrid">' +
               '<div class="fitem"><div class="k">Hunter</div><div class="v">You (M. Iyer)</div></div>' +
@@ -489,6 +541,11 @@ if (!record) {
               '<div class="fitem"><div class="k">Assigned To</div><div class="v">Unassigned</div></div>' +
               '<div class="fitem"><div class="k">Current Stage</div><div class="v" id="ovStage">BDE Review Pending</div></div>' +
             '</div>' +
+          '</div>' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Feedback</div>' +
+            '<div id="feedbackList"></div>' +
+            '<div class="fb-composer"><textarea class="fb-textarea" id="fbInput" placeholder="Add feedback for anyone on this property&hellip;"></textarea><button class="fb-postbtn" id="fbPostBtn">Post</button></div>' +
           '</div>' +
         '</div>' +
         '<div class="tabpane" data-pane="media" id="media" style="display:none;">' +
@@ -513,6 +570,28 @@ if (!record) {
 
   render();
   renderMedia();
+
+  var feedbackItems = [];
+  function renderFeedback() {
+    var list = document.getElementById('feedbackList');
+    if (!feedbackItems.length) { list.innerHTML = '<div class="fb-empty">No feedback yet — be the first to add context for this property.</div>'; return; }
+    list.innerHTML = feedbackItems.map(function (f) {
+      return '<div class="fb-item"><div class="av" style="background:' + f.grad + ';">' + f.initials + '</div>' +
+        '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + f.name + '</span><span class="fb-time">' + f.role + ' &middot; ' + f.time + '</span></div>' +
+        '<div class="fb-text">' + f.text + '</div></div></div>';
+    }).join('');
+  }
+  renderFeedback();
+  document.getElementById('fbPostBtn').addEventListener('click', function () {
+    var input = document.getElementById('fbInput');
+    var text = input.value.trim();
+    if (!text) return;
+    var u = getCurrentUser();
+    feedbackItems.push({ initials:u.initials, grad:u.grad, name:u.name, role:u.role, time:'Just now', text:text });
+    input.value = '';
+    renderFeedback();
+    showToast('Feedback posted');
+  });
 
   document.getElementById('tabPhotos').addEventListener('click', function () { document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
   document.getElementById('tabDocs').addEventListener('click', function () {

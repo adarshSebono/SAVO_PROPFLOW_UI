@@ -118,12 +118,32 @@
   .lockrow{display:flex; align-items:center; gap:9px; color:var(--faint); font-size:12.5px;}
   .lockrow svg{width:15px;height:15px; flex:none;}
 
+  .fb-item{display:flex; gap:11px; margin-bottom:16px;}
+  .fb-item .av{width:30px;height:30px;font-size:10.5px; flex:none;}
+  .fb-body{flex:1; min-width:0;}
+  .fb-head{display:flex; align-items:baseline; gap:8px;}
+  .fb-name{font-size:12.5px; font-weight:700;}
+  .fb-time{font-size:11px; color:var(--faint);}
+  .fb-text{font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:2px;}
+  .fb-empty{font-size:12px; color:var(--faint); margin-bottom:14px;}
+  .fb-composer{display:flex; gap:10px; align-items:flex-end; padding-top:14px; border-top:1px solid var(--line-soft);}
+  .fb-textarea{flex:1; min-height:60px; resize:vertical; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:10px 12px; font-size:12.5px; font-family:inherit; color:var(--ink);}
+  .fb-textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .fb-postbtn{height:38px; padding:0 18px; border-radius:9px; background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; border:none; cursor:pointer; flex:none;}
+  .fb-postbtn:hover{filter:brightness(.96);}
+
   .negtable{width:100%; border-collapse:collapse; font-size:12.5px;}
   .negtable th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); padding:8px 10px; border-bottom:1px solid var(--line);}
   .negtable td{padding:10px; border-bottom:1px solid var(--line-soft);}
 
   .summarycard{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:22px; margin-bottom:16px;}
   .panetitle{font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:0 0 16px;}
+
+  .mapbox{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#e8ecdd;}
+  .mapbox svg{display:block; width:100%; height:auto;}
+  .maplegend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px; font-size:11.5px; color:var(--muted); font-weight:600;}
+  .maplegend span{display:inline-flex; align-items:center; gap:6px;}
+  .maplegend i{width:9px;height:9px;border-radius:50%; display:inline-block;}
   .summarygrid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:14px;}
   .openlink{margin-top:16px; display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--accent);}
   .openlink:hover{color:var(--accent-deep);}
@@ -207,7 +227,7 @@
 
   <div class="main">
     <div class="topbar">
-      <div class="crumb"><a class="back" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Properties</a> / <b>BLR1041</b></div>
+      <div class="crumb"><a class="back" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>Properties</a> / <b id="crumbCode">BLR1041</b></div>
       <div style="display:flex; align-items:center; gap:16px;">
         <div class="sharewrap">
           <div class="sharebtn" id="shareBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-3.9M8.6 13.5l6.8 3.9"/></svg>Share</div>
@@ -227,8 +247,8 @@
 
       <div class="pagehead">
         <div class="htitle">
-          <h1>Whitefield Main Road</h1>
-          <span class="code">BLR1041</span>
+          <h1 id="propTitle">Whitefield Main Road</h1>
+          <span class="code" id="propCode">BLR1041</span>
           <span class="status" id="headStatus"></span>
         </div>
         <div class="flow" id="flowStepper"></div>
@@ -252,26 +272,13 @@
 
         <div>
           <div class="tabpane" data-pane="overview" id="overview">
+            <div id="ovDynamic"></div>
             <div class="summarycard">
-              <div class="panetitle">Property Details</div>
-              <div class="fieldgrid">
-                <div class="fitem"><div class="k">Locality</div><div class="v">Whitefield Main Rd</div></div>
-                <div class="fitem"><div class="k">Size</div><div class="v">1,850 sqft</div></div>
-                <div class="fitem"><div class="k">Expected Rent</div><div class="v">&#8377;1,65,000</div></div>
-                <div class="fitem"><div class="k">City</div><div class="v">Bengaluru</div></div>
-                <div class="fitem"><div class="k">Landlord</div><div class="v">N. Gowda</div></div>
-                <div class="fitem"><div class="k">Landlord Phone</div><div class="v">98450 XXXXX</div></div>
-                <div class="fitem"><div class="k">Source</div><div class="v">Self</div></div>
-                <div class="fitem"><div class="k">Nearest Store</div><div class="v">Whitefield Central &middot; 2.4 km</div></div>
-              </div>
-            </div>
-            <div class="summarycard">
-              <div class="panetitle">Sourcing &amp; Assignment</div>
-              <div class="fieldgrid">
-                <div class="fitem"><div class="k">Hunter</div><div class="v">R. Suresh</div></div>
-                <div class="fitem"><div class="k">Submitted</div><div class="v">12 Aug</div></div>
-                <div class="fitem"><div class="k">Assigned To</div><div class="v">M. Iyer &middot; BDM</div></div>
-                <div class="fitem"><div class="k">Current Stage</div><div class="v" id="ovStage">&mdash;</div></div>
+              <div class="panetitle">Feedback</div>
+              <div id="feedbackList"></div>
+              <div class="fb-composer">
+                <textarea class="fb-textarea" id="fbInput" placeholder="Add feedback for anyone on this property&hellip;"></textarea>
+                <button class="fb-postbtn" id="fbPostBtn">Post</button>
               </div>
             </div>
           </div>
@@ -308,7 +315,7 @@
                 <div class="fitem"><div class="k">Cells Surveyed</div><div class="v">3 of 40</div></div>
                 <div class="fitem"><div class="k">Total Households</div><div class="v">162</div></div>
               </div>
-              <a class="openlink" href="catchment.html?code=BLR1041&name=Whitefield%20Main%20Road">Open Catchment Report <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg></a>
+              <a class="openlink" id="catchmentLink" href="catchment.html?code=BLR1041&name=Whitefield%20Main%20Road">Open Catchment Report <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg></a>
             </div>
           </div>
         </div>
@@ -329,7 +336,42 @@
 
 <script src="common.js"></script>
 <script>
+var SEEDS = {
+  BLR1041: { id:'1041', name:'Whitefield Main Road', city:'Bengaluru', locality:'Whitefield Main Rd', size:'1,850 sqft', rent:'&#8377;1,65,000', landlord:'N. Gowda', landlordPhone:'98450 XXXXX', source:'Self', geo:'12.9698, 77.7500', store:'Whitefield Central &middot; 2.4 km', hunter:'R. Suresh', bde:'A. Verma', assignedName:'M. Iyer', assignedRole:'BDM', submitted:'12 Aug', stage:'bdm_pending',
+    siteEval:{facade:'34 ft', roadWidth:'30 ft', stairs:'2', parking:'75', shutters:'4', ceiling:'11 ft'},
+    fin:{rentSqft:'&#8377;89', depositMonths:'6', terms:'9+9, 3yr lock-in', sales1mo:'&#8377;5,20,000'},
+    comp:{households:'6,200', nearest:'3 discovered (500m)'} },
+  BLR1042: { id:'1042', name:'HSR Layout Sector 3', city:'Bengaluru', locality:'HSR Layout Sector 3', size:'2,100 sqft', rent:'&#8377;1,92,000', landlord:'V. Kumar', landlordPhone:'98802 XXXXX', source:'Consultant', geo:'12.9121, 77.6446', store:'HSR Central &middot; 1.1 km', hunter:'A. Nair', bde:'A. Verma', assignedName:'M. Iyer', assignedRole:'BDM', submitted:'1 Sep', stage:'bdm_hold',
+    siteEval:{facade:'28 ft', roadWidth:'40 ft', stairs:'1', parking:'40', shutters:'3', ceiling:'12 ft'},
+    fin:{rentSqft:'&#8377;91', depositMonths:'8', terms:'9+9, 3yr lock-in', sales1mo:'&#8377;6,10,000'},
+    comp:{households:'8,450', nearest:'5 discovered (500m)'} },
+  CHN1028: { id:'1028', name:'Anna Nagar West', city:'Chennai', locality:'Anna Nagar West 2nd Ave', size:'1,620 sqft', rent:'&#8377;1,38,000', landlord:'R. Elango', landlordPhone:'94440 XXXXX', source:'Employee Referral', geo:'13.0850, 80.2101', store:'Anna Nagar Central &middot; 3.0 km', hunter:'K. Raman', bde:'Demo BDE', assignedName:'Unassigned', assignedRole:'&mdash;', submitted:'28 Aug', stage:'cxo_pending',
+    siteEval:{facade:'26 ft', roadWidth:'24 ft', stairs:'0', parking:'55', shutters:'2', ceiling:'10.5 ft'},
+    fin:{rentSqft:'&#8377;85', depositMonths:'6', terms:'9+9, 3yr lock-in', sales1mo:'&#8377;4,40,000'},
+    comp:{households:'5,120', nearest:'2 discovered (500m)'} },
+  BLR1039: { id:'1039', name:'Indiranagar 100ft Rd', city:'Bengaluru', locality:'100 Feet Road, Indiranagar', size:'1,400 sqft', rent:'&#8377;2,10,000', landlord:'S. Bhat', landlordPhone:'99001 XXXXX', source:'Self', geo:'12.9719, 77.6412', store:'Indiranagar Central &middot; 0.6 km', hunter:'R. Suresh', bde:'A. Verma', assignedName:'M. Iyer', assignedRole:'BDM', submitted:'24 Aug', stage:'bdm_rejected',
+    siteEval:{facade:'22 ft', roadWidth:'100 ft', stairs:'0', parking:'0', shutters:'2', ceiling:'9.5 ft'},
+    fin:{rentSqft:'&#8377;150', depositMonths:'12', terms:'9+9, 3yr lock-in', sales1mo:'&#8377;3,80,000'},
+    comp:{households:'4,300', nearest:'9 discovered (500m)'} },
+  HYD1015: { id:'1015', name:'Gachibowli Circle', city:'Hyderabad', locality:'Gachibowli Main Circle', size:'2,340 sqft', rent:'&#8377;1,80,000', landlord:'T. Reddy', landlordPhone:'93910 XXXXX', source:'Self', geo:'17.4401, 78.3489', store:'Gachibowli Central &middot; 1.8 km', hunter:'S. Reddy', bde:'Demo BDE', assignedName:'P. Rao', assignedRole:'IC Member', submitted:'22 Aug', stage:'ic_pending',
+    siteEval:{facade:'40 ft', roadWidth:'60 ft', stairs:'3', parking:'90', shutters:'5', ceiling:'12.5 ft'},
+    fin:{rentSqft:'&#8377;77', depositMonths:'6', terms:'9+9, 3yr lock-in', sales1mo:'&#8377;6,90,000'},
+    comp:{households:'9,860', nearest:'1 discovered (500m)'} },
+  BLR1044: { id:'1044', name:'Koramangala 5th Block', city:'Bengaluru', locality:'80 Feet Road, Koramangala 5th Blk', size:'1,980 sqft', rent:'&#8377;2,05,000', landlord:'D. Shetty', landlordPhone:'99456 XXXXX', source:'Consultant', geo:'12.9351, 77.6146', store:'Koramangala Central &middot; 1.4 km', hunter:'A. Nair', bde:'A. Verma', assignedName:'K. Bose', assignedRole:'Site Evaluator', submitted:'6 Sep', stage:'siteeval_pending',
+    siteEval:{facade:'&mdash;', roadWidth:'Below 20 ft', stairs:'5.0', parking:'65.0', shutters:'53.0', ceiling:'36.0 ft'},
+    fin:{rentSqft:'&#8377;104', depositMonths:'6', terms:'&mdash;', sales1mo:'&#8377;4,53,000'},
+    comp:{households:'5,324', nearest:'None discovered'} },
+  CHN1030: { id:'1030', name:'Velachery Bypass', city:'Chennai', locality:'Velachery Bypass Road', size:'2,760 sqft', rent:'&#8377;1,60,000', landlord:'M. Iyer (LL)', landlordPhone:'90030 XXXXX', source:'Self', geo:'12.9756, 80.2207', store:'Velachery Central &middot; 0.9 km', hunter:'K. Raman', bde:'Demo BDE', assignedName:'IC Panel', assignedRole:'IC', submitted:'15 Aug', stage:'approved',
+    siteEval:{facade:'46 ft', roadWidth:'80 ft', stairs:'0', parking:'100', shutters:'6', ceiling:'13 ft'},
+    fin:{rentSqft:'&#8377;58', depositMonths:'6', terms:'9+9, 3yr lock-in', sales1mo:'&#8377;7,80,000'},
+    comp:{households:'11,240', nearest:'0 discovered (500m)'} },
+};
+var propCode = new URLSearchParams(window.location.search).get('code') || 'BLR1041';
+var seed = SEEDS[propCode] || SEEDS.BLR1041;
+propCode = SEEDS[propCode] ? propCode : 'BLR1041';
+
 var STAGES = ['Hunter','BDE','Site Eval','BDM','CXO','IC'];
+var STAGE_KEY_IDX = { bde:1, siteeval:2, bdm:3, cxo:4, ic:5 };
 var state = { outcome: null, mediaTab: 'photos', elapsedSec: 6*3600 + 42*60 + 10 };
 
 var ICONS = {
@@ -340,16 +382,38 @@ var ICONS = {
   lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
   dollar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-6"/></svg>',
   plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
 };
 
+function currentStageInfo() {
+  var stg = seed.stage;
+  if (stg === 'approved') return { idx: 5, suffix: 'done' };
+  var parts = stg.split('_');
+  var key = parts[0];
+  var suffix = parts.length > 1 ? parts.slice(1).join('_') : 'pending';
+  var idx = STAGE_KEY_IDX.hasOwnProperty(key) ? STAGE_KEY_IDX[key] : 0;
+  if (idx === 3 && state.outcome !== null) {
+    suffix = state.outcome === 'approved' ? 'done' : state.outcome === 'rejected' ? 'rejected' : 'hold';
+  }
+  return { idx: idx, suffix: suffix };
+}
+
 function bdmState() {
-  return { done: state.outcome === 'approved', rejected: state.outcome === 'rejected', held: state.outcome === 'hold', pending: state.outcome === null };
+  var info = currentStageInfo();
+  var atBdm = info.idx === 3;
+  if (!atBdm) return { done:false, rejected:false, held:false, pending:false, na:true };
+  return { done: info.suffix === 'done', rejected: info.suffix === 'rejected', held: info.suffix === 'hold', pending: info.suffix === 'pending' };
 }
 
 function stageBadge(idx) {
-  var b = bdmState();
-  if (idx < 3) return { cls:'done', icon: ICONS.check };
-  if (idx === 3) return b.done ? {cls:'done', icon:ICONS.check} : b.rejected ? {cls:'rejected', icon:ICONS.x} : b.held ? {cls:'hold', icon:ICONS.pause} : {cls:'current', icon:ICONS.bdm};
+  var info = currentStageInfo();
+  if (idx < info.idx) return { cls:'done', icon: ICONS.check };
+  if (idx === info.idx) {
+    if (info.suffix === 'rejected') return { cls:'rejected', icon: ICONS.x };
+    if (info.suffix === 'hold') return { cls:'hold', icon: ICONS.pause };
+    if (info.suffix === 'done') return { cls:'done', icon: ICONS.check };
+    return { cls:'current', icon: idx===3 ? ICONS.bdm : ICONS.clock };
+  }
   return {cls:'future', icon:ICONS.lock};
 }
 
@@ -373,42 +437,58 @@ function cardHead(badgeCls, icon, name, tag) {
   return '<div class="stchead"><div class="stbadge ' + badgeCls + '">' + icon + '</div><div class="stname">' + name + '</div><span class="sttag ' + badgeCls + '">' + tag + '</span>' + CHEV + '</div>';
 }
 
+function stageCardMeta(idx) {
+  var badge = stageBadge(idx);
+  var tag = badge.cls === 'done' ? 'Complete' : badge.cls === 'rejected' ? 'Rejected' : badge.cls === 'hold' ? 'On hold' : badge.cls === 'current' ? 'Your turn to act' : 'Locked';
+  return { badge: badge, tag: tag };
+}
+
 function renderStages() {
+  var info = currentStageInfo();
   var b = bdmState();
   var html = '';
 
-  html += '<div class="stcard" data-key="hunter">' + cardHead('done', ICONS.check, 'Hunter Submission', 'Complete') +
-    '<div class="stbody">' + fieldGrid([['Locality','Whitefield Main Rd'],['Size','1,850 sqft'],['Expected Rent','&#8377;1,65,000'],['Landlord','N. Gowda'],['Landlord Phone','98450 XXXXX'],['Source','Self'],['City','Bengaluru'],['Submitted','12 Aug']]) + '</div></div>';
+  var hm = stageCardMeta(0);
+  html += '<div class="stcard" data-key="hunter">' + cardHead(hm.badge.cls, hm.badge.icon, 'Hunter Submission', info.idx > 0 ? 'Complete' : hm.tag) +
+    '<div class="stbody">' + fieldGrid([['Locality',seed.locality],['Size',seed.size],['Expected Rent',seed.rent],['Landlord',seed.landlord],['Landlord Phone',seed.landlordPhone],['Source',seed.source],['City',seed.city],['Submitted',seed.submitted]]) + '</div></div>';
 
-  html += '<div class="stcard" data-key="bde">' + cardHead('done', ICONS.check, 'BDE Review', 'Approved') +
-    '<div class="stbody">' + fieldGrid([['Rent / sqft','&#8377;89'],['Frontage','32 ft'],['Property Type','Regular'],['Rent In Line','Yes'],['Deposit','&#8377;9,90,000'],['Deposit Months','6'],['Occupation By','30&ndash;60 days'],['Reviewed','14 Aug']]) + '</div></div>';
+  var bm = stageCardMeta(1);
+  html += '<div class="stcard" data-key="bde">' + cardHead(bm.badge.cls, bm.badge.icon, 'BDE Review', bm.tag) +
+    '<div class="stbody">' + fieldGrid([['Rent / sqft',seed.fin.rentSqft],['Frontage',seed.siteEval.facade],['Property Type','Regular'],['Rent In Line','Yes'],['Deposit Months',seed.fin.depositMonths],['Occupation By','30&ndash;60 days'],['Reviewed By',seed.bde],['Submitted',seed.submitted]]) + '</div></div>';
 
-  html += '<div class="stcard" data-key="siteeval">' + cardHead('done', ICONS.check, 'Site Evaluation', '42/48 checks') +
-    '<div class="stbody">' + fieldGrid([['Location Score','Strong'],['Property Score','Adequate'],['Catchment Profile','61% SEC A'],['Competition','3 nearby']]) + '</div></div>';
+  var sm = stageCardMeta(2);
+  html += '<div class="stcard" data-key="siteeval">' + cardHead(sm.badge.cls, sm.badge.icon, 'Site Evaluation', sm.tag) +
+    '<div class="stbody">' + fieldGrid([['Road Width',seed.siteEval.roadWidth],['Stairs',seed.siteEval.stairs],['2-Wheeler Parking',seed.siteEval.parking],['Shutters',seed.siteEval.shutters],['Ceiling Height',seed.siteEval.ceiling],['Households (GeoIQ)',seed.comp.households]]) + '</div></div>';
 
-  var bdmBadge = b.done?'done':b.rejected?'rejected':b.held?'hold':'current';
-  var bdmTag = b.done?'Approved':b.rejected?'Rejected':b.held?'On hold':'Your turn to act';
-  html += '<div class="stcard ' + (bdmBadge==='current'?'current':'') + '" data-key="bdm">' + cardHead(bdmBadge, b.done?ICONS.check:b.rejected?ICONS.x:b.held?ICONS.pause:ICONS.bdm, 'BDM Review', bdmTag) + '<div class="stbody">';
+  var bdmBadge = b.na ? stageBadge(3) : { cls: b.done?'done':b.rejected?'rejected':b.held?'hold':'current', icon: b.done?ICONS.check:b.rejected?ICONS.x:b.held?ICONS.pause:ICONS.bdm };
+  var bdmTag = b.na ? stageCardMeta(3).tag : (b.done?'Approved':b.rejected?'Rejected':b.held?'On hold':'Your turn to act');
+  html += '<div class="stcard ' + (bdmBadge.cls==='current'?'current':'') + '" data-key="bdm">' + cardHead(bdmBadge.cls, bdmBadge.icon, 'BDM Review', bdmTag) + '<div class="stbody">';
   if (b.pending) {
-    html += '<div class="editgrid"><div><label>Sales Estimate &middot; 1 Month (&#8377;)</label><div class="fakeinput focus">42,00,000</div></div><div><label>Sales Estimate &middot; 3 Month (&#8377;)</label><div class="fakeinput">58,00,000</div></div><div><label>GeoIQ Household Count</label><div class="fakeinput">6,200</div></div></div>' +
+    html += '<div class="editgrid"><div><label>Sales Estimate &middot; 1 Month (&#8377;)</label><div class="fakeinput focus">' + seed.fin.sales1mo.replace('&#8377;','') + '</div></div><div><label>Sales Estimate &middot; 3 Month (&#8377;)</label><div class="fakeinput">58,00,000</div></div><div><label>GeoIQ Household Count</label><div class="fakeinput">' + seed.comp.households + '</div></div></div>' +
       '<div class="actionrow"><div class="commentbox"><label>Comments <span style="color:var(--faint); font-weight:500;">(required for Reject / Hold)</span></label><div class="textarea">Add context for this decision&hellip;</div></div>' +
       '<div class="actionbtns"><div class="abtn hold" id="btnHold">Hold</div><div class="abtn reject" id="btnReject">Reject</div><div class="abtn approve" id="btnApprove">Approve</div></div></div>';
   } else if (b.done) {
-    html += '<div class="decidedbox approve"><div class="ic">' + ICONS.check + '</div><div><div class="t">Approved by M. Iyer</div><div class="d">Sales est. &#8377;42L (1mo) / &#8377;58L (3mo).</div></div></div>';
+    html += '<div class="decidedbox approve"><div class="ic">' + ICONS.check + '</div><div><div class="t">Approved by ' + seed.assignedName + '</div><div class="d">Sales est. ' + seed.fin.sales1mo + ' (1mo).</div></div></div>';
   } else if (b.rejected) {
-    html += '<div class="decidedbox reject"><div class="ic">' + ICONS.x + '</div><div><div class="t">Rejected by M. Iyer</div><div class="d">Pipeline stops here &mdash; property marked BDM Rejected.</div></div></div>';
+    html += '<div class="decidedbox reject"><div class="ic">' + ICONS.x + '</div><div><div class="t">Rejected by ' + seed.assignedName + '</div><div class="d">Pipeline stops here &mdash; property marked BDM Rejected.</div></div></div>';
   } else if (b.held) {
-    html += '<div class="decidedbox hold"><div class="ic">' + ICONS.pause + '</div><div><div class="t">On hold &mdash; M. Iyer</div><div class="d">BDE and BDM can both still act while on hold.</div></div></div>';
+    html += '<div class="decidedbox hold"><div class="ic">' + ICONS.pause + '</div><div><div class="t">On hold &mdash; ' + seed.assignedName + '</div><div class="d">BDE and BDM can both still act while on hold.</div></div></div>';
+  } else if (info.idx > 3) {
+    html += '<div class="decidedbox approve"><div class="ic">' + ICONS.check + '</div><div><div class="t">Approved</div><div class="d">Sales est. ' + seed.fin.sales1mo + ' (1mo).</div></div></div>';
+  } else {
+    html += '<div class="lockrow">' + ICONS.lock + 'Awaiting Site Evaluation completion.</div>';
   }
   html += '</div></div>';
 
-  var negDim = b.done ? '' : 'dim';
-  html += '<div class="stcard ' + negDim + '" data-key="neg">' + cardHead(b.done?'current':'future', ICONS.dollar, 'Negotiation Rounds', b.done?'Open':'Locked') +
+  var negOpen = info.idx > 3 || (info.idx === 3 && info.suffix === 'done');
+  html += '<div class="stcard ' + (negOpen?'':'dim') + '" data-key="neg">' + cardHead(negOpen?'current':'future', ICONS.dollar, 'Negotiation Rounds', negOpen?'Open':'Locked') +
     '<div class="stbody"><table class="negtable"><thead><tr><th>Round</th><th>Monthly Rent</th><th>Deposit (months)</th><th>Agreement Term</th></tr></thead><tbody><tr><td>&mdash;</td><td colspan="3" style="color:var(--faint);">' +
-    (b.done ? 'No rounds recorded yet — add the first round above.' : 'No rounds yet — opens once BDM approves.') + '</td></tr></tbody></table></div></div>';
+    (negOpen ? 'No rounds recorded yet — add the first round above.' : 'No rounds yet — opens once BDM approves.') + '</td></tr></tbody></table></div></div>';
 
-  html += '<div class="stcard dim" data-key="cxo">' + cardHead('future', ICONS.lock, 'CXO Review', 'Locked') + '<div class="stbody"><div class="lockrow">' + ICONS.lock + 'Max rent / deposit approval &mdash; unlocks once BDM approves.</div></div></div>';
-  html += '<div class="stcard dim" data-key="ic">' + cardHead('future', ICONS.lock, 'IC Decision', 'Locked') + '<div class="stbody"><div class="lockrow">' + ICONS.lock + 'Final approval &amp; canonical property name &mdash; unlocks once CXO approves.</div></div></div>';
+  var cm = stageCardMeta(4);
+  html += '<div class="stcard ' + (cm.badge.cls==='future'?'dim':'') + '" data-key="cxo">' + cardHead(cm.badge.cls, cm.badge.icon, 'CXO Review', cm.tag) + '<div class="stbody"><div class="lockrow">' + (cm.badge.cls==='future'?ICONS.lock:ICONS.clock) + 'Max rent / deposit approval &mdash; unlocks once BDM approves.</div></div></div>';
+  var im = stageCardMeta(5);
+  html += '<div class="stcard ' + (im.badge.cls==='future'?'dim':'') + '" data-key="ic">' + cardHead(im.badge.cls, im.badge.icon, 'IC Decision', im.tag) + '<div class="stbody"><div class="lockrow">' + (im.badge.cls==='future'?ICONS.lock:ICONS.clock) + 'Final approval &amp; canonical property name &mdash; unlocks once CXO approves.</div></div></div>';
 
   document.getElementById('stageStack').innerHTML = html;
   applyOpenState();
@@ -452,12 +532,14 @@ var INDEX_ITEMS = [
   ['cxo', 'CXO Review'],
   ['ic', 'IC Decision'],
 ];
+var INDEX_KEY_IDX = { hunter:0, bde:1, siteeval:2, bdm:3, cxo:4, ic:5 };
 function indexBadge(key) {
-  var b = bdmState();
-  if (key === 'hunter' || key === 'bde' || key === 'siteeval') return { cls:'done', icon:ICONS.check };
-  if (key === 'bdm') return b.done ? {cls:'done', icon:ICONS.check} : b.rejected ? {cls:'rejected', icon:ICONS.x} : b.held ? {cls:'hold', icon:ICONS.pause} : {cls:'current', icon:ICONS.bdm};
-  if (key === 'neg') return b.done ? {cls:'current', icon:ICONS.dollar} : {cls:'future', icon:ICONS.lock};
-  return {cls:'future', icon:ICONS.lock};
+  var info = currentStageInfo();
+  if (key === 'neg') {
+    var negOpen = info.idx > 3 || (info.idx === 3 && info.suffix === 'done');
+    return negOpen ? {cls:'current', icon:ICONS.dollar} : {cls:'future', icon:ICONS.lock};
+  }
+  return stageBadge(INDEX_KEY_IDX[key]);
 }
 function renderIndex() {
   var html = INDEX_ITEMS.map(function (it) {
@@ -480,13 +562,15 @@ function goToStage(key) {
 
 // ---- Floating Take Action banner ----
 function renderTakeAction() {
-  var b = bdmState();
+  var info = currentStageInfo();
   var banner = document.getElementById('takeActionBanner');
   var role = getCurrentRole();
-  if (role === 'bdm' && b.pending) {
+  var pendingKeyByIdx = { 3: 'bdm' };
+  var key = pendingKeyByIdx[info.idx];
+  if (key && role === key && info.suffix === 'pending') {
     document.getElementById('takeActionText').textContent = 'Take action';
     banner.classList.add('show');
-    banner.onclick = function () { goToStage('bdm'); };
+    banner.onclick = function () { goToStage(key); };
   } else {
     banner.classList.remove('show');
     banner.onclick = null;
@@ -518,17 +602,57 @@ function renderMedia() {
 document.getElementById('tabPhotos').addEventListener('click', function () { state.mediaTab = 'photos'; document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
 document.getElementById('tabDocs').addEventListener('click', function () { state.mediaTab = 'docs'; document.getElementById('tabDocs').classList.add('on'); document.getElementById('tabPhotos').classList.remove('on'); renderMedia(); });
 
+var STAGE_STATUS_LABEL = { hunter:'Hunter Submitted', bde:'BDE Review Pending', siteeval:'Site Evaluation Pending', bdm:'BDM Review Pending', cxo:'CXO Review Pending', ic:'IC Review Pending' };
 function renderHead() {
-  var b = bdmState();
-  var label = 'BDM Review Pending', bg = '#fbf1dc', color = '#a9740c';
-  if (b.done) { label = 'CXO Review Pending'; }
-  if (b.rejected) { label = 'BDM Rejected'; bg = '#f8e8e8'; color = '#ad3d3d'; }
-  if (b.held) { label = 'BDM Review on Hold'; bg = '#efe6f4'; color = '#7c4f96'; }
+  var info = currentStageInfo();
+  var stageNames = ['hunter','bde','siteeval','bdm','cxo','ic'];
+  var key = stageNames[info.idx] || 'ic';
+  var label = STAGE_STATUS_LABEL[key] || 'In Review', bg = '#fbf1dc', color = '#a9740c';
+  if (info.idx === 5 && info.suffix === 'done') { label = 'Approved'; bg = '#e5f3ea'; color = '#2f8a53'; }
+  else if (info.suffix === 'rejected') { label = (key==='bdm'?'BDM':key.toUpperCase()) + ' Rejected'; bg = '#f8e8e8'; color = '#ad3d3d'; }
+  else if (info.suffix === 'hold') { label = (key==='bdm'?'BDM':key.toUpperCase()) + ' Review on Hold'; bg = '#efe6f4'; color = '#7c4f96'; }
   var el = document.getElementById('headStatus');
   el.style.background = bg; el.style.color = color;
   el.innerHTML = '<span class="dot"></span>' + label;
-  var ov = document.getElementById('ovStage');
-  if (ov) ov.textContent = label;
+
+  document.title = seed.name + ' — PropFlow';
+  var crumb = document.getElementById('crumbCode'); if (crumb) crumb.textContent = propCode;
+  var titleEl = document.getElementById('propTitle'); if (titleEl) titleEl.textContent = seed.name;
+  var codeEl = document.getElementById('propCode'); if (codeEl) codeEl.textContent = propCode;
+  var catchLink = document.getElementById('catchmentLink');
+  if (catchLink) catchLink.setAttribute('href', 'catchment.html?code=' + propCode + '&name=' + encodeURIComponent(seed.name));
+}
+
+function renderOverview() {
+  var ov = document.getElementById('ovDynamic');
+  if (!ov) return;
+  function section(title, items) {
+    return '<div class="summarycard"><div class="panetitle">' + title + '</div>' + fieldGrid(items) + '</div>';
+  }
+  var html = '';
+  html += section('Property Overview', [
+    ['Property ID', seed.id], ['Property Code', propCode], ['City', seed.city], ['Property Locality', seed.locality],
+    ['Size', seed.size], ['GeoCoordinates', seed.geo], ['Hunter', seed.hunter], ['BDE', seed.bde], ['Nearest Savo Store', seed.store],
+  ]);
+  html += section('Site Evaluation', [
+    ['Facade / Frontage', seed.siteEval.facade], ['Road Width', seed.siteEval.roadWidth], ['Stairs', seed.siteEval.stairs],
+    ['2-Wheeler Parking', seed.siteEval.parking], ['Shutters', seed.siteEval.shutters], ['Ceiling Height', seed.siteEval.ceiling],
+  ]);
+  html += section('Financials', [
+    ['Expected Rent', seed.rent], ['Expected Rent per Sqft', seed.fin.rentSqft], ['Deposit (Months)', seed.fin.depositMonths],
+    ['Terms of Agreement', seed.fin.terms], ['Expected Sales &mdash; 1st Month', seed.fin.sales1mo],
+  ]);
+  html += section('Competition &amp; Catchment', [
+    ['GeoIQ Household Count', seed.comp.households], ['Nearest Competitors (500m)', seed.comp.nearest],
+  ]);
+  html += '<div class="summarycard"><div class="panetitle">Interactive Map</div>' +
+    '<div class="maplegend"><span><i style="background:#5b8a63;"></i>Property</span><span><i style="background:#c98a3a;"></i>Competitors</span><span><i style="background:#4c7ba6;"></i>Nearest Store</span></div>' +
+    '<div class="mapbox"><svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="180" fill="#e8ecdd"/><path d="M0 90 H400 M120 0 V180 M270 0 V180" stroke="#c9d0b8" stroke-width="2"/><circle cx="190" cy="95" r="7" fill="#5b8a63"/><circle cx="240" cy="60" r="5" fill="#c98a3a"/><circle cx="150" cy="130" r="5" fill="#c98a3a"/><circle cx="90" cy="50" r="5" fill="#4c7ba6"/></svg></div></div>';
+  html += section('Sourcing &amp; Assignment', [
+    ['Hunter', seed.hunter], ['Submitted', seed.submitted], ['Assigned To', seed.assignedName + ' &middot; ' + seed.assignedRole],
+    ['Current Stage', '<span id="ovStage">' + (STAGE_STATUS_LABEL[['hunter','bde','siteeval','bdm','cxo','ic'][currentStageInfo().idx] || 'ic'] || 'In Review') + '</span>'],
+  ]);
+  ov.innerHTML = html;
 }
 
 function fmt(sec) {
@@ -537,11 +661,39 @@ function fmt(sec) {
   return pad(h)+':'+pad(m)+':'+pad(s);
 }
 
-function render() { renderHead(); renderFlow(); renderStages(); renderIndex(); renderTakeAction(); }
+function render() { renderHead(); renderFlow(); renderStages(); renderIndex(); renderTakeAction(); renderOverview(); }
 
 render();
 renderMedia();
 initUserMenu();
+
+// ---- Feedback (single shared comment box, not per-role) ----
+var feedbackItems = [
+  { initials:'PM', grad:'linear-gradient(155deg,#3f6e85,#2c4e60)', name:'P. Menon', role:'MXM', time:'2 Sep', text:'Household count from GeoIQ looks solid for this catchment — worth pushing sales estimate slightly.' },
+];
+function renderFeedback() {
+  var list = document.getElementById('feedbackList');
+  if (!feedbackItems.length) {
+    list.innerHTML = '<div class="fb-empty">No feedback yet — be the first to add context for this property.</div>';
+    return;
+  }
+  list.innerHTML = feedbackItems.map(function (f) {
+    return '<div class="fb-item"><div class="av" style="background:' + f.grad + ';">' + f.initials + '</div>' +
+      '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + f.name + '</span><span class="fb-time">' + f.role + ' &middot; ' + f.time + '</span></div>' +
+      '<div class="fb-text">' + f.text + '</div></div></div>';
+  }).join('');
+}
+renderFeedback();
+document.getElementById('fbPostBtn').addEventListener('click', function () {
+  var input = document.getElementById('fbInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var u = getCurrentUser();
+  feedbackItems.push({ initials:u.initials, grad:u.grad, name:u.name, role:u.role, time:'Just now', text:text });
+  input.value = '';
+  renderFeedback();
+  showToast('Feedback posted');
+});
 
 var shareBtn = document.getElementById('shareBtn');
 var sharePop = document.getElementById('sharePop');
