@@ -119,15 +119,15 @@
   .lockrow{display:flex; align-items:center; gap:9px; color:var(--faint); font-size:12.5px;}
   .lockrow svg{width:15px;height:15px; flex:none;}
 
-  .fb-item{display:flex; gap:11px; margin-bottom:16px;}
-  .fb-item .av{width:30px;height:30px;font-size:10.5px; flex:none;}
-  .fb-body{flex:1; min-width:0;}
-  .fb-head{display:flex; align-items:baseline; gap:8px;}
-  .fb-name{font-size:12.5px; font-weight:700;}
-  .fb-time{font-size:11px; color:var(--faint);}
-  .fb-text{font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:2px;}
+  .fb-item{margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--line-soft);}
+  .fb-item:last-child{margin-bottom:0; padding-bottom:0; border-bottom:none;}
+  .fb-head{display:flex; align-items:center; gap:10px;}
+  .fb-name{font-size:13.5px; font-weight:700; flex:none;}
+  .fb-time{font-size:11.5px; color:var(--faint); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .fb-body{margin-top:8px;}
+  .fb-text{font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:6px;}
   .fb-empty{font-size:12px; color:var(--faint); margin-bottom:14px;}
-  .fb-action{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 8px; border-radius:100px; margin-left:8px;}
+  .fb-action{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:3px 9px; border-radius:100px; margin-left:auto; flex:none;}
   .fb-action.done{background:var(--good-bg); color:var(--good);}
   .fb-action.rejected{background:var(--bad-bg); color:var(--bad);}
   .fb-action.hold{background:var(--hold-bg); color:var(--hold);}
@@ -438,24 +438,32 @@ function stageCardMeta(idx) {
   return { badge: badge, tag: tag };
 }
 
+function formatNow() {
+  var d = new Date();
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var h = d.getHours(), m = d.getMinutes();
+  var ampm = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12; if (h12 === 0) h12 = 12;
+  return d.getDate() + ' ' + months[d.getMonth()] + ', ' + h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+}
 var COMPLETED_BY = {
-  hunter: { by: seed.hunter, on: seed.submitted, time: '9:14 AM' },
-  bde: { by: seed.bde, on: seed.submitted, time: '2:30 PM' },
-  siteeval: { by: seed.assignedRole === 'Site Evaluator' ? seed.assignedName : 'Site Eval Team', on: seed.submitted, time: '11:05 AM' },
-  bdm: { by: seed.assignedName, on: seed.submitted, time: '4:15 PM' },
-  cxo: { by: 'CXO Panel', on: seed.submitted, time: '5:40 PM' },
-  ic: { by: 'IC Panel', on: seed.submitted, time: '6:20 PM' },
+  hunter: { by: seed.hunter, on: seed.submitted + ', 9:14 AM' },
+  bde: { by: seed.bde, on: seed.submitted + ', 2:30 PM' },
+  siteeval: { by: seed.assignedRole === 'Site Evaluator' ? seed.assignedName : 'Site Eval Team', on: seed.submitted + ', 11:05 AM' },
+  bdm: { by: seed.assignedName, on: seed.submitted + ', 4:15 PM' },
+  cxo: { by: 'CXO Panel', on: seed.submitted + ', 5:40 PM' },
+  ic: { by: 'IC Panel', on: seed.submitted + ', 6:20 PM' },
 };
 function stageMetaOf(key) {
   var m = COMPLETED_BY[key] || {};
-  if (key === 'bdm' && state.outcome !== null) return { by: m.by, on: 'Today', time: 'Just now' };
+  if (key === 'bdm' && state.outcome !== null) return { by: m.by, on: formatNow() };
   return m;
 }
 function completedByLine(key, isDone) {
   if (!isDone) return '';
   var m = stageMetaOf(key);
   if (!m || !m.by) return '';
-  return 'by ' + m.by + ' &middot; ' + m.on + ', ' + m.time;
+  return 'by ' + m.by + ' &middot; ' + m.on;
 }
 
 function renderStages() {
@@ -658,10 +666,9 @@ function reviewGist() {
   var entries = [];
   function push(key, label, action, fields, comment) {
     var m = stageMetaOf(key);
-    entries.push({ key:key, label:label, action:action, by:m.by||'—', on:m.on||'—', time:m.time||'', fields:fields||[], comment:comment||'' });
+    entries.push({ key:key, label:label, action:action, by:m.by||'—', on:m.on||'—', fields:fields||[], comment:comment||'' });
   }
 
-  if (info.idx > 0) push('hunter', 'Hunter Submission', 'done', [['Locality',seed.locality],['Size',seed.size],['Expected Rent',seed.rent]], 'New property submitted for review.');
   if (info.idx > 1) push('bde', 'BDE Review', 'done', [['Rent / sqft',seed.fin.rentSqft],['Deposit Months',seed.fin.depositMonths],['Occupation By','30&ndash;60 days']], 'Numbers check out &mdash; proceeding to Site Evaluation.');
   if (info.idx > 2) push('siteeval', 'Site Evaluation', 'done', [['Road Width',seed.siteEval.roadWidth],['2-Wheeler Parking',seed.siteEval.parking],['GeoIQ Household Count',seed.comp.households]], 'Site meets footfall and access requirements.');
 
@@ -692,11 +699,12 @@ function renderFeedback() {
     var fieldsHtml = e.fields.length ? '<div class="fb-fields">' + e.fields.map(function (f) {
       return '<span class="fchip"><span class="fk">' + f[0] + '</span><span class="fv">' + f[1] + '</span></span>';
     }).join('') + '</div>' : '';
-    return '<div class="fb-item"><div class="stbadge ' + e.action + '" style="flex:none;">' + (e.action==='done'?ICONS.check:e.action==='rejected'?ICONS.x:ICONS.pause) + '</div>' +
-      '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + e.label + '</span><span class="fb-action ' + e.action + '">' + actionLabel + '</span></div>' +
-      '<div class="fb-time">by ' + e.by + ' &middot; ' + e.on + (e.time ? ', ' + e.time : '') + '</div>' +
-      fieldsHtml +
-      '<div class="fb-text">' + e.comment + '</div></div></div>';
+    return '<div class="fb-item">' +
+      '<div class="fb-head"><div class="stbadge ' + e.action + '" style="flex:none;">' + (e.action==='done'?ICONS.check:e.action==='rejected'?ICONS.x:ICONS.pause) + '</div>' +
+      '<span class="fb-name">' + e.label + '</span>' +
+      '<span class="fb-time">by ' + e.by + ' &middot; ' + e.on + '</span>' +
+      '<span class="fb-action ' + e.action + '">' + actionLabel + '</span></div>' +
+      '<div class="fb-body">' + fieldsHtml + '<div class="fb-text">' + e.comment + '</div></div></div>';
   }).join('');
 }
 
