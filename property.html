@@ -127,11 +127,14 @@
   .fb-time{font-size:11px; color:var(--faint);}
   .fb-text{font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:2px;}
   .fb-empty{font-size:12px; color:var(--faint); margin-bottom:14px;}
-  .fb-composer{display:flex; gap:10px; align-items:flex-end; padding-top:14px; border-top:1px solid var(--line-soft);}
-  .fb-textarea{flex:1; min-height:60px; resize:vertical; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:10px 12px; font-size:12.5px; font-family:inherit; color:var(--ink);}
-  .fb-textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
-  .fb-postbtn{height:38px; padding:0 18px; border-radius:9px; background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; border:none; cursor:pointer; flex:none;}
-  .fb-postbtn:hover{filter:brightness(.96);}
+  .fb-action{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 8px; border-radius:100px; margin-left:8px;}
+  .fb-action.done{background:var(--good-bg); color:var(--good);}
+  .fb-action.rejected{background:var(--bad-bg); color:var(--bad);}
+  .fb-action.hold{background:var(--hold-bg); color:var(--hold);}
+  .fb-fields{display:flex; flex-wrap:wrap; gap:5px 16px; margin-top:8px;}
+  .fb-fields .fchip{font-size:11.5px;}
+  .fb-fields .fchip .fk{color:var(--faint); font-weight:600; margin-right:4px;}
+  .fb-fields .fchip .fv{color:var(--ink); font-weight:700;}
 
   .negtable{width:100%; border-collapse:collapse; font-size:12.5px;}
   .negtable th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); padding:8px 10px; border-bottom:1px solid var(--line);}
@@ -271,10 +274,6 @@
             <div class="summarycard">
               <div class="panetitle">Feedback</div>
               <div id="feedbackList"></div>
-              <div class="fb-composer">
-                <textarea class="fb-textarea" id="fbInput" placeholder="Add feedback for anyone on this property&hellip;"></textarea>
-                <button class="fb-postbtn" id="fbPostBtn">Post</button>
-              </div>
             </div>
           </div>
 
@@ -440,18 +439,23 @@ function stageCardMeta(idx) {
 }
 
 var COMPLETED_BY = {
-  hunter: { by: seed.hunter, on: seed.submitted },
-  bde: { by: seed.bde, on: seed.submitted },
-  siteeval: { by: seed.assignedRole === 'Site Evaluator' ? seed.assignedName : 'Site Eval Team', on: seed.submitted },
-  bdm: { by: seed.assignedName, on: seed.submitted },
-  cxo: { by: 'CXO Panel', on: seed.submitted },
-  ic: { by: 'IC Panel', on: seed.submitted },
+  hunter: { by: seed.hunter, on: seed.submitted, time: '9:14 AM' },
+  bde: { by: seed.bde, on: seed.submitted, time: '2:30 PM' },
+  siteeval: { by: seed.assignedRole === 'Site Evaluator' ? seed.assignedName : 'Site Eval Team', on: seed.submitted, time: '11:05 AM' },
+  bdm: { by: seed.assignedName, on: seed.submitted, time: '4:15 PM' },
+  cxo: { by: 'CXO Panel', on: seed.submitted, time: '5:40 PM' },
+  ic: { by: 'IC Panel', on: seed.submitted, time: '6:20 PM' },
 };
+function stageMetaOf(key) {
+  var m = COMPLETED_BY[key] || {};
+  if (key === 'bdm' && state.outcome !== null) return { by: m.by, on: 'Today', time: 'Just now' };
+  return m;
+}
 function completedByLine(key, isDone) {
   if (!isDone) return '';
-  var m = COMPLETED_BY[key];
-  if (!m) return '';
-  return 'by ' + m.by + ' &middot; ' + m.on;
+  var m = stageMetaOf(key);
+  if (!m || !m.by) return '';
+  return 'by ' + m.by + ' &middot; ' + m.on + ', ' + m.time;
 }
 
 function renderStages() {
@@ -591,6 +595,7 @@ function renderHead() {
   if (info.idx === 5 && info.suffix === 'done') { label = 'Approved'; bg = '#e5f3ea'; color = '#2f8a53'; }
   else if (info.suffix === 'rejected') { label = (key==='bdm'?'BDM':key.toUpperCase()) + ' Rejected'; bg = '#f8e8e8'; color = '#ad3d3d'; }
   else if (info.suffix === 'hold') { label = (key==='bdm'?'BDM':key.toUpperCase()) + ' Review on Hold'; bg = '#efe6f4'; color = '#7c4f96'; }
+  else if (info.suffix === 'done') { var nextKey = stageNames[info.idx + 1] || 'ic'; label = STAGE_STATUS_LABEL[nextKey] || 'In Review'; }
   var el = document.getElementById('headStatus');
   el.style.background = bg; el.style.color = color;
   el.innerHTML = '<span class="dot"></span>' + label;
@@ -641,39 +646,59 @@ function fmt(sec) {
   return pad(h)+':'+pad(m)+':'+pad(s);
 }
 
-function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); renderOverview(); }
+function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); renderOverview(); renderFeedback(); }
 
 render();
 renderMedia();
 initUserMenu();
 
-// ---- Feedback (single shared comment box, not per-role) ----
-var feedbackItems = [
-  { initials:'PM', grad:'linear-gradient(155deg,#3f6e85,#2c4e60)', name:'P. Menon', role:'MXM', time:'2 Sep', text:'Household count from GeoIQ looks solid for this catchment — worth pushing sales estimate slightly.' },
-];
+// ---- Feedback: a read-only gist of every completed review, not a comment box ----
+function reviewGist() {
+  var info = currentStageInfo();
+  var entries = [];
+  function push(key, label, action, fields, comment) {
+    var m = stageMetaOf(key);
+    entries.push({ key:key, label:label, action:action, by:m.by||'—', on:m.on||'—', time:m.time||'', fields:fields||[], comment:comment||'' });
+  }
+
+  if (info.idx > 0) push('hunter', 'Hunter Submission', 'done', [['Locality',seed.locality],['Size',seed.size],['Expected Rent',seed.rent]], 'New property submitted for review.');
+  if (info.idx > 1) push('bde', 'BDE Review', 'done', [['Rent / sqft',seed.fin.rentSqft],['Deposit Months',seed.fin.depositMonths],['Occupation By','30&ndash;60 days']], 'Numbers check out &mdash; proceeding to Site Evaluation.');
+  if (info.idx > 2) push('siteeval', 'Site Evaluation', 'done', [['Road Width',seed.siteEval.roadWidth],['2-Wheeler Parking',seed.siteEval.parking],['GeoIQ Household Count',seed.comp.households]], 'Site meets footfall and access requirements.');
+
+  var pastBdm = info.idx > 3;
+  var atBdmDone = info.idx === 3 && info.suffix === 'done';
+  if (pastBdm || atBdmDone) {
+    push('bdm', 'BDM Review', 'done', [['Sales Estimate &middot; 1 Month',seed.fin.sales1mo],['Sales Estimate &middot; 3 Month','&#8377;58,00,000'],['GeoIQ Household Count',seed.comp.households]], 'Sales est. ' + seed.fin.sales1mo + ' (1mo) looks achievable for this catchment.');
+  } else if (info.idx === 3 && info.suffix === 'rejected') {
+    push('bdm', 'BDM Review', 'rejected', [['Sales Estimate &middot; 1 Month',seed.fin.sales1mo]], "Numbers don't support this location &mdash; pipeline stopped here.");
+  } else if (info.idx === 3 && info.suffix === 'hold') {
+    push('bdm', 'BDM Review', 'hold', [], 'Placed on hold pending further clarification.');
+  }
+
+  if (info.idx > 4) push('cxo', 'CXO Review', 'done', [['Max Rent Approved',seed.rent],['Max Deposit Approved',seed.fin.depositMonths + ' months']], 'Terms within approved band &mdash; cleared for IC.');
+  if (info.idx === 5 && info.suffix === 'done') push('ic', 'IC Decision', 'done', [['Canonical Name',seed.name]], 'Final sign-off &mdash; property approved for launch.');
+
+  return entries.reverse();
+}
 function renderFeedback() {
   var list = document.getElementById('feedbackList');
-  if (!feedbackItems.length) {
-    list.innerHTML = '<div class="fb-empty">No feedback yet — be the first to add context for this property.</div>';
+  var entries = reviewGist();
+  if (!entries.length) {
+    list.innerHTML = '<div class="fb-empty">No reviews completed yet.</div>';
     return;
   }
-  list.innerHTML = feedbackItems.map(function (f) {
-    return '<div class="fb-item"><div class="av" style="background:' + f.grad + ';">' + f.initials + '</div>' +
-      '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + f.name + '</span><span class="fb-time">' + f.role + ' &middot; ' + f.time + '</span></div>' +
-      '<div class="fb-text">' + f.text + '</div></div></div>';
+  list.innerHTML = entries.map(function (e) {
+    var actionLabel = e.action === 'done' ? 'Complete' : e.action === 'rejected' ? 'Rejected' : 'On hold';
+    var fieldsHtml = e.fields.length ? '<div class="fb-fields">' + e.fields.map(function (f) {
+      return '<span class="fchip"><span class="fk">' + f[0] + '</span><span class="fv">' + f[1] + '</span></span>';
+    }).join('') + '</div>' : '';
+    return '<div class="fb-item"><div class="stbadge ' + e.action + '" style="flex:none;">' + (e.action==='done'?ICONS.check:e.action==='rejected'?ICONS.x:ICONS.pause) + '</div>' +
+      '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + e.label + '</span><span class="fb-action ' + e.action + '">' + actionLabel + '</span></div>' +
+      '<div class="fb-time">by ' + e.by + ' &middot; ' + e.on + (e.time ? ', ' + e.time : '') + '</div>' +
+      fieldsHtml +
+      '<div class="fb-text">' + e.comment + '</div></div></div>';
   }).join('');
 }
-renderFeedback();
-document.getElementById('fbPostBtn').addEventListener('click', function () {
-  var input = document.getElementById('fbInput');
-  var text = input.value.trim();
-  if (!text) return;
-  var u = getCurrentUser();
-  feedbackItems.push({ initials:u.initials, grad:u.grad, name:u.name, role:u.role, time:'Just now', text:text });
-  input.value = '';
-  renderFeedback();
-  showToast('Feedback posted');
-});
 
 var shareBtn = document.getElementById('shareBtn');
 var sharePop = document.getElementById('sharePop');

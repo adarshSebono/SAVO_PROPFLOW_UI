@@ -126,11 +126,14 @@
   .fb-time{font-size:11px; color:var(--faint);}
   .fb-text{font-size:12.5px; color:var(--muted); line-height:1.6; margin-top:2px;}
   .fb-empty{font-size:12px; color:var(--faint); margin-bottom:14px;}
-  .fb-composer{display:flex; gap:10px; align-items:flex-end; padding-top:14px; border-top:1px solid var(--line-soft);}
-  .fb-textarea{flex:1; min-height:60px; resize:vertical; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:10px 12px; font-size:12.5px; font-family:inherit; color:var(--ink);}
-  .fb-textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
-  .fb-postbtn{height:38px; padding:0 18px; border-radius:9px; background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; border:none; cursor:pointer; flex:none;}
-  .fb-postbtn:hover{filter:brightness(.96);}
+  .fb-action{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 8px; border-radius:100px; margin-left:8px;}
+  .fb-action.done{background:var(--good-bg); color:var(--good);}
+  .fb-action.rejected{background:var(--bad-bg); color:var(--bad);}
+  .fb-action.hold{background:var(--hold-bg); color:var(--hold);}
+  .fb-fields{display:flex; flex-wrap:wrap; gap:5px 16px; margin-top:8px;}
+  .fb-fields .fchip{font-size:11.5px;}
+  .fb-fields .fchip .fk{color:var(--faint); font-weight:600; margin-right:4px;}
+  .fb-fields .fchip .fv{color:var(--ink); font-weight:700;}
 
   .negtable{width:100%; border-collapse:collapse; font-size:12.5px;}
   .negtable th{text-align:left; font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); padding:8px 10px; border-bottom:1px solid var(--line);}
@@ -424,7 +427,7 @@ if (!record) {
       banner.onclick = null;
     }
   }
-  function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); }
+  function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); renderFeedback(); }
 
   function renderMedia() {
     document.getElementById('mediaBody').innerHTML = '<div class="mtiles">' +
@@ -515,7 +518,6 @@ if (!record) {
           '<div class="summarycard">' +
             '<div class="panetitle">Feedback</div>' +
             '<div id="feedbackList"></div>' +
-            '<div class="fb-composer"><textarea class="fb-textarea" id="fbInput" placeholder="Add feedback for anyone on this property&hellip;"></textarea><button class="fb-postbtn" id="fbPostBtn">Post</button></div>' +
           '</div>' +
         '</div>' +
         '<div class="tabpane" data-pane="media" id="media" style="display:none;">' +
@@ -538,30 +540,39 @@ if (!record) {
       '</div>' +
     '</div>';
 
-  render();
-  renderMedia();
-
-  var feedbackItems = [];
+  function reviewGist() {
+    var d = bdeState();
+    var entries = [];
+    function push(action, fields, comment) {
+      entries.push({ label:'BDE Review', action:action, by:'A. Verma', on:'Just now', time:'', fields:fields||[], comment:comment||'' });
+    }
+    entries.push({ label:'Hunter Submission', action:'done', by:'You (M. Iyer)', on:record.detail.submittedAt, time:'',
+      fields:[['Locality',record.detail.locality],['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],['Expected Rent', record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—']],
+      comment:'New property submitted for review.' });
+    if (d.done) push('done', [['Rent / sqft','&#8377;89'],['Deposit','&#8377;9,90,000'],['Occupation By','30&ndash;60 days']], 'Numbers check out &mdash; proceeding to Site Evaluation.');
+    else if (d.rejected) push('rejected', [], "Numbers don't support this location &mdash; pipeline stopped here.");
+    else if (d.held) push('hold', [], 'Placed on hold pending further clarification.');
+    return entries.reverse();
+  }
   function renderFeedback() {
     var list = document.getElementById('feedbackList');
-    if (!feedbackItems.length) { list.innerHTML = '<div class="fb-empty">No feedback yet — be the first to add context for this property.</div>'; return; }
-    list.innerHTML = feedbackItems.map(function (f) {
-      return '<div class="fb-item"><div class="av" style="background:' + f.grad + ';">' + f.initials + '</div>' +
-        '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + f.name + '</span><span class="fb-time">' + f.role + ' &middot; ' + f.time + '</span></div>' +
-        '<div class="fb-text">' + f.text + '</div></div></div>';
+    var entries = reviewGist();
+    if (!entries.length) { list.innerHTML = '<div class="fb-empty">No reviews completed yet.</div>'; return; }
+    list.innerHTML = entries.map(function (e) {
+      var actionLabel = e.action === 'done' ? 'Complete' : e.action === 'rejected' ? 'Rejected' : 'On hold';
+      var fieldsHtml = e.fields.length ? '<div class="fb-fields">' + e.fields.map(function (f) {
+        return '<span class="fchip"><span class="fk">' + f[0] + '</span><span class="fv">' + f[1] + '</span></span>';
+      }).join('') + '</div>' : '';
+      return '<div class="fb-item"><div class="stbadge ' + e.action + '" style="flex:none;">' + (e.action==='done'?ICONS.check:e.action==='rejected'?ICONS.x:ICONS.pause) + '</div>' +
+        '<div class="fb-body"><div class="fb-head"><span class="fb-name">' + e.label + '</span><span class="fb-action ' + e.action + '">' + actionLabel + '</span></div>' +
+        '<div class="fb-time">by ' + e.by + ' &middot; ' + e.on + (e.time ? ', ' + e.time : '') + '</div>' +
+        fieldsHtml +
+        '<div class="fb-text">' + e.comment + '</div></div></div>';
     }).join('');
   }
-  renderFeedback();
-  document.getElementById('fbPostBtn').addEventListener('click', function () {
-    var input = document.getElementById('fbInput');
-    var text = input.value.trim();
-    if (!text) return;
-    var u = getCurrentUser();
-    feedbackItems.push({ initials:u.initials, grad:u.grad, name:u.name, role:u.role, time:'Just now', text:text });
-    input.value = '';
-    renderFeedback();
-    showToast('Feedback posted');
-  });
+
+  render();
+  renderMedia();
 
   document.getElementById('tabPhotos').addEventListener('click', function () { document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
   document.getElementById('tabDocs').addEventListener('click', function () {
