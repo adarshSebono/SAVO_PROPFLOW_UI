@@ -88,7 +88,6 @@
     <div class="header">
       <div>
         <h1>Properties</h1>
-        <div class="headsub"><div class="livedot"></div><span id="visibleCount">7</span> shown &middot; 3 awaiting your review</div>
       </div>
       <a class="newbtn" href="new-property.html"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New Property</a>
     </div>
@@ -208,7 +207,6 @@ function matchesFilters(r) {
 
 function renderRows() {
   var filtered = ALL_ROWS.filter(matchesFilters);
-  document.getElementById('visibleCount').textContent = filtered.length;
   document.getElementById('emptyState').style.display = filtered.length === 0 ? 'block' : 'none';
   document.getElementById('rows').innerHTML = filtered.map(function (r) {
     var s = STATUS_MAP[r.status];
