@@ -29,7 +29,7 @@
   .tabbtn.on{color:var(--accent-ink);}
   .tabindicator{position:absolute; bottom:-1px; height:2px; background:var(--accent); border-radius:2px 2px 0 0; transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);}
 
-  .bodygrid{display:grid; grid-template-columns:260px 1fr; gap:20px; margin-top:20px; align-items:start;}
+  .bodygrid{display:grid; grid-template-columns:1fr; gap:20px; margin-top:20px; align-items:start;}
   .leftcol{position:sticky; top:calc(var(--gtop-h) + 68px); border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); padding:18px; animation:riseIn .4s .05s ease-out both;}
   .leftcol h3{font-size:12.5px; font-weight:800; margin:0 0 4px;}
   .leftsub{font-size:11px; color:var(--faint); margin-bottom:12px;}
@@ -76,6 +76,7 @@
   .stbadge.hold{background:var(--hold-bg); color:var(--hold);}
   .stbadge.future{background:var(--line-soft); color:var(--faint);}
   .stname{font-size:14.5px; font-weight:700;}
+  .stmeta{font-size:11.5px; color:var(--faint); font-weight:600;}
   .sttag{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:3px 9px; border-radius:100px; margin-left:auto;}
   .sttag.done{background:var(--good-bg); color:var(--good);}
   .sttag.current{background:var(--accent-soft); color:var(--accent-ink);}
@@ -338,7 +339,7 @@ if (!record) {
   function renderStages() {
     var html = '';
 
-    html += '<div class="stcard" data-key="hunter"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Hunter Submission</div><span class="sttag done">Complete</span>' + CHEV + '</div><div class="stbody">' +
+    html += '<div class="stcard" data-key="hunter"><div class="stchead"><div class="stbadge done">' + ICONS.check + '</div><div class="stname">Hunter Submission</div><span class="stmeta">by You (M. Iyer) &middot; ' + record.detail.submittedAt + '</span><span class="sttag done">Complete</span>' + CHEV + '</div><div class="stbody">' +
       fieldGrid([
         ['Locality', record.detail.locality],
         ['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],
@@ -353,7 +354,8 @@ if (!record) {
     var d = bdeState();
     var bdeBadge = d.done?'done':d.rejected?'rejected':d.held?'hold':'current';
     var bdeTag = d.done?'Approved':d.rejected?'Rejected':d.held?'On hold':'Your turn to act';
-    html += '<div class="stcard ' + (bdeBadge==='current'?'current':'') + '" data-key="bde"><div class="stchead"><div class="stbadge ' + bdeBadge + '">' + (d.done?ICONS.check:d.rejected?ICONS.x:d.held?ICONS.pause:ICONS.clock) + '</div><div class="stname">BDE Review</div><span class="sttag ' + bdeBadge + '">' + bdeTag + '</span>' + CHEV + '</div><div class="stbody">';
+    var bdeMeta = d.done ? '<span class="stmeta">by A. Verma &middot; Just now</span>' : '';
+    html += '<div class="stcard ' + (bdeBadge==='current'?'current':'') + '" data-key="bde"><div class="stchead"><div class="stbadge ' + bdeBadge + '">' + (d.done?ICONS.check:d.rejected?ICONS.x:d.held?ICONS.pause:ICONS.clock) + '</div><div class="stname">BDE Review</div>' + bdeMeta + '<span class="sttag ' + bdeBadge + '">' + bdeTag + '</span>' + CHEV + '</div><div class="stbody">';
     if (d.pending) {
       html += fieldGrid([['Locality', record.detail.locality],['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],['Expected Rent', record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—'],['Source', record.detail.source]]) +
         '<div class="editgrid" style="margin-top:18px;"><div><label>Rent / sqft (&#8377;)</label><div class="fakeinput focus">89</div></div><div><label>Deposit (&#8377;)</label><div class="fakeinput">9,90,000</div></div><div><label>Occupation By</label><div class="fakeinput">30&ndash;60 days</div></div></div>' +
@@ -405,32 +407,6 @@ if (!record) {
     applyOpenState();
   });
 
-  var INDEX_ITEMS = [
-    ['hunter', 'Hunter Submission'],
-    ['bde', 'BDE Review'],
-    ['siteeval', 'Site Evaluation'],
-    ['bdm', 'BDM Review'],
-    ['neg', 'Negotiation Rounds'],
-    ['cxo', 'CXO Review'],
-    ['ic', 'IC Decision'],
-  ];
-  function indexBadge(key) {
-    var d = bdeState();
-    if (key === 'hunter') return { cls:'done', icon:ICONS.check };
-    if (key === 'bde') return d.done ? {cls:'done', icon:ICONS.check} : d.rejected ? {cls:'rejected', icon:ICONS.x} : d.held ? {cls:'hold', icon:ICONS.pause} : {cls:'current', icon:ICONS.clock};
-    if (key === 'siteeval') return d.done ? {cls:'current', icon:ICONS.clock} : {cls:'future', icon:ICONS.lock};
-    return {cls:'future', icon:ICONS.lock};
-  }
-  function renderIndex() {
-    var html = INDEX_ITEMS.map(function (it) {
-      var bd = indexBadge(it[0]);
-      return '<div class="idxitem" data-key="' + it[0] + '"><div class="idxdot ' + bd.cls + '">' + bd.icon + '</div><div class="idxlbl">' + it[1] + '</div></div>';
-    }).join('');
-    document.getElementById('reviewIndex').innerHTML = html;
-    document.querySelectorAll('.idxitem').forEach(function (item) {
-      item.addEventListener('click', function () { goToStage(item.getAttribute('data-key')); });
-    });
-  }
   function goToStage(key) {
     var propflowTab = document.querySelector('.tabbtn[data-tab="propflow"]');
     if (!propflowTab.classList.contains('on')) propflowTab.click();
@@ -448,7 +424,7 @@ if (!record) {
       banner.onclick = null;
     }
   }
-  function render() { renderHead(); renderFlow(); renderStages(); renderIndex(); renderTakeAction(); }
+  function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); }
 
   function renderMedia() {
     document.getElementById('mediaBody').innerHTML = '<div class="mtiles">' +
@@ -479,12 +455,6 @@ if (!record) {
     '</div>' +
 
     '<div class="bodygrid">' +
-      '<div class="leftcol">' +
-        '<h3>Review Index</h3>' +
-        '<div class="leftsub">Jump to any review</div>' +
-        '<div class="idxlist" id="reviewIndex"></div>' +
-      '</div>' +
-
       '<div>' +
         '<div class="tabpane" data-pane="overview" id="overview">' +
           '<div class="summarycard">' +
