@@ -172,6 +172,13 @@
   .maplegend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:12px; font-size:11.5px; color:var(--muted); font-weight:600;}
   .maplegend span{display:inline-flex; align-items:center; gap:6px;}
   .maplegend i{width:9px;height:9px;border-radius:50%; display:inline-block;}
+
+  .comingsoon{border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-sm); padding:44px 26px; text-align:center;}
+  .comingsoon-ic{width:52px;height:52px;border-radius:14px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; margin:0 auto 16px;}
+  .comingsoon-ic svg{width:24px;height:24px;}
+  .comingsoon-t{font-size:15px; font-weight:800; margin-bottom:7px;}
+  .comingsoon-d{font-size:12.5px; color:var(--muted); max-width:400px; margin:0 auto 20px; line-height:1.6;}
+  .comingsoon .openlink{margin-top:0;}
   .openlink{margin-top:16px; display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--accent);}
   .openlink:hover{color:var(--accent-deep);}
   .openlink svg{width:13px;height:13px;}
@@ -248,7 +255,6 @@
       <div class="navlabel">Workspace</div>
       <a class="nitem" href="inbox.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"/></svg>For you</a>
       <a class="nitem on" href="dashboard.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>Properties</a>
-      <a class="nitem" href="catchment-reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v9l9 9 9-9-9-9z"/><circle cx="12" cy="12" r="2.4"/></svg>Catchment Reports</a>
       <a class="nitem" href="bde-stats.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Dashboard</a>
     </div>
   </div>
@@ -469,6 +475,8 @@ if (!record) {
     ind.style.width = btn.offsetWidth + 'px';
   }
 
+  var djangoUrl = 'https://internal-staging.savomart.in/admin/propflow/propertyindex/?q=' + encodeURIComponent(record.code);
+
   document.getElementById('pagewrap').innerHTML =
     '<div class="pagehead">' +
       '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="code">' + record.code + '</span><span class="status" id="headStatus"></span></div>' +
@@ -549,12 +557,20 @@ if (!record) {
         '</div>' +
         '<div class="tabpane" data-pane="propflow" id="propflow" style="display:none;"><div id="stageStack"></div></div>' +
         '<div class="tabpane" data-pane="launchflow" id="launchflow" style="display:none;">' +
-          '<div class="summarycard"><span class="status" style="background:var(--line-soft); color:var(--faint);"><span class="dot"></span>Not eligible yet</span>' +
-          '<p style="font-size:12.5px; color:var(--muted); margin:10px 0 0; line-height:1.6;">LL SoW is auto-created once CXO approves this property, then initiated by BDM. Nothing to do here yet — this property is still at BDE Review.</p></div>' +
+          '<div class="comingsoon">' +
+            '<div class="comingsoon-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>' +
+            '<div class="comingsoon-t">Coming Soon</div>' +
+            '<div class="comingsoon-d">Launch Flow (LL SoW &amp; HOTO) isn\'t available in this preview yet. Use the current PropFlow system for this property in the meantime.</div>' +
+            '<a class="openlink" href="' + djangoUrl + '" target="_blank" rel="noopener">Open in current PropFlow <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg></a>' +
+          '</div>' +
         '</div>' +
         '<div class="tabpane" data-pane="marketops" id="marketops" style="display:none;">' +
-          '<div class="summarycard"><span class="status" style="background:var(--line-soft); color:var(--faint);"><span class="dot"></span>Not eligible yet</span>' +
-          '<p style="font-size:12.5px; color:var(--muted); margin:10px 0 0; line-height:1.6;">An MXM can initiate a Catchment Report from BDM Review onward, not before.</p></div>' +
+          '<div class="comingsoon">' +
+            '<div class="comingsoon-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>' +
+            '<div class="comingsoon-t">Coming Soon</div>' +
+            '<div class="comingsoon-d">Market Ops (Catchment Reports) isn\'t available in this preview yet. Use the current PropFlow system for this property in the meantime.</div>' +
+            '<a class="openlink" href="' + djangoUrl + '" target="_blank" rel="noopener">Open in current PropFlow <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17 17 7M7 7h10v10"/></svg></a>' +
+          '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
