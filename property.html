@@ -31,6 +31,7 @@
   .tabindicator{position:absolute; bottom:-1px; height:2px; background:var(--accent); border-radius:2px 2px 0 0; transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);}
 
   .bodygrid{display:grid; grid-template-columns:1fr; gap:20px; margin-top:20px; align-items:start;}
+  .bodygrid > *{min-width:0;}
   .leftcol{position:sticky; top:calc(var(--gtop-h) + 68px); border:1px solid var(--line); border-radius:16px; background:var(--panel); box-shadow:var(--shadow-md); padding:18px; animation:riseIn .4s .05s ease-out both;}
   .leftcol h3{font-size:12.5px; font-weight:800; margin:0 0 4px;}
   .leftsub{font-size:11px; color:var(--faint); margin-bottom:12px;}
