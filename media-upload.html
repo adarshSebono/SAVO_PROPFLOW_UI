@@ -43,36 +43,110 @@
   .btn.ghost{background:var(--line-soft); color:var(--ink);}
   .note{margin-top:20px; border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:13px 14px; font-size:11.5px; color:var(--muted); line-height:1.6; box-shadow:var(--shadow-sm);}
   .note b{color:var(--ink);}
+
+  .titlestep{border:1px solid var(--line); border-radius:14px; background:var(--panel); padding:16px; box-shadow:var(--shadow-sm); margin-bottom:18px;}
+  .titlestep label{display:block; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:.04em;}
+  .titleinput{width:100%; height:42px; border:1.5px solid var(--line); border-radius:10px; background:var(--paper); padding:0 12px; font-size:13.5px; font-family:inherit; color:var(--ink);}
+  .titleinput:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); background:var(--panel);}
+  .attachbtn{margin-top:12px; height:44px; border-radius:10px; background:var(--accent); color:#fff; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; border:none; cursor:pointer; width:100%;}
+  .attachbtn:disabled{background:var(--line-soft); color:var(--faint); cursor:not-allowed;}
+  .attachbtn svg{width:16px;height:16px;}
+  .flowzone{display:none;}
+  .flowzone.show{display:block;}
+
+  .gallery{margin-top:26px;}
+  .gallery h3{font-size:12px; font-weight:800; color:var(--faint); text-transform:uppercase; letter-spacing:.05em; margin:0 0 12px;}
+  .gtiles{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .gtile{aspect-ratio:4/3; border-radius:12px; position:relative; overflow:hidden; display:flex; align-items:flex-end; box-shadow:var(--shadow-sm);}
+  .gtile .lb{padding:8px 10px; font-size:11px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
+  .gdoc{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; background:var(--panel); padding:12px 14px; margin-bottom:8px; box-shadow:var(--shadow-sm);}
+  .gdoc .ic{width:32px;height:32px;border-radius:8px; background:var(--line-soft); color:var(--muted); display:flex; align-items:center; justify-content:center; flex:none;}
+  .gdoc .ic svg{width:15px;height:15px;}
+  .gdoc .t{font-size:12.5px; font-weight:700;}
+  .gdoc .d{font-size:10.5px; color:var(--faint); margin-top:1px;}
 </style>
 </head>
 <body>
 <div class="phone">
   <div class="topbar">
     <button class="iconbtn" onclick="window.location.href='property.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-    <div class="toptitle">Add Front Photo</div>
+    <div class="toptitle" id="topTitle">Add Photo</div>
     <button class="iconbtn" id="resetBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 4v5h-5"/></svg></button>
   </div>
   <div class="content">
-    <div class="preview"><div class="tag">Required</div><div class="name">IMG_20260907.jpg</div></div>
 
-    <div class="stepline">
-      <div class="sp done"><div class="n" id="step1n"></div><div class="l">Select</div></div>
-      <div class="spline done"></div>
-      <div class="sp done"><div class="n" id="step2n"></div><div class="l">Compress</div></div>
-      <div class="spline done" id="line2"></div>
-      <div class="sp" id="step3"><div class="n" id="step3n">3</div><div class="l">Upload</div></div>
-      <div class="spline" id="line3"></div>
-      <div class="sp" id="step4"><div class="n">4</div><div class="l">Attach</div></div>
+    <div class="titlestep">
+      <label for="titleInput" id="titleLabel">Title</label>
+      <input class="titleinput" id="titleInput" placeholder="e.g. Front facade, Interior view&hellip;">
+      <button class="attachbtn" id="attachBtn" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Attach media</button>
     </div>
 
-    <div id="progressZone"></div>
+    <div class="flowzone" id="flowZone">
+      <div class="preview" id="previewBox"><div class="tag">Required</div><div class="name" id="previewName">IMG_20260907.jpg</div></div>
 
-    <div class="note"><b>Behind the scenes, unchanged:</b> a 15-minute signed PUT URL, extension + content-type checked, path-regex validated before it's attached &mdash; identical to today's flow, just shown as it happens.</div>
+      <div class="stepline">
+        <div class="sp done"><div class="n" id="step1n"></div><div class="l">Select</div></div>
+        <div class="spline done"></div>
+        <div class="sp done"><div class="n" id="step2n"></div><div class="l">Compress</div></div>
+        <div class="spline done" id="line2"></div>
+        <div class="sp" id="step3"><div class="n" id="step3n">3</div><div class="l">Upload</div></div>
+        <div class="spline" id="line3"></div>
+        <div class="sp" id="step4"><div class="n">4</div><div class="l">Attach</div></div>
+      </div>
+
+      <div id="progressZone"></div>
+
+      <div class="note"><b>Behind the scenes, unchanged:</b> a 15-minute signed PUT URL, extension + content-type checked, path-regex validated before it's attached &mdash; identical to today's flow, just shown as it happens.</div>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
   </div>
 </div>
 
 <script src="common.js"></script>
 <script>
+var params = new URLSearchParams(window.location.search);
+var uploadType = params.get('type') === 'doc' ? 'doc' : 'photo';
+var presetTitle = params.get('title') || '';
+
+var EXISTING_PHOTOS = [
+  { title:'Front', grad:'linear-gradient(150deg,#9fb3c0,#4a7d95)' },
+  { title:'Interior', grad:'linear-gradient(150deg,#b0a08f,#7d5f4a)' },
+  { title:'Walkthrough', grad:'linear-gradient(150deg,#93b0a0,#3f8a6d)' },
+];
+var EXISTING_DOCS = [
+  { title:'Title Deed.pdf', size:'2.1 MB' },
+  { title:'Rent Agreement.docx', size:'640 KB' },
+];
+
+document.getElementById('topTitle').textContent = uploadType === 'doc' ? 'Add Document' : (presetTitle ? 'Add ' + presetTitle + ' Photo' : 'Add Photo');
+document.getElementById('titleLabel').textContent = uploadType === 'doc' ? 'Document Title' : 'Photo Title';
+document.getElementById('titleInput').placeholder = uploadType === 'doc' ? 'e.g. Title Deed, Rent Agreement…' : 'e.g. Front facade, Interior view…';
+document.title = (uploadType === 'doc' ? 'Add Document' : 'Add Photo') + ' — PropFlow';
+if (presetTitle) { document.getElementById('titleInput').value = presetTitle; }
+
+var DOC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+
+function renderGallery() {
+  var host = document.getElementById('gallery');
+  if (uploadType === 'doc') {
+    host.innerHTML = '<h3>Already Attached</h3>' + EXISTING_DOCS.map(function (d) {
+      return '<div class="gdoc"><div class="ic">' + DOC_ICON + '</div><div><div class="t">' + d.title + '</div><div class="d">' + d.size + '</div></div></div>';
+    }).join('');
+  } else {
+    host.innerHTML = '<h3>Already Attached</h3><div class="gtiles">' + EXISTING_PHOTOS.map(function (p) {
+      return '<div class="gtile" style="background:' + p.grad + ';"><div class="lb">' + p.title + '</div></div>';
+    }).join('') + '</div>';
+  }
+}
+renderGallery();
+
+var titleInput = document.getElementById('titleInput');
+var attachBtn = document.getElementById('attachBtn');
+function syncAttachBtn() { attachBtn.disabled = !titleInput.value.trim(); }
+titleInput.addEventListener('input', syncAttachBtn);
+syncAttachBtn();
+
 document.getElementById('step1n').innerHTML = ICON.check.replace('#fff','currentColor');
 document.getElementById('step2n').innerHTML = ICON.check.replace('#fff','currentColor');
 
@@ -90,6 +164,8 @@ function start() {
 
 function render() {
   var done = pct >= 100;
+  var title = titleInput.value.trim() || (uploadType === 'doc' ? 'Document' : 'Photo');
+  document.getElementById('previewName').textContent = uploadType === 'doc' ? title : 'IMG_20260907.jpg';
   document.getElementById('step3').className = 'sp ' + (done ? 'done' : 'on');
   document.getElementById('step3n').innerHTML = done ? ICON.check.replace('#fff','currentColor') : '3';
   document.getElementById('line3').className = 'spline' + (done ? ' done' : '');
@@ -102,15 +178,26 @@ function render() {
       '<div class="pnote">' + (18.2 * pct / 100).toFixed(1) + ' / 18.2 MB &middot; compressed from 51 MB on-device</div></div>';
   } else {
     document.getElementById('progressZone').innerHTML =
-      '<div class="donecard"><div class="ic">' + ICON.check.replace('#fff','currentColor') + '</div><div class="t">Front photo attached</div><div class="d">18.2 MB uploaded and linked to BLR1041</div></div>' +
+      '<div class="donecard"><div class="ic">' + ICON.check.replace('#fff','currentColor') + '</div><div class="t">"' + title + '" attached</div><div class="d">18.2 MB uploaded and linked to BLR1041</div></div>' +
       '<div class="btnrow"><div class="btn ghost" id="againBtn">Add another</div><a class="btn primary" href="property.html">Done</a></div>';
     var again = document.getElementById('againBtn');
-    if (again) again.addEventListener('click', start);
+    if (again) again.addEventListener('click', function () {
+      document.getElementById('flowZone').classList.remove('show');
+      titleInput.value = '';
+      syncAttachBtn();
+    });
   }
 }
 
-document.getElementById('resetBtn').addEventListener('click', start);
-start();
+attachBtn.addEventListener('click', function () {
+  document.getElementById('flowZone').classList.add('show');
+  start();
+});
+document.getElementById('resetBtn').addEventListener('click', function () {
+  document.getElementById('flowZone').classList.remove('show');
+  titleInput.value = presetTitle;
+  syncAttachBtn();
+});
 </script>
 </body>
 </html>

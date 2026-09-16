@@ -38,7 +38,6 @@
   .kpi .delta svg{width:11px;height:11px;}
   .kpi .sub{font-size:11px; color:var(--faint); margin-top:3px; line-height:1.5;}
 
-  .showing{font-size:12px; color:var(--faint); margin:0 0 12px;}
 
   .tablewrap{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--panel); box-shadow:var(--shadow-md); overflow-x:auto;}
   table{width:100%; border-collapse:collapse; font-size:12.8px; min-width:820px;}
@@ -110,44 +109,7 @@
 
       <div class="section">
         <div class="sectiontitle">Company Overview</div>
-        <div class="kpis">
-          <div class="kpi">
-            <div class="k">Submitted</div>
-            <div class="v">38</div>
-            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>6 (18.8%)</div>
-            <div class="sub">vs previous period</div>
-          </div>
-          <div class="kpi">
-            <div class="k">In Pipeline</div>
-            <div class="v">14</div>
-            <div class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>-3 (-17.6%)</div>
-            <div class="sub">BDE 3 &middot; BDM 5 &middot; CXO 4 &middot; IC 2</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Approved</div>
-            <div class="v">9</div>
-            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>2 (28.6%)</div>
-            <div class="sub">Conversion 64.3% of closed</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Rejected</div>
-            <div class="v">5</div>
-            <div class="delta down" style="color:var(--bad);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>1 (25.0%)</div>
-            <div class="sub">35.7% of closed</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Avg TAT</div>
-            <div class="v">42.3 <span style="font-size:14px; font-weight:700; color:var(--faint);">days</span></div>
-            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>4.1 (8.8%)</div>
-            <div class="sub">days, lead to IC decision</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Weighted Avg &#8377;/sqft</div>
-            <div class="v">&#8377;94</div>
-            <div class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>3 (3.3%)</div>
-            <div class="sub">weighted by submitted size</div>
-          </div>
-        </div>
+        <div class="kpis" id="kpis"></div>
       </div>
 
       <div class="section">
@@ -157,26 +119,23 @@
           <div class="ffield"><label>Period</label><select id="fPeriod"><option>Last 7 days</option><option selected>Last 30 days</option><option>Last 90 days</option><option>Custom range</option></select></div>
           <div class="ffield"><label>Start</label><input type="text" placeholder="dd-mm-yyyy" disabled></div>
           <div class="ffield"><label>End</label><input type="text" placeholder="dd-mm-yyyy" disabled></div>
-          <div class="ffield"><label>City</label><select id="fCity"><option>All cities</option><option>Bangalore</option><option>Chennai</option><option>Hyderabad</option></select></div>
+          <div class="ffield"><label>City</label><select id="fCity"><option>All cities</option><option>Bengaluru</option><option>Chennai</option><option>Hyderabad</option></select></div>
           <div class="ffield"><label>Source</label><select id="fSource"><option>All sources</option><option>Self</option><option>Consultant</option><option>Employee Referral</option></select></div>
           <label class="fcheck"><input type="checkbox" checked>Hide deactivated BDEs</label>
           <button class="applybtn" id="applyBtn">Apply</button>
         </div>
-
-        <div class="showing">Showing: Last 30 days &middot; City: All &middot; Source: All</div>
 
         <div class="tablewrap">
           <table>
             <thead>
               <tr class="grp">
                 <th rowspan="2">BDE</th>
-                <th rowspan="2">Submitted<br>Last 30D</th>
-                <th rowspan="2">Assigned<br>Last 30D</th>
-                <th colspan="4">In Pipeline &middot; Last 30D</th>
-                <th rowspan="2">Approved<br>Last 30D</th>
-                <th rowspan="2">Rejected<br>Last 30D</th>
-                <th rowspan="2">Conversion %<br>Last 30D</th>
-                <th rowspan="2">Avg TAT<br>Last 30D</th>
+                <th rowspan="2">Submitted<br><span id="thPeriod1">Last 30D</span></th>
+                <th rowspan="2">Assigned<br><span id="thPeriod2">Last 30D</span></th>
+                <th colspan="4">In Pipeline &middot; <span id="thPeriod3">Last 30D</span></th>
+                <th rowspan="2">Approved<br><span id="thPeriod4">Last 30D</span></th>
+                <th rowspan="2">Conversion %<br><span id="thPeriod5">Last 30D</span></th>
+                <th rowspan="2">Avg TAT<br><span id="thPeriod6">Last 30D</span></th>
               </tr>
               <tr class="cols"><th>BDE</th><th>BDM</th><th>CXO</th><th>IC</th></tr>
             </thead>
@@ -190,31 +149,115 @@
 
 <script src="common.js"></script>
 <script>
-var ROWS = [
-  { name:'TOTAL', total:true, submitted:5, assigned:2, bde:0, bdm:0, cxo:2, ic:0, approved:1, rejected:0, conv:'100.0%', tat:'49.9' },
-  { name:'Demo BDE', submitted:2, assigned:1, bde:0, bdm:0, cxo:1, ic:0, approved:1, rejected:0, conv:'100.0%', tat:'49.9' },
-  { name:'A. Verma', submitted:2, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0, rejected:0, conv:null, tat:null },
-  { name:'Sanchitha', submitted:1, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0, rejected:0, conv:null, tat:null },
-  { name:'Kishore', submitted:0, assigned:1, bde:0, bdm:0, cxo:1, ic:0, approved:0, rejected:0, conv:null, tat:null },
-];
+var UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>';
+var DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>';
+
+var PERIOD_DATA = {
+  'Last 7 days': {
+    label: 'Last 7D',
+    kpis: {
+      submitted: { v:'9', delta:UP+'2 (28.6%)', dir:'up', sub:'vs previous period' },
+      approved: { v:'2', delta:UP+'1 (100.0%)', dir:'up', sub:'Conversion 66.7% of closed' },
+      avgTat: { v:'38.4', delta:UP+'2.1 (5.8%)', dir:'up', sub:'days, lead to IC decision' },
+      wsqft: { v:'&#8377;91', delta:UP+'1 (1.1%)', dir:'up', sub:'weighted by submitted size' },
+    },
+    rows: [
+      { name:'Demo BDE', city:'Bengaluru', submitted:1, assigned:1, bde:0, bdm:0, cxo:1, ic:0, approved:0, conv:null, tat:null },
+      { name:'A. Verma', city:'Bengaluru', submitted:1, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0, conv:null, tat:null },
+      { name:'Sanchitha', city:'Chennai', submitted:0, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0, conv:null, tat:null },
+      { name:'Kishore', city:'Hyderabad', submitted:0, assigned:1, bde:0, bdm:0, cxo:1, ic:0, approved:0, conv:null, tat:null },
+    ],
+  },
+  'Last 30 days': {
+    label: 'Last 30D',
+    kpis: {
+      submitted: { v:'38', delta:UP+'6 (18.8%)', dir:'up', sub:'vs previous period' },
+      approved: { v:'9', delta:UP+'2 (28.6%)', dir:'up', sub:'Conversion 64.3% of closed' },
+      avgTat: { v:'42.3', delta:UP+'4.1 (8.8%)', dir:'up', sub:'days, lead to IC decision' },
+      wsqft: { v:'&#8377;94', delta:UP+'3 (3.3%)', dir:'up', sub:'weighted by submitted size' },
+    },
+    rows: [
+      { name:'Demo BDE', city:'Bengaluru', submitted:2, assigned:1, bde:0, bdm:0, cxo:1, ic:0, approved:1, conv:'100.0%', tat:'49.9' },
+      { name:'A. Verma', city:'Bengaluru', submitted:2, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0, conv:null, tat:null },
+      { name:'Sanchitha', city:'Chennai', submitted:1, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0, conv:null, tat:null },
+      { name:'Kishore', city:'Hyderabad', submitted:0, assigned:1, bde:0, bdm:0, cxo:1, ic:0, approved:0, conv:null, tat:null },
+    ],
+  },
+  'Last 90 days': {
+    label: 'Last 90D',
+    kpis: {
+      submitted: { v:'104', delta:UP+'18 (20.9%)', dir:'up', sub:'vs previous period' },
+      approved: { v:'31', delta:UP+'6 (24.0%)', dir:'up', sub:'Conversion 68.9% of closed' },
+      avgTat: { v:'45.7', delta:DOWN+'1.4 (3.2%)', dir:'down', sub:'days, lead to IC decision' },
+      wsqft: { v:'&#8377;97', delta:UP+'2 (2.1%)', dir:'up', sub:'weighted by submitted size' },
+    },
+    rows: [
+      { name:'Demo BDE', city:'Bengaluru', submitted:6, assigned:3, bde:1, bdm:1, cxo:2, ic:0, approved:3, conv:'75.0%', tat:'44.2' },
+      { name:'A. Verma', city:'Bengaluru', submitted:5, assigned:1, bde:0, bdm:1, cxo:0, ic:0, approved:1, conv:'50.0%', tat:'51.0' },
+      { name:'Sanchitha', city:'Chennai', submitted:3, assigned:1, bde:1, bdm:0, cxo:0, ic:0, approved:0, conv:null, tat:null },
+      { name:'Kishore', city:'Hyderabad', submitted:2, assigned:2, bde:0, bdm:0, cxo:1, ic:1, approved:1, conv:'60.0%', tat:'39.5' },
+    ],
+  },
+};
+PERIOD_DATA['Custom range'] = PERIOD_DATA['Last 90 days'];
 
 function cell(v) { return v === null || v === undefined ? '<span class="dash">&mdash;</span>' : v; }
 
-document.getElementById('rows').innerHTML = ROWS.map(function (r) {
-  return '<tr class="' + (r.total ? 'total' : '') + '">' +
-    '<td class="bdename">' + r.name + '</td>' +
-    '<td>' + r.submitted + '</td>' +
-    '<td>' + r.assigned + '</td>' +
-    '<td>' + r.bde + '</td><td>' + r.bdm + '</td><td>' + r.cxo + '</td><td>' + r.ic + '</td>' +
-    '<td>' + r.approved + '</td>' +
-    '<td>' + r.rejected + '</td>' +
-    '<td>' + cell(r.conv) + '</td>' +
-    '<td>' + cell(r.tat) + '</td>' +
-    '</tr>';
-}).join('');
+function renderKpis(k) {
+  function card(label, kk) {
+    return '<div class="kpi"><div class="k">' + label + '</div><div class="v">' + kk.v + '</div>' +
+      '<div class="delta ' + kk.dir + '">' + kk.delta + '</div><div class="sub">' + kk.sub + '</div></div>';
+  }
+  document.getElementById('kpis').innerHTML =
+    card('Submitted', k.submitted) + card('Approved', k.approved) +
+    card('Avg TAT <span style="text-transform:none;">(days)</span>', k.avgTat) +
+    card('Weighted Avg &#8377;/sqft', k.wsqft);
+}
 
-document.getElementById('applyBtn').addEventListener('click', function () { showToast('Filters applied — showing demo data for this period.', 'info'); });
+function renderTable(rows) {
+  var t = { submitted:0, assigned:0, bde:0, bdm:0, cxo:0, ic:0, approved:0 };
+  rows.forEach(function (r) {
+    t.submitted += r.submitted; t.assigned += r.assigned; t.bde += r.bde; t.bdm += r.bdm;
+    t.cxo += r.cxo; t.ic += r.ic; t.approved += r.approved;
+  });
+  var totalConv = t.approved && t.submitted ? (t.approved / t.submitted * 100).toFixed(1) + '%' : null;
+  var totalRow = { name:'TOTAL', total:true, conv:totalConv, tat:rows.length ? rows[0].tat : null };
+  Object.assign(totalRow, t);
 
+  function tr(r) {
+    return '<tr class="' + (r.total ? 'total' : '') + '">' +
+      '<td class="bdename">' + r.name + '</td>' +
+      '<td>' + r.submitted + '</td>' +
+      '<td>' + r.assigned + '</td>' +
+      '<td>' + r.bde + '</td><td>' + r.bdm + '</td><td>' + r.cxo + '</td><td>' + r.ic + '</td>' +
+      '<td>' + r.approved + '</td>' +
+      '<td>' + cell(r.conv) + '</td>' +
+      '<td>' + cell(r.tat) + '</td>' +
+      '</tr>';
+  }
+  document.getElementById('rows').innerHTML = tr(totalRow) + rows.map(tr).join('');
+}
+
+function applyFilters() {
+  var period = document.getElementById('fPeriod').value;
+  var city = document.getElementById('fCity').value;
+  var data = PERIOD_DATA[period] || PERIOD_DATA['Last 30 days'];
+
+  renderKpis(data.kpis);
+  ['thPeriod1','thPeriod2','thPeriod3','thPeriod4','thPeriod5','thPeriod6'].forEach(function (id) {
+    document.getElementById(id).textContent = data.label;
+  });
+
+  var rows = city === 'All cities' ? data.rows : data.rows.filter(function (r) { return r.city === city; });
+  renderTable(rows);
+}
+
+document.getElementById('applyBtn').addEventListener('click', function () {
+  applyFilters();
+  showToast('Filters applied.', 'info');
+});
+
+applyFilters();
 initUserMenu();
 </script>
 </body>
