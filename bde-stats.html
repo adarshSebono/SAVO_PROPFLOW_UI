@@ -28,7 +28,7 @@
 
   .sectiontitle{font-size:16px; font-weight:800; margin:0 0 14px; letter-spacing:-.01em;}
   .section{margin-bottom:32px;}
-  .kpis{display:grid; grid-template-columns:repeat(6, 1fr); gap:14px; margin-bottom:16px;}
+  .kpis{display:grid; grid-template-columns:repeat(4, 1fr); gap:14px; margin-bottom:16px;}
   .kpi{border:1px solid var(--line); border-radius:14px; background:var(--panel); box-shadow:var(--shadow-sm); padding:18px 20px; animation:riseIn .3s ease-out both;}
   .kpi .k{font-family:'JetBrains Mono',monospace; font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:8px;}
   .kpi .v{font-size:28px; font-weight:800; letter-spacing:-.01em; line-height:1;}
@@ -203,14 +203,15 @@ PERIOD_DATA['Custom range'] = PERIOD_DATA['Last 90 days'];
 function cell(v) { return v === null || v === undefined ? '<span class="dash">&mdash;</span>' : v; }
 
 function renderKpis(k) {
-  function card(label, kk) {
+  function card(label, kk, showDelta) {
+    var delta = showDelta === false ? '' : '<div class="delta ' + kk.dir + '">' + kk.delta + '</div>';
     return '<div class="kpi"><div class="k">' + label + '</div><div class="v">' + kk.v + '</div>' +
-      '<div class="delta ' + kk.dir + '">' + kk.delta + '</div><div class="sub">' + kk.sub + '</div></div>';
+      delta + '<div class="sub">' + kk.sub + '</div></div>';
   }
   document.getElementById('kpis').innerHTML =
     card('Submitted', k.submitted) + card('Approved', k.approved) +
-    card('Avg TAT <span style="text-transform:none;">(days)</span>', k.avgTat) +
-    card('Weighted Avg &#8377;/sqft', k.wsqft);
+    card('Avg TAT <span style="text-transform:none;">(days)</span>', k.avgTat, false) +
+    card('Weighted Avg &#8377;/sqft', k.wsqft, false);
 }
 
 function renderTable(rows) {
