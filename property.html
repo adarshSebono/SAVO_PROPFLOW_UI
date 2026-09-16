@@ -11,7 +11,7 @@
   .topbar{position:sticky; top:var(--gtop-h); z-index:50; height:52px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:space-between; padding:0 32px;}
 
   .pagewrap{max-width:1180px; margin:0 auto; padding:24px 32px 60px;}
-  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
+  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both;}
   .flowcard{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-sm); margin-top:14px; animation:riseIn .4s .05s ease-out both;}
   .htop{display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
   .htitle{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
@@ -310,7 +310,6 @@
       <div class="pagehead">
         <div class="htitle">
           <h1 id="propTitle">Whitefield Main Road</h1>
-          <span class="code" id="propCode">BLR1041</span>
           <span class="status" id="headStatus"></span>
         </div>
       </div>
@@ -355,7 +354,7 @@
           </div>
 
           <div class="tabpane" data-pane="propflow" id="propflow" style="display:none;">
-            <div id="stageStack"></div>
+            <div id="stageStack" style="padding-bottom:90px;"></div>
           </div>
 
           <div class="tabpane" data-pane="launchflow" id="launchflow" style="display:none;">
@@ -727,7 +726,6 @@ function renderHead() {
   document.title = seed.name + ' — PropFlow';
   var crumb = document.getElementById('crumbCode'); if (crumb) crumb.textContent = propCode;
   var titleEl = document.getElementById('propTitle'); if (titleEl) titleEl.textContent = seed.name;
-  var codeEl = document.getElementById('propCode'); if (codeEl) codeEl.textContent = propCode;
   var djangoUrl = 'https://internal-staging.savomart.in/admin/propflow/propertyindex/' + seed.id + '/change/';
   var djangoLaunch = document.getElementById('djangoLinkLaunch'); if (djangoLaunch) djangoLaunch.setAttribute('href', djangoUrl);
   var djangoMarket = document.getElementById('djangoLinkMarket'); if (djangoMarket) djangoMarket.setAttribute('href', djangoUrl);

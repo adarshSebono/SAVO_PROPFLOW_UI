@@ -130,16 +130,22 @@ button{font-family:inherit;}
 .usermenu-btn{width:34px; height:34px; border-radius:9px; border:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:border-color .15s, background .15s;}
 .usermenu-btn:hover{border-color:var(--accent); color:var(--accent);}
 .usermenu-btn svg{width:16px;height:16px;}
-.usermenu-dd{position:absolute; top:calc(100% + 8px); right:0; width:260px; background:var(--panel); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg); padding:16px; z-index:150; opacity:0; pointer-events:none; transform:translateY(-6px); transition:opacity .15s, transform .15s;}
+.usermenu-dd{position:absolute; top:calc(100% + 8px); right:0; width:276px; max-width:calc(100vw - 24px); background:var(--panel); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow-lg); padding:18px; z-index:150; opacity:0; pointer-events:none; transform:translateY(-6px); transition:opacity .15s, transform .15s;}
 .usermenu-dd.open{opacity:1; pointer-events:auto; transform:translateY(0);}
-.usermenu-head{display:flex; align-items:center; gap:11px; padding-bottom:14px; border-bottom:1px solid var(--line-soft); margin-bottom:12px;}
-.usermenu-head .av{width:38px;height:38px;font-size:13px;}
-.usermenu-head .n{font-size:13.5px; font-weight:700;}
-.usermenu-head .r{font-size:11px; color:var(--faint); margin-top:1px;}
-.usermenu-rows{display:flex; flex-direction:column; gap:9px; margin-bottom:12px;}
-.usermenu-row{display:flex; justify-content:space-between; font-size:12px;}
-.usermenu-row .k{color:var(--faint);}
-.usermenu-row .v{color:var(--muted); font-weight:600;}
+.usermenu-greet{font-size:15px; font-weight:800; color:var(--accent-ink); margin-bottom:14px;}
+.usermenu-info{display:flex; flex-direction:column; gap:9px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--line-soft);}
+.usermenu-info-row{display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--muted); font-weight:600;}
+.usermenu-info-row svg{width:14px;height:14px; color:var(--faint); flex:none;}
+.usermenu-section-label{font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-bottom:10px;}
+.usermenu-access-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; font-size:12.5px; font-weight:600; color:var(--ink);}
+.usermenu-pill{font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:100px; background:var(--accent-soft); color:var(--accent-ink);}
+.usermenu-toggle-row{display:flex; align-items:center; justify-content:space-between; padding:12px 0; margin-bottom:12px; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);}
+.usermenu-toggle-label{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600; color:var(--ink);}
+.usermenu-toggle-label svg{width:15px;height:15px; color:var(--faint);}
+.usermenu-toggle{width:36px;height:20px;border-radius:100px; background:var(--line-soft); position:relative; cursor:pointer; transition:background .15s; flex:none;}
+.usermenu-toggle::after{content:""; position:absolute; top:2px; left:2px; width:16px;height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:left .15s;}
+.usermenu-toggle.on{background:var(--accent);}
+.usermenu-toggle.on::after{left:18px;}
 .usermenu-out{width:100%; height:36px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--muted); font-size:12.5px; font-weight:600; cursor:pointer; font-family:inherit;}
 .usermenu-out:hover{border-color:var(--bad); color:var(--bad);}
 

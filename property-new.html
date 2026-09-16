@@ -11,7 +11,7 @@
   .topbar{position:sticky; top:var(--gtop-h); z-index:50; height:52px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:space-between; padding:0 32px;}
 
   .pagewrap{max-width:1180px; margin:0 auto; padding:24px 32px 60px;}
-  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
+  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both;}
   .flowcard{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-sm); margin-top:14px; animation:riseIn .4s .05s ease-out both;}
   .htop{display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
   .htitle{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
@@ -324,7 +324,7 @@ if (!record) {
   document.getElementById('pagewrap').innerHTML =
     '<div class="empty404"><h2>No submission found</h2><p>This link doesn\'t match a property submitted in this browser. Submissions are stored locally per browser and reset if storage is cleared.</p><a href="new-property.html">Submit a new property &rarr;</a> &middot; <a href="dashboard.html">Back to Properties</a></div>';
 } else {
-  document.getElementById('crumbCode').textContent = record.code + ' · ' + record.detail.locality;
+  document.getElementById('crumbCode').textContent = record.code;
   document.title = record.code + ' — PropFlow';
 
   var STAGES = ['Hunter','BDE','Site Eval','BDM','CXO','IC'];
@@ -521,7 +521,7 @@ if (!record) {
 
   document.getElementById('pagewrap').innerHTML =
     '<div class="pagehead">' +
-      '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="code">' + record.code + '</span><span class="status" id="headStatus"></span></div>' +
+      '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="status" id="headStatus"></span></div>' +
     '</div>' +
     '<div class="flowcard">' +
       '<div class="flow" id="flowStepper"></div>' +
@@ -599,7 +599,7 @@ if (!record) {
             '<div id="mediaBody"></div>' +
           '</div>' +
         '</div>' +
-        '<div class="tabpane" data-pane="propflow" id="propflow" style="display:none;"><div id="stageStack"></div></div>' +
+        '<div class="tabpane" data-pane="propflow" id="propflow" style="display:none;"><div id="stageStack" style="padding-bottom:90px;"></div></div>' +
         '<div class="tabpane" data-pane="launchflow" id="launchflow" style="display:none;">' +
           '<div class="comingsoon">' +
             '<div class="comingsoon-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>' +

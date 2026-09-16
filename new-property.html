@@ -15,6 +15,8 @@
   .formsub{font-size:12px; color:var(--faint); margin:0 0 20px;}
   .fgrid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;}
   .fgrid.span2 > div{grid-column:span 2;}
+  .fgrid.fpair{display:flex; flex-wrap:nowrap; gap:16px;}
+  .fgrid.fpair > div{flex:1; min-width:0;}
   label{display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:7px;}
   .req{color:var(--bad); font-weight:700;}
   input.fld, select.fld, textarea.fld{width:100%; height:42px; border:1.5px solid var(--line); border-radius:9px; background:var(--panel); padding:0 13px; font-size:13.5px; font-family:inherit; color:var(--ink); outline:none; transition:border-color .15s, box-shadow .15s;}
@@ -76,14 +78,8 @@
     </div>
 
     <div class="wrap">
-      <div class="head">
-        <h1>Submit a new property</h1>
-        <div class="sub">Same fields as the Hunter Submission form today — locality, size, expected rent, landlord contact, source and city.</div>
-      </div>
-
       <form class="formcard" id="propForm" novalidate>
-        <h2>Property</h2>
-        <p class="formsub">What the field team found.</p>
+        <h1 style="margin-bottom:20px;">Submit a new property</h1>
         <div class="fgrid span2">
           <div>
             <label>Property Locality <span class="req">*</span></label>
@@ -100,7 +96,7 @@
             </div>
           </div>
         </div>
-        <div class="fgrid">
+        <div class="fgrid fpair">
           <div>
             <label>Size (sqft) <span class="req">*</span></label>
             <input class="fld" id="f_size" type="number" min="0" placeholder="e.g. 1800" />
@@ -112,8 +108,6 @@
           </div>
         </div>
 
-        <h2 style="margin-top:6px;">Landlord</h2>
-        <p class="formsub">Who to reach for the term sheet.</p>
         <div class="fgrid">
           <div>
             <label>Landlord Name</label>
@@ -125,8 +119,6 @@
           </div>
         </div>
 
-        <h2 style="margin-top:6px;">Classification</h2>
-        <p class="formsub">Where it goes and how it reached you.</p>
         <div class="fgrid">
           <div>
             <label>Source</label>
@@ -150,7 +142,7 @@
 
         <div class="divider"></div>
         <div class="formactions">
-          <a class="cancel" href="dashboard.html">Cancel</a>
+          <a class="cancel" id="cancelLink" href="dashboard.html">Cancel</a>
           <button class="submitbtn" type="submit">Submit Property</button>
         </div>
       </form>
@@ -175,6 +167,11 @@ function nextCode(city) {
 }
 
 function field(id) { return document.getElementById(id); }
+
+// Cancel returns to wherever this form was opened from; only a successful
+// submit lands on the Properties list.
+var fromPage = new URLSearchParams(window.location.search).get('from');
+document.getElementById('cancelLink').setAttribute('href', fromPage || 'dashboard.html');
 
 function validate() {
   var ok = true;

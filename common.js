@@ -47,14 +47,14 @@ function notWired(label) {
 
 // Demo user roster — one per pipeline/ops stage, so the prototype can be viewed as any role.
 var USERS = {
-  hunter:   { name:'R. Suresh',   role:'Hunter',         city:'Bengaluru', initials:'RS', email:'r.suresh@savomart.com',   grad:'linear-gradient(155deg,#4a7d95,#2c4e60)' },
-  bde:      { name:'A. Verma',    role:'BDE',            city:'Bengaluru', initials:'AV', email:'a.verma@savomart.com',    grad:'linear-gradient(155deg,#3f8a6d,#2c5c48)' },
-  siteeval: { name:'K. Bose',     role:'Site Evaluator', city:'Chennai',   initials:'KB', email:'k.bose@savomart.com',     grad:'linear-gradient(155deg,#a97b4a,#7a5530)' },
-  bdm:      { name:'M. Iyer',     role:'BDM',            city:'Bengaluru', initials:'MI', email:'m.iyer@savomart.com',     grad:'linear-gradient(155deg,#7c4f96,#5a3970)' },
-  cxo:      { name:'S. Malhotra', role:'CXO',            city:'Mumbai',    initials:'SM', email:'s.malhotra@savomart.com', grad:'linear-gradient(155deg,#ad3d3d,#7a2929)' },
-  ic:       { name:'V. Sharma',   role:'IC Member',      city:'Mumbai',    initials:'VS', email:'v.sharma@savomart.com',   grad:'linear-gradient(155deg,#5a7a95,#3a5570)' },
-  mxm:      { name:'P. Menon',    role:'MXM',            city:'Bengaluru', initials:'PM', email:'p.menon@savomart.com',    grad:'linear-gradient(155deg,#3f6e85,#2c4e60)' },
-  pm:       { name:'R. Kapoor',   role:'PM',             city:'Bengaluru', initials:'RK', email:'r.kapoor@savomart.com',   grad:'linear-gradient(155deg,#3f6e85,#2c4e60)' },
+  hunter:   { name:'R. Suresh',   role:'Hunter',         city:'Bengaluru', initials:'RS', email:'r.suresh@savomart.com',   phone:'+91 98450 11223', grad:'linear-gradient(155deg,#4a7d95,#2c4e60)' },
+  bde:      { name:'A. Verma',    role:'BDE',            city:'Bengaluru', initials:'AV', email:'a.verma@savomart.com',    phone:'+91 98802 33445', grad:'linear-gradient(155deg,#3f8a6d,#2c5c48)' },
+  siteeval: { name:'K. Bose',     role:'Site Evaluator', city:'Chennai',   initials:'KB', email:'k.bose@savomart.com',     phone:'+91 94440 55667', grad:'linear-gradient(155deg,#a97b4a,#7a5530)' },
+  bdm:      { name:'M. Iyer',     role:'BDM',            city:'Bengaluru', initials:'MI', email:'m.iyer@savomart.com',     phone:'+91 99001 77889', grad:'linear-gradient(155deg,#7c4f96,#5a3970)' },
+  cxo:      { name:'S. Malhotra', role:'CXO',            city:'Mumbai',    initials:'SM', email:'s.malhotra@savomart.com', phone:'+91 93910 99001', grad:'linear-gradient(155deg,#ad3d3d,#7a2929)' },
+  ic:       { name:'V. Sharma',   role:'IC Member',      city:'Mumbai',    initials:'VS', email:'v.sharma@savomart.com',   phone:'+91 99456 22334', grad:'linear-gradient(155deg,#5a7a95,#3a5570)' },
+  mxm:      { name:'P. Menon',    role:'MXM',            city:'Bengaluru', initials:'PM', email:'p.menon@savomart.com',    phone:'+91 90030 44556', grad:'linear-gradient(155deg,#3f6e85,#2c4e60)' },
+  pm:       { name:'R. Kapoor',   role:'PM',             city:'Bengaluru', initials:'RK', email:'r.kapoor@savomart.com',   phone:'+91 98123 66778', grad:'linear-gradient(155deg,#3f6e85,#2c4e60)' },
 };
 var USER_ORDER = ['hunter', 'bde', 'siteeval', 'bdm', 'cxo', 'ic', 'mxm', 'pm'];
 
@@ -157,9 +157,20 @@ function renderSideStats() {
   }).join('');
 }
 
-// Repaints every identity chip on the page (sidebar + user menu) for the current demo user.
-function applyCurrentUser() {
+var ICON2 = {
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+};
+
+// Fully repaints the user-menu dropdown (identity, city access, app access,
+// notification toggle, switch-user list) for the current demo user, and the
+// sidebar identity chip. Rebuilding from scratch means the same JS drives the
+// menu on every page regardless of that page's static markup.
+function renderUserMenu(dd) {
   var u = getCurrentUser();
+
   var sideAv = document.querySelector('.sidebottom .av');
   if (sideAv) { sideAv.style.background = u.grad; sideAv.textContent = u.initials; }
   var sideName = document.querySelector('.sidebottom .who-name');
@@ -167,42 +178,52 @@ function applyCurrentUser() {
   var sideRole = document.querySelector('.sidebottom .who-role');
   if (sideRole) sideRole.textContent = u.role + ' · ' + u.city;
 
-  var umAv = document.querySelector('.usermenu-head .av');
-  if (umAv) { umAv.style.background = u.grad; umAv.textContent = u.initials; }
-  var umName = document.querySelector('.usermenu-head .n');
-  if (umName) umName.textContent = u.name;
-  var umRole = document.querySelector('.usermenu-head .r');
-  if (umRole) umRole.textContent = u.role + ' · ' + u.city;
-
-  Array.prototype.forEach.call(document.querySelectorAll('.usermenu-row'), function (row) {
-    var k = row.querySelector('.k'), v = row.querySelector('.v');
-    if (!k || !v) return;
-    if (k.textContent === 'Email') v.textContent = u.email;
-    else if (k.textContent === 'Role') v.textContent = u.role;
-    else if (k.textContent === 'City access') v.textContent = u.city;
-  });
-}
-
-// Appends a "Switch user (demo)" role list into an open user-menu dropdown.
-function injectSwitchUser(dd) {
-  if (dd.querySelector('.usermenu-switch')) return;
+  if (!dd) return;
   var current = getCurrentRole();
-  var wrap = document.createElement('div');
-  wrap.className = 'usermenu-switch';
-  wrap.innerHTML = '<div class="usermenu-switch-label">Switch user (demo)</div><div class="usermenu-switch-list">' +
-    USER_ORDER.map(function (key) {
-      var u = USERS[key];
-      var on = key === current ? ' on' : '';
-      return '<div class="usermenu-switch-btn' + on + '" data-role="' + key + '"><span class="av" style="background:' + u.grad + ';">' + u.initials + '</span><span><span class="swn">' + u.name + '</span><span class="swr">' + u.role + '</span></span></div>';
-    }).join('') + '</div>';
-  var out = dd.querySelector('.usermenu-out');
-  dd.insertBefore(wrap, out);
-  Array.prototype.forEach.call(wrap.querySelectorAll('.usermenu-switch-btn'), function (btn) {
+  var notifyOn = localStorage.getItem('propflow_notify') !== 'off';
+
+  dd.innerHTML =
+    '<div class="usermenu-greet">Hi, ' + u.name + '</div>' +
+    '<div class="usermenu-info">' +
+      '<div class="usermenu-info-row">' + ICON2.phone + '<span>' + u.phone + '</span></div>' +
+      '<div class="usermenu-info-row">' + ICON2.mail + '<span>' + u.email + '</span></div>' +
+      '<div class="usermenu-info-row">' + ICON2.pin + '<span>' + u.city + '</span></div>' +
+    '</div>' +
+    '<div class="usermenu-section-label">App access</div>' +
+    '<div class="usermenu-access-row"><span>PropFlow</span><span class="usermenu-pill">' + u.role + '</span></div>' +
+    '<div class="usermenu-toggle-row">' +
+      '<span class="usermenu-toggle-label">' + ICON2.bell + 'Notifications</span>' +
+      '<span class="usermenu-toggle' + (notifyOn ? ' on' : '') + '" id="usermenuNotifyToggle"></span>' +
+    '</div>' +
+    '<div class="usermenu-switch">' +
+      '<div class="usermenu-switch-label">Switch user (demo)</div>' +
+      '<div class="usermenu-switch-list">' +
+        USER_ORDER.map(function (key) {
+          var uu = USERS[key];
+          var on = key === current ? ' on' : '';
+          return '<div class="usermenu-switch-btn' + on + '" data-role="' + key + '"><span class="av" style="background:' + uu.grad + ';">' + uu.initials + '</span><span><span class="swn">' + uu.name + '</span><span class="swr">' + uu.role + '</span></span></div>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<button class="usermenu-out" id="userMenuSignOut">Sign out</button>';
+
+  Array.prototype.forEach.call(dd.querySelectorAll('.usermenu-switch-btn'), function (btn) {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
       setCurrentRole(btn.getAttribute('data-role'));
     });
   });
+  var toggle = dd.querySelector('#usermenuNotifyToggle');
+  if (toggle) {
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var on = toggle.classList.toggle('on');
+      localStorage.setItem('propflow_notify', on ? 'on' : 'off');
+      showToast('Notifications ' + (on ? 'on' : 'off'), 'info');
+    });
+  }
+  var out = dd.querySelector('#userMenuSignOut');
+  if (out) out.addEventListener('click', function () { notWired('Sign out'); });
 }
 
 // Hunter is a submit-and-track role: only "For you" (Your Submissions + New Property)
@@ -225,12 +246,11 @@ function applyRoleAccess() {
 // Shared top-right user menu: call once per page after the DOM is in place.
 function initUserMenu() {
   applyRoleAccess();
-  applyCurrentUser();
   renderSideStats();
   var btn = document.getElementById('userMenuBtn');
   var dd = document.getElementById('userMenuDd');
+  renderUserMenu(dd);
   if (!btn || !dd) return;
-  injectSwitchUser(dd);
   btn.addEventListener('click', function (e) {
     e.stopPropagation();
     dd.classList.toggle('open');
@@ -238,8 +258,6 @@ function initUserMenu() {
   document.addEventListener('click', function (e) {
     if (!dd.contains(e.target) && e.target !== btn) dd.classList.remove('open');
   });
-  var out = document.getElementById('userMenuSignOut');
-  if (out) out.addEventListener('click', function () { notWired('Sign out'); });
 }
 
 // Sticky sub-nav scrollspy: highlights the active section link as the page scrolls,
