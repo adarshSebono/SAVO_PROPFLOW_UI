@@ -1,3 +1,23 @@
+// Fixed-position elements (the mobile bottom nav) size percentage/left+right
+// widths against the layout viewport, which on a desktop browser includes the
+// space reserved for the vertical scrollbar - a few px wider than what's
+// actually visible (document.documentElement.clientWidth). That mismatch is
+// what let the bottom nav (and anything dragged along with it) drift past the
+// right edge and reveal blank space. Pin it to the real visible width instead.
+// Real phones use overlay scrollbars so this is a no-op there.
+function fixMobileNavWidth() {
+  var side = document.querySelector('.side');
+  if (!side) return;
+  if (window.matchMedia('(max-width: 720px)').matches) {
+    side.style.width = document.documentElement.clientWidth + 'px';
+  } else {
+    side.style.width = '';
+  }
+}
+window.addEventListener('resize', fixMobileNavWidth);
+document.addEventListener('DOMContentLoaded', fixMobileNavWidth);
+fixMobileNavWidth();
+
 // Shared across every page: toast + tiny icon strings.
 var ICON = {
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>',
