@@ -182,6 +182,8 @@
   .mapbox.highlighting .mappin.active{opacity:1;}
   .comppanel{max-height:0; overflow:hidden; transition:max-height .3s ease;}
   .comppanel.open{max-height:900px;}
+  .comptoggle{cursor:pointer; color:var(--accent); border-bottom:1px dashed var(--accent);}
+  .comptoggle:hover{color:var(--accent-deep);}
   .geolink{color:var(--accent); text-decoration:none;}
   .geolink:hover{text-decoration:underline;}
 
@@ -703,7 +705,7 @@ function renderOverview() {
       (seed.comp.competitorsMore ? '<tr><td colspan="2" style="color:var(--faint);">+' + seed.comp.competitorsMore + ' more within 500m</td></tr>' : '') + '</tbody></table>'
     : '<div class="lockrow">' + ICONS.lock + 'No competitors auto-discovered within 500m.</div>';
   html += '<div class="summarycard"><div class="panetitle">Competition &amp; Catchment</div>' +
-    fieldGrid([['GeoIQ Household Count', seed.comp.households], ['Auto-Discovered Competitors', seed.comp.nearest]]) +
+    fieldGrid([['GeoIQ Household Count', seed.comp.households], ['Auto-Discovered Competitors', '<span class="comptoggle" id="compToggle">' + seed.comp.nearest + '</span>']]) +
     '<div class="comppanel" id="compPanel"><div class="comppanel-inner">' +
       '<div class="panetitle" style="margin-top:18px;">Nearest Competitors</div>' + compTableHtml +
       '<div class="panetitle" style="margin-top:18px;">Catchment Summary</div>' +
@@ -730,6 +732,10 @@ function renderOverview() {
 function wireCompMap() {
   var mapbox = document.getElementById('mapbox');
   var panel = document.getElementById('compPanel');
+  var toggle = document.getElementById('compToggle');
+  if (toggle && panel) {
+    toggle.addEventListener('click', function () { panel.classList.toggle('open'); });
+  }
   if (!mapbox) return;
   var items = document.querySelectorAll('#ovDynamic .maplegend-item');
   items.forEach(function (item) {
@@ -740,13 +746,11 @@ function wireCompMap() {
       document.querySelectorAll('#ovDynamic .mappin').forEach(function (p) { p.classList.remove('active'); });
       if (alreadyOn) {
         mapbox.classList.remove('highlighting');
-        if (panel) panel.classList.remove('open');
         return;
       }
       item.classList.add('on');
       mapbox.classList.add('highlighting');
       document.querySelectorAll('#ovDynamic .mappin[data-cat="' + cat + '"]').forEach(function (p) { p.classList.add('active'); });
-      if (panel) panel.classList.toggle('open', cat === 'competitors');
     });
   });
 }
