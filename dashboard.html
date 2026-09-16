@@ -47,16 +47,16 @@
   .empty{padding:60px 20px; text-align:center; color:var(--faint); font-size:13px;}
 
   @media (max-width: 720px){
-    body{overflow-x:hidden;}
+    html{overflow-x:hidden;}
     .header{padding:20px 16px 0; flex-wrap:wrap; gap:10px;}
     h1{font-size:19px;}
     .newbtn{height:36px; padding:0 12px; font-size:12px;}
     .toolbar{margin:16px 16px 14px; flex-direction:column; align-items:stretch; gap:10px;}
     .search{width:100%; box-sizing:border-box;}
-    .filters{flex-direction:column; align-items:stretch; gap:10px; width:100%;}
+    .filters{display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;}
     .filterfield{width:100%;}
     .filterfield select{width:100%; min-width:0; box-sizing:border-box;}
-    .filterreset{align-self:flex-start; padding-left:0;}
+    .filterreset{grid-column:1 / -1; align-self:flex-start; padding-left:0;}
     .tablewrap{margin:0 16px 24px; overflow-x:auto; -webkit-overflow-scrolling:touch;}
     .tablewrap::-webkit-scrollbar{height:4px;}
     table{min-width:640px;}

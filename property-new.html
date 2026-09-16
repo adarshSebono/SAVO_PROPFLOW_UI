@@ -11,7 +11,8 @@
   .topbar{position:sticky; top:var(--gtop-h); z-index:50; height:52px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:space-between; padding:0 32px;}
 
   .pagewrap{max-width:1180px; margin:0 auto; padding:24px 32px 60px;}
-  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
+  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
+  .flowcard{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-sm); margin-top:14px; animation:riseIn .4s .05s ease-out both;}
   .htop{display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
   .htitle{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   h1{font-size:22px; font-weight:800; margin:0; letter-spacing:-.01em;}
@@ -46,6 +47,12 @@
   .idxdot.future{background:var(--line-soft); color:var(--faint);}
   .idxlbl{font-size:12px; font-weight:600; color:var(--muted); flex:1; min-width:0;}
 
+  .uploadrow{display:flex; gap:10px; margin-bottom:18px;}
+  .uploadtitle{flex:1; height:40px; border:1.5px solid var(--line); border-radius:9px; background:var(--paper); padding:0 12px; font-size:12.5px; font-family:inherit; color:var(--ink);}
+  .uploadtitle:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); background:var(--panel);}
+  .uploadbtn{height:40px; padding:0 16px; border-radius:9px; background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; border:none; cursor:pointer; white-space:nowrap; flex:none;}
+  .uploadbtn:hover{filter:brightness(.96);}
+  .gallerylbl{font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); margin-bottom:10px;}
   .mtabs{display:flex; gap:4px; background:var(--paper); padding:3px; border-radius:8px; margin-bottom:12px;}
   .mtab{flex:1; text-align:center; font-size:11px; font-weight:700; padding:6px 0; border-radius:6px; color:var(--muted); cursor:pointer;}
   .mtab.on{background:var(--panel); color:var(--ink); box-shadow:var(--shadow-sm);}
@@ -211,15 +218,16 @@
   .empty404 a{color:var(--accent); font-weight:600;}
 
   @media (max-width: 720px){
-    body{overflow-x:hidden;}
-    .fieldgrid{grid-template-columns:repeat(2, 1fr);}
+    html{overflow-x:hidden;}
     .bodygrid{grid-template-columns:1fr;}
     .leftcol{position:static; width:100%;}
     .flow{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px;}
     .tabbar{overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;}
     .tabbtn{white-space:nowrap;}
-    .takeaction{right:16px; bottom:16px; padding:12px 16px;}
+    .takeaction{right:16px; bottom:calc(70px + env(safe-area-inset-bottom)); padding:12px 16px;}
     .takeaction .d{display:none;}
+    .uploadrow{gap:8px;}
+    .uploadbtn{padding:0 12px; font-size:11.5px;}
   }
 </style>
 </head>
@@ -315,6 +323,9 @@ if (!record) {
 
   var STAGES = ['Hunter','BDE','Site Eval','BDM','CXO','IC'];
   var state = { bdeOutcome: null };
+  var mediaPhotos = [];
+  var mediaDocs = [];
+  var MEDIA_GRADS = ['linear-gradient(150deg,#9fb3c0,#4a7d95)','linear-gradient(150deg,#b0a08f,#7d5f4a)','linear-gradient(150deg,#93b0a0,#3f8a6d)','linear-gradient(150deg,#c9a97e,#a97b4a)','linear-gradient(150deg,#a7b8c9,#5a7a95)'];
 
   function bdeState() {
     return { done: state.bdeOutcome === 'approved', rejected: state.bdeOutcome === 'rejected', held: state.bdeOutcome === 'hold', pending: state.bdeOutcome === null };
@@ -462,12 +473,37 @@ if (!record) {
   }
   function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); renderFeedback(); renderTimeline(); }
 
-  function renderMedia() {
-    document.getElementById('mediaBody').innerHTML = '<div class="mtiles">' +
-      '<div class="tile add req" onclick="window.location.href=\'media-upload.html?type=photo&title=Front\'">' + ICONS.plus + '</div>' +
-      '<div class="tile add" onclick="window.location.href=\'media-upload.html?type=photo\'">' + ICONS.plus + '</div>' +
-      '<div class="tile add" onclick="window.location.href=\'media-upload.html?type=photo\'">' + ICONS.plus + '</div></div>';
+  function renderMediaTab(kind) {
+    var body = document.getElementById('mediaBody');
+    var items = kind === 'doc' ? mediaDocs : mediaPhotos;
+    var tilesHtml = kind === 'doc'
+      ? items.map(function (d) { return '<div class="doctile"><div class="lb">' + d.title + '</div></div>'; }).join('')
+      : '<div class="mtiles">' + items.map(function (p) { return '<div class="tile filled" style="background:' + p.grad + ';"><div class="lb">' + p.title + '</div></div>'; }).join('') + '</div>';
+    body.innerHTML =
+      '<div class="uploadrow">' +
+        '<input class="uploadtitle" id="mediaTitleInput" placeholder="' + (kind === 'doc' ? 'e.g. Title Deed, Rent Agreement&hellip;' : 'e.g. Front facade, Interior view&hellip;') + '">' +
+        '<button class="uploadbtn" id="mediaAttachBtn">Click to attach</button>' +
+      '</div>' +
+      '<div class="gallerylbl">' + (kind === 'doc' ? 'Artifacts' : 'Gallery') + '</div>' +
+      (items.length ? tilesHtml : '<div class="leftsub">Nothing attached yet.</div>');
+    document.querySelectorAll('#mediaBody .tile.filled, #mediaBody .doctile').forEach(function (t) {
+      t.addEventListener('click', function () { notWired(kind === 'doc' ? 'Document preview' : 'Media preview'); });
+    });
+    var input = document.getElementById('mediaTitleInput');
+    document.getElementById('mediaAttachBtn').addEventListener('click', function () {
+      var title = input.value.trim();
+      if (!title) { showToast('Enter a title first', 'info'); input.focus(); return; }
+      if (kind === 'doc') {
+        mediaDocs.push({ title: title });
+        showToast('"' + title + '" attached to Artifacts');
+      } else {
+        mediaPhotos.push({ title: title, grad: MEDIA_GRADS[mediaPhotos.length % MEDIA_GRADS.length] });
+        showToast('"' + title + '" attached to Gallery');
+      }
+      renderMediaTab(kind);
+    });
   }
+  function renderMedia() { renderMediaTab('photo'); }
 
   function moveTabIndicator(btn) {
     var ind = document.getElementById('tabIndicator');
@@ -480,6 +516,8 @@ if (!record) {
   document.getElementById('pagewrap').innerHTML =
     '<div class="pagehead">' +
       '<div class="htitle"><h1>' + record.detail.locality + '</h1><span class="code">' + record.code + '</span><span class="status" id="headStatus"></span></div>' +
+    '</div>' +
+    '<div class="flowcard">' +
       '<div class="flow" id="flowStepper"></div>' +
     '</div>' +
 
@@ -635,10 +673,10 @@ if (!record) {
   render();
   renderMedia();
 
-  document.getElementById('tabPhotos').addEventListener('click', function () { document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
+  document.getElementById('tabPhotos').addEventListener('click', function () { document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMediaTab('photo'); });
   document.getElementById('tabDocs').addEventListener('click', function () {
     document.getElementById('tabDocs').classList.add('on'); document.getElementById('tabPhotos').classList.remove('on');
-    document.getElementById('mediaBody').innerHTML = '<div class="mtiles"><div class="tile add req" onclick="window.location.href=\'media-upload.html?type=doc\'">' + ICONS.plus + '</div><div class="tile add" onclick="window.location.href=\'media-upload.html?type=doc\'">' + ICONS.plus + '</div></div>';
+    renderMediaTab('doc');
   });
 
   document.querySelectorAll('.tabbtn').forEach(function (btn) {

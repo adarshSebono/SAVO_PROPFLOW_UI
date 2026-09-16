@@ -11,7 +11,8 @@
   .topbar{position:sticky; top:var(--gtop-h); z-index:50; height:52px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:space-between; padding:0 32px;}
 
   .pagewrap{max-width:1180px; margin:0 auto; padding:24px 32px 60px;}
-  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
+  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
+  .flowcard{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 26px; box-shadow:var(--shadow-sm); margin-top:14px; animation:riseIn .4s .05s ease-out both;}
   .htop{display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
   .htitle{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   h1{font-size:22px; font-weight:800; margin:0; letter-spacing:-.01em;}
@@ -47,6 +48,12 @@
   .idxlbl{font-size:12px; font-weight:600; color:var(--muted); flex:1; min-width:0;}
   .idxitem.on .idxlbl{color:var(--ink); font-weight:700;}
 
+  .uploadrow{display:flex; gap:10px; margin-bottom:18px;}
+  .uploadtitle{flex:1; height:40px; border:1.5px solid var(--line); border-radius:9px; background:var(--paper); padding:0 12px; font-size:12.5px; font-family:inherit; color:var(--ink);}
+  .uploadtitle:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); background:var(--panel);}
+  .uploadbtn{height:40px; padding:0 16px; border-radius:9px; background:var(--accent); color:#fff; font-size:12.5px; font-weight:700; border:none; cursor:pointer; white-space:nowrap; flex:none;}
+  .uploadbtn:hover{filter:brightness(.96);}
+  .gallerylbl{font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--faint); margin-bottom:10px;}
   .mtabs{display:flex; gap:4px; background:var(--paper); padding:3px; border-radius:8px; margin-bottom:12px;}
   .mtab{flex:1; text-align:center; font-size:11px; font-weight:700; padding:6px 0; border-radius:6px; color:var(--muted); cursor:pointer;}
   .mtab.on{background:var(--panel); color:var(--ink); box-shadow:var(--shadow-sm);}
@@ -222,17 +229,18 @@
   .share-note{font-size:11px; color:var(--faint); line-height:1.5; margin-top:10px;}
 
   @media (max-width: 720px){
-    body{overflow-x:hidden;}
+    html{overflow-x:hidden;}
     .topbar{flex-wrap:wrap; height:auto; padding:10px 16px; gap:6px;}
     .pagewrap{padding-left:16px; padding-right:16px;}
-    .fieldgrid{grid-template-columns:repeat(2, 1fr);}
     .bodygrid{grid-template-columns:1fr;}
     .leftcol{position:static; width:100%;}
     .flow{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px;}
     .flow::-webkit-scrollbar{height:4px;}
     .tabbar{overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap;}
     .tabbtn{white-space:nowrap;}
-    .takeaction{right:16px; bottom:16px; padding:12px 16px;}
+    .takeaction{right:16px; bottom:calc(70px + env(safe-area-inset-bottom)); padding:12px 16px;}
+    .uploadrow{gap:8px;}
+    .uploadbtn{padding:0 12px; font-size:11.5px;}
     .takeaction .d{display:none;}
   }
 </style>
@@ -299,6 +307,9 @@
           <span class="code" id="propCode">BLR1041</span>
           <span class="status" id="headStatus"></span>
         </div>
+      </div>
+
+      <div class="flowcard">
         <div class="flow" id="flowStepper"></div>
       </div>
 
@@ -420,6 +431,15 @@ propCode = SEEDS[propCode] ? propCode : 'BLR1041';
 var STAGES = ['Hunter','BDE','Site Eval','BDM','CXO','IC'];
 var STAGE_KEY_IDX = { bde:1, siteeval:2, bdm:3, cxo:4, ic:5 };
 var state = { outcome: null, mediaTab: 'photos', elapsedSec: 6*3600 + 42*60 + 10 };
+var mediaPhotos = [
+  { title:'Front', req:true, grad:'linear-gradient(150deg,#9fb3c0,#4a7d95)' },
+  { title:'Interior', grad:'linear-gradient(150deg,#b0a08f,#7d5f4a)' },
+  { title:'Walkthrough', grad:'linear-gradient(150deg,#93b0a0,#3f8a6d)' },
+];
+var mediaDocs = [
+  { title:'Title Deed.pdf' },
+  { title:'Rent Agreement.docx' },
+];
 
 var ICONS = {
   check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>',
@@ -636,20 +656,49 @@ function setOutcome(outcome, msg) {
   showToast(msg);
 }
 
+var MEDIA_GRADS = ['linear-gradient(150deg,#9fb3c0,#4a7d95)','linear-gradient(150deg,#b0a08f,#7d5f4a)','linear-gradient(150deg,#93b0a0,#3f8a6d)','linear-gradient(150deg,#c9a97e,#a97b4a)','linear-gradient(150deg,#a7b8c9,#5a7a95)'];
+
 function renderMedia() {
   var body = document.getElementById('mediaBody');
   if (state.mediaTab === 'photos') {
-    body.innerHTML = '<div class="mtiles">' +
-      '<div class="tile filled req" onclick="window.location.href=\'media-upload.html?type=photo&title=Front\'"><div class="lb">Front</div></div>' +
-      '<div class="tile filled" style="background:linear-gradient(150deg,#b0a08f,#7d5f4a);" onclick="window.location.href=\'media-upload.html?type=photo&title=Interior\'"><div class="lb">Interior</div></div>' +
-      '<div class="tile filled" style="background:linear-gradient(150deg,#93b0a0,#3f8a6d);" onclick="window.location.href=\'media-upload.html?type=photo&title=Walkthrough\'"><div class="lb">Walkthrough</div></div>' +
-      '<div class="tile add" onclick="window.location.href=\'media-upload.html?type=photo\'">' + ICONS.plus + '</div></div>';
+    body.innerHTML =
+      '<div class="uploadrow">' +
+        '<input class="uploadtitle" id="mediaTitleInput" placeholder="e.g. Front facade, Interior view&hellip;">' +
+        '<button class="uploadbtn" id="mediaAttachBtn">Click to attach</button>' +
+      '</div>' +
+      '<div class="gallerylbl">Gallery</div>' +
+      '<div class="mtiles">' + mediaPhotos.map(function (p, i) {
+        return '<div class="tile filled' + (p.req ? ' req' : '') + '" style="background:' + p.grad + ';" data-idx="' + i + '"><div class="lb">' + p.title + '</div></div>';
+      }).join('') + '</div>';
+    document.querySelectorAll('#mediaBody .tile.filled').forEach(function (t) {
+      t.addEventListener('click', function () { notWired('Media preview'); });
+    });
   } else {
     body.innerHTML =
-      '<div class="doctile"><div class="lb">Title Deed.pdf</div></div>' +
-      '<div class="doctile"><div class="lb">Rent Agreement.docx</div></div>' +
-      '<div class="tile add" style="height:52px;" onclick="window.location.href=\'media-upload.html?type=doc\'">' + ICONS.plus + '</div>';
+      '<div class="uploadrow">' +
+        '<input class="uploadtitle" id="mediaTitleInput" placeholder="e.g. Title Deed, Rent Agreement&hellip;">' +
+        '<button class="uploadbtn" id="mediaAttachBtn">Click to attach</button>' +
+      '</div>' +
+      '<div class="gallerylbl">Artifacts</div>' +
+      mediaDocs.map(function (d) { return '<div class="doctile"><div class="lb">' + d.title + '</div></div>'; }).join('');
+    document.querySelectorAll('#mediaBody .doctile').forEach(function (t) {
+      t.addEventListener('click', function () { notWired('Document preview'); });
+    });
   }
+
+  var input = document.getElementById('mediaTitleInput');
+  document.getElementById('mediaAttachBtn').addEventListener('click', function () {
+    var title = input.value.trim();
+    if (!title) { showToast('Enter a title first', 'info'); input.focus(); return; }
+    if (state.mediaTab === 'photos') {
+      mediaPhotos.push({ title: title, grad: MEDIA_GRADS[mediaPhotos.length % MEDIA_GRADS.length] });
+      showToast('"' + title + '" attached to Gallery');
+    } else {
+      mediaDocs.push({ title: title });
+      showToast('"' + title + '" attached to Artifacts');
+    }
+    renderMedia();
+  });
 }
 
 document.getElementById('tabPhotos').addEventListener('click', function () { state.mediaTab = 'photos'; document.getElementById('tabPhotos').classList.add('on'); document.getElementById('tabDocs').classList.remove('on'); renderMedia(); });
