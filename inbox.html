@@ -14,9 +14,6 @@
   .headtitle{font-size:23px; font-weight:800; margin:0; letter-spacing:-.01em;}
   .headsub{font-size:12.5px; color:var(--faint); margin-top:4px;}
   .headbtns{display:flex; align-items:center; gap:10px; flex:none;}
-  .subsbtn{height:54px; padding:0 16px; border-radius:14px; background:var(--panel); color:var(--ink); font-size:12.5px; font-weight:700; display:flex; align-items:center; gap:7px; border:1px solid var(--line); box-shadow:var(--shadow-sm); cursor:pointer;}
-  .subsbtn:hover{border-color:var(--accent); color:var(--accent);}
-  .subsbtn svg{width:14px;height:14px;}
 
   .newcard{display:flex; align-items:center; gap:10px; height:54px; padding:0 8px 0 8px; border-radius:14px; background:linear-gradient(135deg,var(--accent-soft),var(--panel)); border:1px solid var(--line); box-shadow:var(--shadow-sm); cursor:pointer; transition:transform .12s, box-shadow .12s;}
   .newcard:hover{transform:translateY(-1px); box-shadow:var(--shadow-md);}
@@ -110,7 +107,6 @@
         <div class="headsub" id="headsub"></div>
       </div>
       <div class="headbtns">
-        <div class="subsbtn" id="subsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Your Submissions</div>
         <a class="newcard" href="new-property.html">
           <div class="newcard-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.686-7-11a7 7 0 0 1 14 0c0 5.314-7 11-7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></div>
           <div class="newcard-body"><div class="newcard-t">New Property</div><div class="newcard-d">Capture a lead in minutes</div></div>
@@ -275,7 +271,6 @@ document.getElementById('filterClear').addEventListener('click', function () { a
 
 function scrollToSubmissions() { document.getElementById('mySubmissions').scrollIntoView({ behavior:'smooth', block:'start' }); }
 document.getElementById('mySubsMetric').addEventListener('click', scrollToSubmissions);
-document.getElementById('subsBtn').addEventListener('click', scrollToSubmissions);
 
 initUserMenu();
 </script>

@@ -11,7 +11,7 @@
   .topbar{position:sticky; top:var(--gtop-h); z-index:50; height:52px; border-bottom:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:space-between; padding:0 32px;}
 
   .pagewrap{max-width:1180px; margin:0 auto; padding:24px 32px 60px;}
-  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both;}
+  .pagehead{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 26px; box-shadow:var(--shadow-md); animation:riseIn .4s ease-out both; position:sticky; top:calc(var(--gtop-h) + 52px); z-index:40;}
   .htop{display:flex; align-items:flex-start; justify-content:space-between; gap:20px;}
   .htitle{display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
   h1{font-size:22px; font-weight:800; margin:0; letter-spacing:-.01em;}
@@ -111,9 +111,35 @@
   .decidedbox .t{font-size:13.5px; font-weight:700; margin-bottom:3px;}
   .decidedbox .d{font-size:12px; color:var(--muted); line-height:1.6;}
 
-  .fieldgrid{display:grid; grid-template-columns:repeat(4, 1fr); gap:18px;}
-  .fitem .k{font-size:10px; font-weight:600; color:var(--faint); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;}
-  .fitem .v{font-size:13.5px; font-weight:700;}
+  .fieldgrid{display:flex; flex-wrap:wrap; gap:8px 28px;}
+  .fieldgrid .fitem{font-size:13px; line-height:1.7;}
+  .fieldgrid .fitem .k{font-size:13px; font-weight:600; color:var(--muted); text-transform:none; letter-spacing:normal; margin-bottom:0;}
+  .fieldgrid .fitem .v{font-size:13px; font-weight:700; color:var(--ink); margin-left:4px;}
+
+  .timeline{display:flex; flex-direction:column;}
+  .tlitem{display:flex; gap:14px; position:relative; padding-bottom:22px;}
+  .tlitem:last-child{padding-bottom:0;}
+  .tlitem::before{content:""; position:absolute; left:13px; top:28px; bottom:0; width:2px; background:var(--line);}
+  .tlitem:last-child::before{display:none;}
+  .tldot{width:26px;height:26px;border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; z-index:1;}
+  .tldot svg{width:12px;height:12px;}
+  .tldot.done{background:var(--good-bg); color:var(--good);}
+  .tldot.current{background:var(--accent); color:#fff;}
+  .tldot.rejected{background:var(--bad-bg); color:var(--bad);}
+  .tldot.hold{background:var(--hold-bg); color:var(--hold);}
+  .tldot.future{background:var(--line-soft); color:var(--faint);}
+  .tlbody{flex:1; min-width:0; padding-top:3px;}
+  .tlhead{display:flex; align-items:center; gap:10px; margin-bottom:5px;}
+  .tlname{font-size:13.5px; font-weight:700;}
+  .tlstatus{font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:2px 8px; border-radius:100px; margin-left:auto; flex:none;}
+  .tlstatus.done{background:var(--good-bg); color:var(--good);}
+  .tlstatus.current{background:var(--accent-soft); color:var(--accent-ink);}
+  .tlstatus.rejected{background:var(--bad-bg); color:var(--bad);}
+  .tlstatus.hold{background:var(--hold-bg); color:var(--hold);}
+  .tlstatus.future{background:var(--line-soft); color:var(--faint);}
+  .tlrow{font-size:12px; color:var(--muted); line-height:1.7;}
+  .tlk{color:var(--faint); font-weight:600;}
+  .tlv{color:var(--ink); font-weight:700;}
 
   .lockrow{display:flex; align-items:center; gap:9px; color:var(--faint); font-size:12.5px;}
   .lockrow svg{width:15px;height:15px; flex:none;}
@@ -290,7 +316,7 @@ if (!record) {
 
   function fieldGrid(items) {
     return '<div class="fieldgrid">' + items.map(function (it) {
-      return '<div class="fitem"><div class="k">' + it[0] + '</div><div class="v">' + it[1] + '</div></div>';
+      return '<span class="fitem"><span class="k">' + it[0] + ':</span><span class="v">' + it[1] + '</span></span>';
     }).join('') + '</div>';
   }
 
@@ -428,7 +454,7 @@ if (!record) {
       banner.onclick = null;
     }
   }
-  function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); renderFeedback(); }
+  function render() { renderHead(); renderFlow(); renderStages(); renderTakeAction(); renderFeedback(); renderTimeline(); }
 
   function renderMedia() {
     document.getElementById('mediaBody').innerHTML = '<div class="mtiles">' +
@@ -463,44 +489,41 @@ if (!record) {
         '<div class="tabpane" data-pane="overview" id="overview">' +
           '<div class="summarycard">' +
             '<div class="panetitle">Property Details</div>' +
-            '<div class="fieldgrid">' +
-              '<div class="fitem"><div class="k">Locality</div><div class="v">' + record.detail.locality + '</div></div>' +
-              '<div class="fitem"><div class="k">Size</div><div class="v">' + (record.detail.size ? record.detail.size + ' sqft' : '—') + '</div></div>' +
-              '<div class="fitem"><div class="k">Expected Rent</div><div class="v">' + (record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—') + '</div></div>' +
-              '<div class="fitem"><div class="k">City</div><div class="v">' + record.detail.city + '</div></div>' +
-              '<div class="fitem"><div class="k">Landlord</div><div class="v">' + record.detail.landlord + '</div></div>' +
-              '<div class="fitem"><div class="k">Landlord Phone</div><div class="v">' + record.detail.phone + '</div></div>' +
-              '<div class="fitem"><div class="k">Source</div><div class="v">' + record.detail.source + '</div></div>' +
-              '<div class="fitem"><div class="k">Nearest Store</div><div class="v">TBD after BDE review</div></div>' +
-            '</div>' +
+            fieldGrid([
+              ['Locality', record.detail.locality],
+              ['Size', record.detail.size ? record.detail.size + ' sqft' : '—'],
+              ['Expected Rent', record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—'],
+              ['City', record.detail.city],
+              ['Landlord', record.detail.landlord],
+              ['Landlord Phone', record.detail.phone],
+              ['Source', record.detail.source],
+              ['Nearest Store', 'TBD after BDE review'],
+            ]) +
           '</div>' +
           '<div class="summarycard">' +
             '<div class="panetitle">Site Evaluation</div>' +
-            '<div class="fieldgrid">' +
-              '<div class="fitem"><div class="k">Facade / Frontage</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
-              '<div class="fitem"><div class="k">Road Width</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
-              '<div class="fitem"><div class="k">Stairs</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
-              '<div class="fitem"><div class="k">2-Wheeler Parking</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
-              '<div class="fitem"><div class="k">Shutters</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
-              '<div class="fitem"><div class="k">Ceiling Height</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
-            '</div>' +
+            fieldGrid([
+              ['Facade / Frontage', '<span style="color:var(--faint);">Pending Site Evaluation</span>'],
+              ['Road Width', '<span style="color:var(--faint);">Pending Site Evaluation</span>'],
+              ['Stairs', '&mdash;'], ['2-Wheeler Parking', '&mdash;'], ['Shutters', '&mdash;'], ['Ceiling Height', '&mdash;'],
+            ]) +
           '</div>' +
           '<div class="summarycard">' +
             '<div class="panetitle">Financials</div>' +
-            '<div class="fieldgrid">' +
-              '<div class="fitem"><div class="k">Expected Rent</div><div class="v">' + (record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—') + '</div></div>' +
-              '<div class="fitem"><div class="k">Expected Rent per Sqft</div><div class="v" style="color:var(--faint);">Pending BDE Review</div></div>' +
-              '<div class="fitem"><div class="k">Deposit (Months)</div><div class="v" style="color:var(--faint);">Pending BDE Review</div></div>' +
-              '<div class="fitem"><div class="k">Terms of Agreement</div><div class="v" style="color:var(--faint);">&mdash;</div></div>' +
-              '<div class="fitem"><div class="k">Expected Sales &mdash; 1st Month</div><div class="v" style="color:var(--faint);">Pending BDM Review</div></div>' +
-            '</div>' +
+            fieldGrid([
+              ['Expected Rent', record.detail.rent ? '&#8377;' + Number(record.detail.rent).toLocaleString('en-IN') : '—'],
+              ['Expected Rent per Sqft', '<span style="color:var(--faint);">Pending BDE Review</span>'],
+              ['Deposit (Months)', '<span style="color:var(--faint);">Pending BDE Review</span>'],
+              ['Terms of Agreement', '&mdash;'],
+              ['Expected Sales &mdash; 1st Month', '<span style="color:var(--faint);">Pending BDM Review</span>'],
+            ]) +
           '</div>' +
           '<div class="summarycard">' +
             '<div class="panetitle">Competition &amp; Catchment</div>' +
-            '<div class="fieldgrid">' +
-              '<div class="fitem"><div class="k">GeoIQ Household Count</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
-              '<div class="fitem"><div class="k">Nearest Competitors (500m)</div><div class="v" style="color:var(--faint);">Pending Site Evaluation</div></div>' +
-            '</div>' +
+            fieldGrid([
+              ['GeoIQ Household Count', '<span style="color:var(--faint);">Pending Site Evaluation</span>'],
+              ['Nearest Competitors (500m)', '<span style="color:var(--faint);">Pending Site Evaluation</span>'],
+            ]) +
           '</div>' +
           '<div class="summarycard">' +
             '<div class="panetitle">Interactive Map</div>' +
@@ -508,17 +531,12 @@ if (!record) {
             '<div class="mapbox"><svg viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="180" fill="#e8ecdd"/><path d="M0 90 H400 M120 0 V180 M270 0 V180" stroke="#c9d0b8" stroke-width="2"/><circle cx="190" cy="95" r="7" fill="#5b8a63"/></svg></div>' +
           '</div>' +
           '<div class="summarycard">' +
-            '<div class="panetitle">Sourcing &amp; Assignment</div>' +
-            '<div class="fieldgrid">' +
-              '<div class="fitem"><div class="k">Hunter</div><div class="v">You (M. Iyer)</div></div>' +
-              '<div class="fitem"><div class="k">Submitted</div><div class="v">' + record.detail.submittedAt + '</div></div>' +
-              '<div class="fitem"><div class="k">Assigned To</div><div class="v">Unassigned</div></div>' +
-              '<div class="fitem"><div class="k">Current Stage</div><div class="v" id="ovStage">BDE Review Pending</div></div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="summarycard">' +
             '<div class="panetitle">Feedback</div>' +
             '<div id="feedbackList"></div>' +
+          '</div>' +
+          '<div class="summarycard">' +
+            '<div class="panetitle">Timeline</div>' +
+            '<div class="timeline" id="timelineList"></div>' +
           '</div>' +
         '</div>' +
         '<div class="tabpane" data-pane="media" id="media" style="display:none;">' +
@@ -547,34 +565,55 @@ if (!record) {
     var h = dt.getHours(), m = dt.getMinutes();
     var ampm = h >= 12 ? 'PM' : 'AM';
     var h12 = h % 12; if (h12 === 0) h12 = 12;
-    return dt.getDate() + ' ' + months[dt.getMonth()] + ', ' + h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+    return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear() + ', ' + h12 + ':' + String(m).padStart(2,'0') + ' ' + ampm;
   }
-  function reviewGist() {
-    var d = bdeState();
-    var entries = [];
-    function push(action, fields, comment) {
-      entries.push({ label:'BDE Review', action:action, by:'A. Verma', on:formatNow(), fields:fields||[], comment:comment||'' });
-    }
-    if (d.done) push('done', [['Rent / sqft','&#8377;89'],['Deposit','&#8377;9,90,000'],['Occupation By','30&ndash;60 days']], 'Numbers check out &mdash; proceeding to Site Evaluation.');
-    else if (d.rejected) push('rejected', [], "Numbers don't support this location &mdash; pipeline stopped here.");
-    else if (d.held) push('hold', [], 'Placed on hold pending further clarification.');
-    return entries.reverse();
-  }
+  // Feedback only surfaces BDM-and-above reviews — this page never reaches BDM,
+  // so it naturally stays empty until the property progresses past BDE.
+  function reviewGist() { return []; }
   function renderFeedback() {
     var list = document.getElementById('feedbackList');
     var entries = reviewGist();
     if (!entries.length) { list.innerHTML = '<div class="fb-empty">No reviews completed yet.</div>'; return; }
     list.innerHTML = entries.map(function (e) {
-      var actionLabel = e.action === 'done' ? 'Complete' : e.action === 'rejected' ? 'Rejected' : 'On hold';
       var fieldsHtml = e.fields.length ? '<div class="fb-fields">' + e.fields.map(function (f) {
         return '<span class="fchip"><span class="fk">' + f[0] + '</span><span class="fv">' + f[1] + '</span></span>';
       }).join('') + '</div>' : '';
       return '<div class="fb-item">' +
         '<div class="fb-head"><div class="stbadge ' + e.action + '" style="flex:none;">' + (e.action==='done'?ICONS.check:e.action==='rejected'?ICONS.x:ICONS.pause) + '</div>' +
         '<span class="fb-name">' + e.label + '</span>' +
-        '<span class="fb-time">by ' + e.by + ' &middot; ' + e.on + '</span>' +
-        '<span class="fb-action ' + e.action + '">' + actionLabel + '</span></div>' +
+        '<span class="fb-time">by ' + e.by + ' &middot; ' + e.on + '</span></div>' +
         '<div class="fb-body">' + fieldsHtml + '<div class="fb-text">' + e.comment + '</div></div></div>';
+    }).join('');
+  }
+
+  var TIMELINE_STAGES = [
+    ['hunter', 'Hunter Submission'], ['bde', 'BDE Review'], ['siteeval', 'Site Evaluation'],
+    ['bdm', 'BDM Review'], ['cxo', 'CXO Review'], ['ic', 'IC Decision'],
+  ];
+  function renderTimeline() {
+    var host = document.getElementById('timelineList');
+    if (!host) return;
+    var d = bdeState();
+    host.innerHTML = TIMELINE_STAGES.map(function (it) {
+      var key = it[0], label = it[1], cls, icon, statusText, assignedTo, completedBy;
+      if (key === 'hunter') {
+        cls = 'done'; icon = ICONS.check; statusText = 'Complete';
+        assignedTo = 'You (M. Iyer)'; completedBy = 'You (M. Iyer) &middot; ' + record.detail.submittedAt;
+      } else if (key === 'bde') {
+        cls = d.done ? 'done' : d.rejected ? 'rejected' : d.held ? 'hold' : 'current';
+        icon = d.done ? ICONS.check : d.rejected ? ICONS.x : d.held ? ICONS.pause : ICONS.clock;
+        statusText = d.done ? 'Complete' : d.rejected ? 'Rejected' : d.held ? 'On hold' : 'In progress';
+        assignedTo = 'A. Verma';
+        completedBy = d.done ? ('A. Verma &middot; ' + formatNow()) : '&mdash;';
+      } else {
+        cls = 'future'; icon = ICONS.lock; statusText = 'Locked';
+        assignedTo = '&mdash;'; completedBy = '&mdash;';
+      }
+      return '<div class="tlitem"><div class="tldot ' + cls + '">' + icon + '</div><div class="tlbody">' +
+        '<div class="tlhead"><span class="tlname">' + label + '</span><span class="tlstatus ' + cls + '">' + statusText + '</span></div>' +
+        '<div class="tlrow"><span class="tlk">Assigned to:</span> <span class="tlv">' + assignedTo + '</span></div>' +
+        '<div class="tlrow"><span class="tlk">Completed by:</span> <span class="tlv">' + completedBy + '</span></div>' +
+        '</div></div>';
     }).join('');
   }
 
