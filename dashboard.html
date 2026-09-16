@@ -226,7 +226,7 @@ function renderRows() {
   document.getElementById('rows').innerHTML = filtered.map(function (r) {
     var s = STATUS_MAP[r.status];
     var assigneeHtml = r.assignee
-      ? '<div class="assignee"><div class="av" style="width:22px;height:22px;font-size:9px;background:' + r.ac + ';">' + initials(r.assignee) + '</div>' + r.assignee + '</div>'
+      ? '<div class="assignee">' + r.assignee + '</div>'
       : '<span class="muted">Unassigned</span>';
     var href = r.href.indexOf('?') === -1 ? r.href + '?code=' + r.code : r.href;
     return '<tr onclick="window.location.href=\'' + href + '\'">' +
