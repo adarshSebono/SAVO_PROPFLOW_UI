@@ -32,16 +32,14 @@
   .metric .mlbl{font-size:11.5px; font-weight:600; color:var(--faint); margin-top:7px; display:flex; align-items:center; gap:6px;}
   .metric .mdot{width:7px;height:7px;border-radius:50%; flex:none;}
 
-  .filterbar{display:flex; align-items:center; gap:12px; margin:14px 32px 0; padding:10px 16px; border-radius:10px; background:var(--accent-soft); color:var(--accent-ink); font-size:12.5px; font-weight:600;}
-  .filterclear{cursor:pointer; color:var(--accent); font-weight:700;}
-  .filterclear:hover{text-decoration:underline;}
-  .section.hidden{display:none;}
+  .tabbar{position:relative; display:flex; gap:0; border-bottom:1px solid var(--line); margin:20px 32px 0;}
+  .tabbtn{padding:12px 4px; margin-right:26px; font-size:13.5px; font-weight:700; color:var(--faint); cursor:pointer; transition:color .15s;}
+  .tabbtn:hover{color:var(--muted);}
+  .tabbtn.on{color:var(--accent-ink);}
+  .tabindicator{position:absolute; bottom:-1px; height:2px; background:var(--accent); border-radius:2px 2px 0 0; transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);}
 
   .section{margin:24px 32px;}
-  .sectionhead{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-  .sectionhead h2{font-size:15px; font-weight:800; margin:0;}
-  .seccount{font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--accent-ink); background:var(--accent-soft); padding:3px 9px; border-radius:100px;}
-  .secdesc{font-size:12.5px; color:var(--faint); margin:-8px 0 14px;}
+  .secdesc{font-size:12.5px; color:var(--faint); margin:0 0 14px;}
 
   .rowlist{border:1px solid var(--line); border-radius:14px; background:var(--panel); box-shadow:var(--shadow-md); overflow:hidden;}
   .rowitem{display:flex; align-items:center; gap:14px; padding:15px 20px; border-bottom:1px solid var(--line-soft); cursor:pointer; transition:background .15s; animation:riseIn .3s ease-out both;}
@@ -115,44 +113,43 @@
     </div>
 
     <div class="metrics">
-      <div class="metric" data-filter="need"><div class="mval" id="mNeed">0</div><div class="mlbl"><span class="mdot" style="background:#a9740c;"></span>Needs Attention</div></div>
-      <div class="metric" data-filter="hold"><div class="mval" id="mHold">0</div><div class="mlbl"><span class="mdot" style="background:#7c4f96;"></span>On Hold</div></div>
-      <div class="metric" data-filter="next"><div class="mval" id="mNext">0</div><div class="mlbl"><span class="mdot" style="background:#3f6e85;"></span>Next in Line</div></div>
-      <div class="metric" data-filter="pipe"><div class="mval" id="mPipe">0</div><div class="mlbl"><span class="mdot" style="background:#2f7a53;"></span>Your Pipeline</div></div>
-      <div class="metric" id="mySubsMetric"><div class="mval" id="mSubs">0</div><div class="mlbl"><span class="mdot" style="background:#c95fa8;"></span>Your Submissions</div></div>
+      <div class="metric" data-jump="need"><div class="mval" id="mNeed">0</div><div class="mlbl"><span class="mdot" style="background:#a9740c;"></span>Needs Attention</div></div>
+      <div class="metric" data-jump="hold"><div class="mval" id="mHold">0</div><div class="mlbl"><span class="mdot" style="background:#7c4f96;"></span>On Hold</div></div>
+      <div class="metric" data-jump="next"><div class="mval" id="mNext">0</div><div class="mlbl"><span class="mdot" style="background:#3f6e85;"></span>Next in Line</div></div>
+      <div class="metric" data-jump="pipe"><div class="mval" id="mPipe">0</div><div class="mlbl"><span class="mdot" style="background:#2f7a53;"></span>Your Pipeline</div></div>
+      <div class="metric" data-jump="subs" id="mySubsMetric"><div class="mval" id="mSubs">0</div><div class="mlbl"><span class="mdot" style="background:#c95fa8;"></span>Your Submissions</div></div>
     </div>
 
-    <div class="filterbar" id="filterBar" style="display:none;">
-      <span id="filterLabel"></span>
-      <span class="filterclear" id="filterClear">Clear filter &times;</span>
+    <div class="tabbar" id="tabBar">
+      <div class="tabbtn on" data-tab="need">Needs Attention</div>
+      <div class="tabbtn" data-tab="hold">On Hold</div>
+      <div class="tabbtn" data-tab="next">Upcoming</div>
+      <div class="tabbtn" data-tab="pipe">Your Pipeline</div>
+      <div class="tabbtn" data-tab="subs">Your Submissions</div>
+      <div class="tabindicator" id="tabIndicator"></div>
     </div>
 
-    <div class="section" data-section="need">
-      <div class="sectionhead"><h2>Needs Attention</h2><span class="seccount" id="needCount">0</span></div>
+    <div class="section tabpane" data-pane="need">
       <div class="secdesc">Your turn to act — nothing moves on these until you do.</div>
       <div class="rowlist" id="needList"></div>
     </div>
 
-    <div class="section" data-section="hold">
-      <div class="sectionhead"><h2>On Hold</h2><span class="seccount" id="holdCount">0</span></div>
+    <div class="section tabpane" data-pane="hold" style="display:none;">
       <div class="secdesc">Paused, not closed — you can still act on these whenever you're ready.</div>
       <div class="rowlist" id="holdList"></div>
     </div>
 
-    <div class="section" data-section="next">
-      <div class="sectionhead"><h2>Upcoming</h2><span class="seccount" id="nextCount">0</span></div>
+    <div class="section tabpane" data-pane="next" style="display:none;">
       <div class="secdesc">One stage away — these land in Needs Attention once the current stage clears.</div>
       <div class="rowlist" id="nextList"></div>
     </div>
 
-    <div class="section" data-section="pipe">
-      <div class="sectionhead"><h2>Your Pipeline</h2><span class="seccount" id="pipeCount">0</span></div>
+    <div class="section tabpane" data-pane="pipe" style="display:none;">
       <div class="secdesc">Properties you already acted on — now with a later stage. For visibility, not action.</div>
       <div class="rowlist" id="pipeList"></div>
     </div>
 
-    <div class="section" id="mySubmissions">
-      <div class="sectionhead"><h2>Your Submissions</h2><span class="seccount" id="subsCount">0</span></div>
+    <div class="section tabpane" data-pane="subs" id="mySubmissions" style="display:none;">
       <div class="secdesc">Properties you personally submitted, across every stage they've since moved through.</div>
       <div class="rowlist" id="subsList"></div>
     </div>
@@ -186,10 +183,6 @@ var u = getCurrentUser();
 
 document.querySelector('.headtitle').textContent = 'Good to see you, ' + u.name;
 document.getElementById('headsub').textContent = sections.need.length + ' need you right now · ' + sections.hold.length + ' on hold · ' + sections.next.length + ' coming up next';
-document.getElementById('needCount').textContent = sections.need.length;
-document.getElementById('holdCount').textContent = sections.hold.length;
-document.getElementById('nextCount').textContent = sections.next.length;
-document.getElementById('pipeCount').textContent = sections.pipe.length;
 document.getElementById('mNeed').textContent = sections.need.length;
 document.getElementById('mHold').textContent = sections.hold.length;
 document.getElementById('mNext').textContent = sections.next.length;
@@ -234,42 +227,38 @@ try {
     MY_SUBMISSIONS.unshift({ code:r.code, name:r.detail.locality, status:'bde', note:'Submitted ' + r.detail.submittedAt + ' — with BDE' });
   });
 } catch (e) { /* ignore malformed storage */ }
-document.getElementById('subsCount').textContent = MY_SUBMISSIONS.length;
 document.getElementById('mSubs').textContent = MY_SUBMISSIONS.length;
 renderList('subsList', MY_SUBMISSIONS);
 
-var FILTER_LABELS = { need:'Needs Attention', hold:'On Hold', next:'Upcoming', pipe:'Your Pipeline' };
-var activeFilter = null;
-
-function applyFilter() {
-  document.querySelectorAll('.metric').forEach(function (m) {
-    m.classList.toggle('on', m.getAttribute('data-filter') === activeFilter);
-  });
-  document.querySelectorAll('.section').forEach(function (s) {
-    var key = s.getAttribute('data-section');
-    s.classList.toggle('hidden', !!activeFilter && key !== activeFilter);
-  });
-  var bar = document.getElementById('filterBar');
-  if (activeFilter) {
-    bar.style.display = 'flex';
-    document.getElementById('filterLabel').textContent = 'Showing only: ' + FILTER_LABELS[activeFilter];
-  } else {
-    bar.style.display = 'none';
-  }
+function moveTabIndicator(btn) {
+  var ind = document.getElementById('tabIndicator');
+  ind.style.left = btn.offsetLeft + 'px';
+  ind.style.width = btn.offsetWidth + 'px';
 }
 
-document.querySelectorAll('.metric[data-filter]').forEach(function (m) {
-  m.addEventListener('click', function () {
-    var key = m.getAttribute('data-filter');
-    activeFilter = (activeFilter === key) ? null : key;
-    applyFilter();
-    if (activeFilter) document.querySelector('.section[data-section="' + activeFilter + '"]').scrollIntoView({ behavior:'smooth', block:'start' });
+function selectTab(key) {
+  var btn = document.querySelector('.tabbtn[data-tab="' + key + '"]');
+  if (!btn) return;
+  document.querySelectorAll('.tabbtn').forEach(function (b) { b.classList.remove('on'); });
+  btn.classList.add('on');
+  moveTabIndicator(btn);
+  document.querySelectorAll('.tabpane').forEach(function (p) {
+    p.style.display = (p.getAttribute('data-pane') === key) ? '' : 'none';
   });
-});
-document.getElementById('filterClear').addEventListener('click', function () { activeFilter = null; applyFilter(); });
+  document.querySelectorAll('.metric[data-jump]').forEach(function (m) {
+    m.classList.toggle('on', m.getAttribute('data-jump') === key);
+  });
+}
 
-function scrollToSubmissions() { document.getElementById('mySubmissions').scrollIntoView({ behavior:'smooth', block:'start' }); }
-document.getElementById('mySubsMetric').addEventListener('click', scrollToSubmissions);
+document.querySelectorAll('.tabbtn').forEach(function (btn) {
+  btn.addEventListener('click', function () { selectTab(btn.getAttribute('data-tab')); });
+});
+document.querySelectorAll('.metric[data-jump]').forEach(function (m) {
+  m.addEventListener('click', function () { selectTab(m.getAttribute('data-jump')); });
+});
+
+selectTab('need');
+window.addEventListener('resize', function () { moveTabIndicator(document.querySelector('.tabbtn.on')); });
 
 initUserMenu();
 </script>
